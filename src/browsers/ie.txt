@@ -1,0 +1,80 @@
+# version   feature
+
+# Taken from http://kangax.github.io/es5-compat-table/
+
+8           dom:window:hashchange
+
+9           es5:object:create
+9           es5:object:defineproperties
+9           es5:object:getprototypeof
+9           es5:object:keys
+9           es5:object:seal
+9           es5:object:freeze
+9           es5:object:preventextensions
+9           es5:object:issealed
+9           es5:object:isfrozen
+9           es5:object:isextensible
+9           es5:object:getownpropertynames
+
+9           es5:array:isarray
+9           es5:array:indexof
+9           es5:array:lastindexof
+9           es5:array:every
+9           es5:array:some
+9           es5:array:foreach
+9           es5:array:map
+9           es5:array:filter
+9           es5:array:reduce
+9           es5:array:reduceright
+
+9           es5:date:toisostring
+9           es5:date:now
+9           es5:function:bind
+9           es5:string:trim
+
+*           es6:string:repeat
+*           es6:string:startswith
+#*           es6:string:endswith
+#*           es6:string:contains
+#*           es6:string:toarray
+
+
+# The following is not supported in IE 8
+#           es5:array:indexof
+#           es5:array:lastindexof
+#           es5:array:every
+#           es5:array:some
+#           es5:array:foreach
+#           es5:array:map
+#           es5:array:filter
+#           es5:array:reduce
+#           es5:array:reduceright
+#           es5:object:create
+#           es5:object:defineproperties
+#           es5:object:getprototypeof
+#           es5:object:keys
+#           es5:object:seal
+#           es5:object:freeze
+#           es5:object:preventextensions
+#           es5:object:issealed
+#           es5:object:isfrozen
+#           es5:object:isextensible
+#           es5:function:bind
+#           es5:date:toisostring
+#           es5:date:now
+#           es6:array:from
+#           es6:string:repeat
+#           es6:string:startswith
+#           dom:window:innersize
+#           dom:window:wheel
+#           dom:document:contentloaded
+#           dom:document:defaultview
+#           dom:node:classlist
+#           dom:node:dataset
+#           dom:node:getelementbyclassname
+#           dom:node:textcontent
+#           dom:node:comparedocumentposition
+#           dom:svg:children
+#           dom:svg:classlist
+#           dom:ie:getcomputedstyle
+#           console

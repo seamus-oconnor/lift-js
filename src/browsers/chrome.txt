@@ -1,0 +1,12 @@
+# version   feature
+
+5           dom:window:hashchange
+
+6           es5:object:seal
+6           es5:object:freeze
+6           es5:object:preventextensions
+6           es5:object:issealed
+6           es5:object:isfrozen
+6           es5:object:isextensible
+
+7           es5:function:bind

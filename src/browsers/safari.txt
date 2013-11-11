@@ -1,0 +1,14 @@
+# version   feature
+
+5             dom:window:hashchange
+
+5.1           es5:object:seal
+5.1           es5:object:freeze
+5.1           es5:object:preventextensions
+5.1           es5:object:issealed
+5.1           es5:object:isfrozen
+5.1           es5:object:isextensible
+
+# Actually supported in 5.1.4 but we don't detect down to that version level
+# http://kangax.github.io/es5-compat-table/#safari-bind-note
+6             es5:function:bind

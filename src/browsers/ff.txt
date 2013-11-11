@@ -1,0 +1,22 @@
+# version   feature
+
+3.5         es5:array:map
+
+3.6         dom:window:hashchange
+
+4           es5:object:create
+4           es5:object:defineproperty
+4           es5:object:defineproperties
+4           es5:object:keys
+4           es5:object:seal
+4           es5:object:freeze
+4           es5:object:preventextensions
+4           es5:object:issealed
+4           es5:object:isfrozen
+4           es5:object:isextensible
+#4           es5:object:getownpropertydescriptor
+4           es5:object:getownpropertynames
+4           es5:array:isarray
+4           es5:function:bind
+
+16          es6:number:isfinite
