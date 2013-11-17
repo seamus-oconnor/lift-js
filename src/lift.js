@@ -154,7 +154,7 @@
       major = +major[0]; minor = +major[1];
       // console.log(ver[0], ver[1], '---', browser.major, browser.minor, ver[0] > browser.major, (ver[0] == browser.major && ver[1] > browser.minor));
       if(major > browser.major || (major == browser.major && minor > browser.minor)) {
-        return ['bundle/' + browser.name + (still_unsupported ? last_ver + '+' : last_ver + '-' + ver)];
+        return ['./bundles/' + browser.name + (still_unsupported ? last_ver + '+' : last_ver + '-' + ver)];
       }
       last_ver = ver
     }
@@ -176,7 +176,7 @@
   // sniff the browser properly then we will load a bundle of all the required
   // modules. If not need to build a list of dependencies for the unsupported
   // features.
-  var deps = buildBundle() || walk(reqs || support, support, './');
+  var deps = buildBundle() || walk(reqs || support, support, './modules/');
 
   console.log('built with requirements?', !!reqs);
   console.log('AMD deps:', JSON.stringify(deps));

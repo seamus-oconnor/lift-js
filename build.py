@@ -115,7 +115,7 @@ def main():
 
           moduleid = "/".join(path)
           path[-1] += ".js"
-          sourcefp = open(os.path.join(srcdir, *path), "r")
+          sourcefp = open(os.path.join(srcdir, "modules", *path), "r")
           for line in sourcefp:
             matches = DEFINE_RE.match(line)
             if matches:
@@ -231,7 +231,7 @@ def copyAllAMDModules(srcdir, destdir):
   dirs = ["es5", "es6", "dom"]
 
   for name in dirs:
-    path = os.path.join(srcdir, name)
+    path = os.path.join(srcdir, "modules", name)
     for root, subdirs, files in os.walk(path):
       nest = os.path.relpath(root, path)
       logger.debug(nest)
@@ -244,7 +244,9 @@ def copyAllAMDModules(srcdir, destdir):
 
   files = ["console.js"]
   for name in files:
-    shutil.copyfile(os.path.join(srcdir, name), os.path.join(destdir, "modules", name))
+    outputpath = os.path.join(srcdir, "modules")
+    makedirs(outputpath)
+    shutil.copyfile(os.path.join(outputpath, name), os.path.join(destdir, "modules", name))
 
 
 def makedirs(path):
