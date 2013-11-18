@@ -156,20 +156,12 @@
       if(major > browser.major || (major == browser.major && minor > browser.minor)) {
         return ['./bundles/' + browser.name + (still_unsupported ? last_ver + '+' : last_ver + '-' + ver)];
       }
-      last_ver = ver
+      last_ver = ver;
     }
 
     return [];
   }
   // -- BUILD REQUIREMENTS --
-
-  // If no requirements are specified from a built version of lift.js then
-  // assume that ES5 shims are enough and let authors require their own liftjs
-  // dependencies in their own AMD modules.
-  var basicSupport = {
-    console: true,
-    es5: '*'
-  };
 
   // If there are built reqs (i.e. array.indexOf, string.trim, etc) then we know
   // that there are built bundles for known browsers too. If we were able to

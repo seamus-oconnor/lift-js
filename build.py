@@ -119,7 +119,7 @@ def main():
           for line in sourcefp:
             matches = DEFINE_RE.match(line)
             if matches:
-              line = "define('liftjs/%s', %s\n" % (moduleid, matches.group(1))
+              line = "define('liftjs/modules/%s', [], %s\n" % (moduleid, matches.group(1))
             bundlefp.write(line)
           bundlefp.write("\n")
       finally:
