@@ -122,6 +122,7 @@ def main():
               line = "define('liftjs/modules/%s', [], %s\n" % (moduleid, matches.group(1))
             bundlefp.write(line)
           bundlefp.write("\n")
+        bundlefp.write("define(function() {});\n")
       finally:
         if sourcefp:
           sourcefp.close()

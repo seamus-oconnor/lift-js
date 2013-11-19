@@ -1,29 +1,25 @@
 (function() {
   curl.config({
     apiName: 'require',
-    baseUrl: './',
+    // preloads: ['liftjs'],
+    baseUrl: '',
     paths: {
       local: './',
-      build: '../build',
-      bundle: '../build/bundles',
-      lib: '../src/'
+      bundle: 'js/lib/liftjs/bundles',
     },
-    preloads: ['build/lift'],
     packages: {
       liftjs: {
-        location: '../build/',
+        location: 'js/lib/liftjs',
         main: 'lift'
       }
     }
   });
 
-  require(['local/module'], function(mod) {
-    mod.hi('testing');
-  });
+  // require(['local/module'], function(mod) {
+  //   mod.hi('testing');
+  // });
 
-  require(['bundle/ie-9.0'], function() {
-    require(['liftjs/modules/es5/object/create'], function(result) {
-      console.log(result);
-    });
+  require(['liftjs'], function(liftjs) {
+    console.log(liftjs);
   });
 })();

@@ -1358,7 +1358,7 @@
  * TODO: only add logging to some of the useful core functions
  *
  */
-define(['require', 'curl/_privileged'], function (require, priv) {
+curl(['require', 'curl/_privileged'], function (require, priv) {
 "use strict";
 
 	var cache, totalWaiting, prevTotal, origDefine;
