@@ -1,19 +1,29 @@
 (function() {
-  var deps = [];
-
   curl.config({
+    apiName: 'require',
     baseUrl: './',
     paths: {
-      my: './',
+      local: './',
+      build: '../build',
       bundle: '../build/bundles',
       lib: '../src/'
     },
-    preloads: ['lib/lift']
+    preloads: ['build/lift'],
+    packages: {
+      liftjs: {
+        location: '../build/',
+        main: 'lift'
+      }
+    }
   });
 
-  curl(['my/module'], function(mod) {
-    // assert(true);
+  require(['local/module'], function(mod) {
+    mod.hi('testing');
+  });
 
-    // mod.hi('test');
+  require(['bundle/ie-9.0'], function() {
+    require(['liftjs/modules/es5/object/create'], function(result) {
+      console.log(result);
+    });
   });
 })();

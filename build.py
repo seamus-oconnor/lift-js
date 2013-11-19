@@ -189,7 +189,7 @@ def buildBundles(fp, reqs):
     version = Version(version)
 
     # logger.debug("version %s - %s", version, feature)
-    if version.all or isFeatureInReq(feature, reqs):
+    if isFeatureInReq(feature, reqs):
       # logger.debug(version)
       versions.append(version)
       features.append((version, feature))
@@ -234,7 +234,7 @@ def copyAllAMDModules(srcdir, destdir):
     path = os.path.join(srcdir, "modules", name)
     for root, subdirs, files in os.walk(path):
       nest = os.path.relpath(root, path)
-      logger.debug(nest)
+      # logger.debug(nest)
       outputpath = os.path.join(destdir, "modules", name, nest)
 
       for file in files:
@@ -262,7 +262,9 @@ def isFeatureInReq(feature, reqs):
     return True
   feature_parts = feature.strip().split(":")
   tree = reqs
+  # logger.debug(feature_parts)
   for part in feature_parts:
+    # logger.debug("part %s. part in tree? %s", part, part in tree)
     if part in tree:
       tree = tree[part]
       if tree in (True, "*"):
