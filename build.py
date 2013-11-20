@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 
 
 infinity = float('inf')
-DEFINE_RE = re.compile(r"\s*define\s*\((.+)")
+DEFINE_RE = re.compile(r"\s*define\s*\(([^,]+,\s*)?function(.+)")
 
 
 def main():
@@ -119,7 +119,7 @@ def main():
           for line in sourcefp:
             matches = DEFINE_RE.match(line)
             if matches:
-              line = "define('liftjs/modules/%s', [], %s\n" % (moduleid, matches.group(1))
+              line = "define('liftjs/modules/%s', %sfunction%s\n" % (moduleid, matches.group(1) if matches.group(1) else "[], ", matches.group(2))
             bundlefp.write(line)
           bundlefp.write("\n")
         bundlefp.write("define(function() {});\n")

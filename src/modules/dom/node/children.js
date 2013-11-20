@@ -21,7 +21,8 @@ define(function() {
       }
 
       return arr;
-    }
+    },
+    enumerable: true
   });
 
   return true;

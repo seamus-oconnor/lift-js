@@ -38,6 +38,14 @@
 #*           es6:string:contains
 #*           es6:string:toarray
 
+6           dom:node:children
+10          dom:node:classlist
+11          dom:node:dataset
+
+# Tested up to IE 11
+*           dom:svg:children
+*           dom:svg:classlist
+
 
 # The following is not supported in IE 8
 #           es5:array:indexof
