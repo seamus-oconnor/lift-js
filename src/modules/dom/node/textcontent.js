@@ -28,7 +28,7 @@ define(function() {
         return texts.join('');
       },
       'set': function setTextContent(val) {
-        this.innerHtml = ''; // cheap way to empty element
+        this.innerHTML = ''; // cheap way to empty element
         this.appendChild(document.createTextNode(val));
       }
     }

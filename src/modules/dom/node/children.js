@@ -7,7 +7,7 @@ define(function() {
 
   if(('children' in div) && svg && ('children' in svg)) return false;
 
-  Object.defineProperty(Element.prototype, 'children', {
+  var descriptor = {
     'get': function() {
       var arr = [];
       var child = this.firstChild;
@@ -23,7 +23,14 @@ define(function() {
       return arr;
     },
     enumerable: true
-  });
+  };
+
+  try {
+    Object.defineProperty(Element.prototype, 'children', descriptor);
+  } catch(e) {
+    delete descriptor.enumerable;
+    Object.defineProperty(Element.prototype, 'children', descriptor);
+  }
 
   return true;
 });

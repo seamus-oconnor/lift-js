@@ -42,6 +42,9 @@
 10          dom:node:classlist
 11          dom:node:dataset
 
+9           dom:ie:eventlistenersg
+9           dom:node:textcontent
+
 # Tested up to IE 11
 *           dom:svg:children
 *           dom:svg:classlist
