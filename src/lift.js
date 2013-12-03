@@ -51,7 +51,10 @@
       },
       string: {
         repeat: !!String.prototype.repeat,
-        startswith: !!String.prototype.startsWith
+        startswith: !!String.prototype.startsWith,
+        endswith: !!String.prototype.endsWith,
+        contains: !!String.prototype.contains,
+        toarray: !!String.prototype.toArray
       }
     },
     dom: {

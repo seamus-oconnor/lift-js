@@ -1,8 +1,16 @@
 # version   feature
 
-# Taken from http://kangax.github.io/es5-compat-table/
+##########  IE 6+  ##########
+
+6           dom:node:children
+
+##########  IE 8+  ##########
 
 8           dom:window:hashchange
+
+##########  IE 9+  ##########
+
+# From: http://kangax.github.io/es5-compat-table/
 
 9           es5:object:create
 9           es5:object:defineproperties
@@ -29,63 +37,44 @@
 
 9           es5:date:toisostring
 9           es5:date:now
+
 9           es5:function:bind
+
 9           es5:string:trim
 
-*           es6:string:repeat
-*           es6:string:startswith
-#*           es6:string:endswith
-#*           es6:string:contains
-#*           es6:string:toarray
+9           dom:window:innersize
+9           dom:window:hashchange
 
-6           dom:node:children
+9           dom:document:defaultview
+
+9           dom:node:textcontent
+9           dom:node:getelementbyclassname
+9           dom:node:comparedocumentposition
+
+9           dom:ie:getcomputedstyle
+9           dom:ie:eventlisteners
+9           dom:ie:createevent
+
+9           console
+
+##########  IE 10+  ##########
+v
 10          dom:node:classlist
+
+##########  IE 11+  ##########
+
 11          dom:node:dataset
 
-9           dom:ie:eventlistenersg
-9           dom:node:textcontent
+##########  Tested up to IE 11 ##########
 
-# Tested up to IE 11
+*           es6:array:from
+*           es6:string:repeat
+*           es6:string:startswith
+*           es6:string:endswith
+*           es6:string:contains
+*           es6:string:toarray
+*           dom:window:wheel
+*           dom:document:contentloaded
+*           dom:node:dataset
 *           dom:svg:children
 *           dom:svg:classlist
-
-
-# The following is not supported in IE 8
-#           es5:array:indexof
-#           es5:array:lastindexof
-#           es5:array:every
-#           es5:array:some
-#           es5:array:foreach
-#           es5:array:map
-#           es5:array:filter
-#           es5:array:reduce
-#           es5:array:reduceright
-#           es5:object:create
-#           es5:object:defineproperties
-#           es5:object:getprototypeof
-#           es5:object:keys
-#           es5:object:seal
-#           es5:object:freeze
-#           es5:object:preventextensions
-#           es5:object:issealed
-#           es5:object:isfrozen
-#           es5:object:isextensible
-#           es5:function:bind
-#           es5:date:toisostring
-#           es5:date:now
-#           es6:array:from
-#           es6:string:repeat
-#           es6:string:startswith
-#           dom:window:innersize
-#           dom:window:wheel
-#           dom:document:contentloaded
-#           dom:document:defaultview
-#           dom:node:classlist
-#           dom:node:dataset
-#           dom:node:getelementbyclassname
-#           dom:node:textcontent
-#           dom:node:comparedocumentposition
-#           dom:svg:children
-#           dom:svg:classlist
-#           dom:ie:getcomputedstyle
-#           console
