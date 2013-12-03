@@ -5,7 +5,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<script src="curl-debug.js"></script>
+<script src="curl.js"></script>
 
 </head>
 <body>
@@ -25,14 +25,14 @@ curl.config({
   },
   packages: {
     liftjs: {
-      location: 'js/lib/liftjs',
+      location: '../src/',
       main: 'lift'
     }
   }
 });
 
-require(['liftjs'], function() {
-  console.log('here');
+require(['liftjs'], function(liftjs) {
+  console.log(liftjs);
 });
 </script>
 

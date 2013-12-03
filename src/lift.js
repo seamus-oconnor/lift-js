@@ -64,7 +64,6 @@
         wheel: 'onwheel' in testel,
       },
       'document': {
-        contentloaded: false, // TODO try and detect 'DOMContentLoaded'
         defaultview: !!document.defaultView
       },
       node: {
