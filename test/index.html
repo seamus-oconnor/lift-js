@@ -5,15 +5,52 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<script data-curl-run="main" src="curl.js" async defer></script>
+<link rel="stylesheet" type="text/css" href="lib/mocha.css">
+
+<script src="lib/curl.js"></script>
+<script>
+var useBuilt = location.search.indexOf("built=true") > -1;
+curl.config({
+  apiName: 'require',
+  preloads: ['liftjs'],
+  baseUrl: '',
+  paths: {
+    local: './',
+    bundle: 'js/lib/liftjs/bundles'
+  },
+  packages: {
+    liftjs: {
+      location: useBuilt ? '../build/' : '../src/',
+      main: 'lift'
+    }
+  }
+});
+</script>
 
 </head>
 <body>
 
-<h1>Lift JS</h1>
+<div id="mocha"></div>
 
-<p>Shims missing JS features in old browsers. Lifts browser's JS, DOM, and API
-support up to modern levels.</p>
+<div id="note"></h1>
+<script>
+document.getElementById('note').innerHTML = useBuilt ? 'Using Built Bundles' : 'Using Dynamic Modules'
+</script>
+
+<script src="lib/mocha.js"></script>
+<script src="lib/expect.js"></script>
+<script>mocha.setup('bdd');</script>
+
+<script src="spec/lift.js"></script>
+<script src="spec/es5/array/every.js"></script>
+
+<script>
+require([], function() {
+  mocha.checkLeaks();
+  mocha.globals(['require']);
+  mocha.run();
+});
+</script>
 
 </body>
 </html>

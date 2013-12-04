@@ -184,16 +184,18 @@ def buildBundles(fp, reqs):
 
     try:
       (version, feature) = line.split()
-    except ValueError:
-      raise IOError("Syntax error: '%s' on line: %d" % (line, i))
-    feature = feature.strip()
-    version = Version(version)
 
-    # logger.debug("version %s - %s", version, feature)
-    if isFeatureInReq(feature, reqs):
-      # logger.debug(version)
-      versions.append(version)
-      features.append((version, feature))
+      feature = feature.strip()
+      version = Version(version)
+
+      # logger.debug("version %s - %s", version, feature)
+      if isFeatureInReq(feature, reqs):
+        # logger.debug(version)
+        versions.append(version)
+        features.append((version, feature))
+    except Exception, err:
+      logger.error(err)
+      raise IOError("Syntax error in %s:%d\n\"%s\"" % (fp.name, i, line))
 
   versions = list(set(versions))
   versions.sort()
@@ -253,7 +255,7 @@ def copyAllAMDModules(srcdir, destdir):
 def makedirs(path):
   try:
     os.makedirs(path)
-  except OSError as exc:
+  except OSError, exc:
     if exc.errno != 17 or not os.path.isdir(path):
       raise
 
