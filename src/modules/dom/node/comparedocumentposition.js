@@ -14,12 +14,21 @@ define(function() {
         if(ret) {
           return ret;
         }
+        console.log(node.childNodes.length);
         if(node.childNodes && node.childNodes.length) {
           ret = recursivelyWalk(node.childNodes, cb);
           if(ret) {
             return ret;
           }
         }
+      }
+    }
+
+    function identifyWhichIsFirst(node) {
+      if (node === other) {
+        return "other";
+      } else if (node === reference) {
+        return "reference";
       }
     }
 
@@ -34,6 +43,7 @@ define(function() {
     while(referenceTop.parentNode) {
       referenceTop = referenceTop.parentNode;
     }
+
     while(otherTop.parentNode) {
       otherTop = otherTop.parentNode;
     }
@@ -50,7 +60,7 @@ define(function() {
       return Node.DOCUMENT_POSITION_CONTAINS + Node.DOCUMENT_POSITION_PRECEDING;
     }
 
-    switch(recursivelyWalk([referenceTop], function(node) {return node === other ? 'other' : 'reference';})) {
+    switch(recursivelyWalk([referenceTop], identifyWhichIsFirst)) {
       case 'other':
         return Node.DOCUMENT_POSITION_PRECEDING;
       default:
