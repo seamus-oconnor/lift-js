@@ -14,7 +14,7 @@ define(function() {
         if(ret) {
           return ret;
         }
-        console.log(node.childNodes.length);
+
         if(node.childNodes && node.childNodes.length) {
           ret = recursivelyWalk(node.childNodes, cb);
           if(ret) {

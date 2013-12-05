@@ -173,7 +173,7 @@
   var deps = buildBundle() || walk(reqs || support, support, './modules/');
 
   console.log('LiftJS: built with requirements?', !!reqs);
-  console.log('LiftJS: AMD deps:', JSON.stringify(deps));
+  // console.log('LiftJS: AMD deps:', JSON.stringify(deps));
 
   var now = new Date().getTime();
   var head = document.head || document.getElementsByTagName('head')[0];

@@ -18,8 +18,10 @@ define(function() {
   ];
 
   Object.keys = function shimObjectKeys(obj) {
-    if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
-      throw new TypeError('Object.keys called on non-object');
+    // In IE 8 Object.keys(document.body.contains) will throw an error because
+    // .hasOwnProperty doesn't exist on this kind of native function/object.
+    if(typeof obj !== 'object' && (typeof obj !== 'function' || obj === null) || !obj.hasOwnProperty) {
+      throw new TypeError(obj + ' is not an object');
     }
 
     var result = [], prop;
