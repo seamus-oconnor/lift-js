@@ -52,7 +52,7 @@ define(function() {
 
     forEach(el.attributes, function(attr) {
       if(/^data-\w[\w-]*$/.test(attr.name)) {
-        var name = attr.name.substr(5).replace(/-./, replaceFn);
+        var name = attr.name.substr(5).replace(/-./g, replaceFn);
 
         var property = {
           enumerable: true,
