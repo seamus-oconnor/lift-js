@@ -61,7 +61,8 @@
       'window': {
         innersize: !!window.innerWidth,
         hashchange: 'onhashchange' in window,
-        wheel: 'onwheel' in testel
+        wheel: 'onwheel' in testel,
+        base64: !!(window.atob && window.btoa)
       },
       'document': {
         defaultview: !!document.defaultView

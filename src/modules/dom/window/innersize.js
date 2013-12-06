@@ -3,8 +3,9 @@ define(function() {
 
   if(window.innerWidth && window.innerHeight) return true;
 
+  var root = document.documentElement;
+
   function windowResize() {
-    var root = window.document.documentElement;
     window.innerHeight = root.offsetHeight;
     window.innerWidth = root.offsetWidth;
   }

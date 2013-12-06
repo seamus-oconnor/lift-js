@@ -60,6 +60,7 @@
 ##########  IE 10+  ##########
 
 10          dom:node:classlist
+10          dom:window:base64
 
 ##########  IE 11+  ##########
 
@@ -74,7 +75,6 @@
 *           es6:string:contains
 *           es6:string:toarray
 *           dom:window:wheel
-*           dom:document:contentloaded
 *           dom:node:dataset
 *           dom:svg:children
 *           dom:svg:classlist
