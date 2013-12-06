@@ -74,7 +74,7 @@
         contains: 'contains' in testel,
         dataset: 'dataset' in testel,
         textcontent: 'textContent' in testel,
-        getelementbyclassname: !!document.getElementsByClassName,
+        getelementsbyclassname: !!document.getElementsByClassName,
         comparedocumentposition: !!testel.compareDocumentPosition
       },
       svg: {

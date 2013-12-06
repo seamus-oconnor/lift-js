@@ -48,7 +48,7 @@
 9           dom:document:defaultview
 
 9           dom:node:textcontent
-9           dom:node:getelementbyclassname
+9           dom:node:getelementsbyclassname
 9           dom:node:comparedocumentposition
 
 9           dom:ie:getcomputedstyle
