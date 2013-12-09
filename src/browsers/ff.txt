@@ -20,3 +20,5 @@
 4           es5:function:bind
 
 16          es6:number:isfinite
+
+23          dom:window:raf

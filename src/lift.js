@@ -1,3 +1,48 @@
+  // TODO:
+  // - Check Jquery to see what other shims are required to match it's API.
+  // - matches():
+  //   http://caniuse.com/#feat=matchesselector
+  // - ChannelMessaging:
+  //   http://caniuse.com/#feat=channel-messaging
+  //   Pollyfill using postmessage + prefix?
+  // - DataChannel:
+  //   https://github.com/ShareIt-project/DataChannel-polyfill
+  // - Any need to normalize touch events?
+  //   http://caniuse.com/#feat=touch
+  // - JSON:
+  //   needed?
+  //   use JSON3 if required: http://bestiejs.github.io/json3/lib/json3.js
+  // - ClipBoard:
+  //   http://caniuse.com/#feat=clipboard
+  // - Pointer Events:
+  //   http://caniuse.com/#feat=pointer
+  // - Form validation:
+  //   http://caniuse.com/#feat=form-validation
+  // - File & Blob stuff:
+  //   Can they build off each other? (Say IE 8 supports new Blob but not FileReader...)
+  //   http://caniuse.com/#feat=filereader
+  //   http://caniuse.com/#feat=fileapi
+  //   http://caniuse.com/#feat=blobbuilder
+  //   http://caniuse.com/#feat=bloburls
+  // - Web Audio?
+  //   http://caniuse.com/#feat=audio-api
+  // - Event Source:
+  //   http://caniuse.com/#feat=eventsource
+  // - Drag & Drop:
+  //   Shim IE by using their version of D&D
+  //   http://caniuse.com/#feat=dragndrop
+  // - Download Attribute:
+  //   http://caniuse.com/#feat=download
+  // - IndexDB:
+  //   Shim using WebSQL?
+  //   https://hacks.mozilla.org/2012/07/using-indexeddb-api-today-the-indexeddb-polyfills/
+  //   http://html5doctor.com/introducing-web-sql-databases/
+  //   http://caniuse.com/#feat=indexeddb
+  // - History State Mangement:
+  //   http://caniuse.com/#feat=history
+  // - TransitionEnd
+  //
+
 (function() {
   "use strict";
 
@@ -62,7 +107,8 @@
         innersize: !!window.innerWidth,
         hashchange: 'onhashchange' in window,
         wheel: 'onwheel' in testel,
-        base64: !!(window.atob && window.btoa)
+        base64: !!(window.atob && window.btoa),
+        raf: !!(window.requestAnimationFrame && window.cancelAnimationFrame)
       },
       'document': {
         defaultview: !!document.defaultView
@@ -75,7 +121,8 @@
         dataset: 'dataset' in testel,
         textcontent: 'textContent' in testel,
         getelementsbyclassname: !!document.getElementsByClassName,
-        comparedocumentposition: !!testel.compareDocumentPosition
+        comparedocumentposition: !!testel.compareDocumentPosition,
+        transitionend: 'transition' in testel.style
       },
       svg: {
         children: 'children' in svgel,
@@ -89,11 +136,6 @@
     },
     console: window.console && console.log
   };
-
-  // TODO:
-  // -  JSON:
-  //    needed?
-  //    use JSON3 if required: http://bestiejs.github.io/json3/lib/json3.js
 
   function walk(obj1, obj2, prefix) {
     // console.log('walk', obj1, obj2, prefix);

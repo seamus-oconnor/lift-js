@@ -61,6 +61,7 @@
 
 10          dom:node:classlist
 10          dom:window:base64
+10          dom:window:raf
 
 ##########  IE 11+  ##########
 

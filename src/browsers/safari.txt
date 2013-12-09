@@ -12,3 +12,5 @@
 # Actually supported in 5.1.4 but we don't detect down to that version level
 # http://kangax.github.io/es5-compat-table/#safari-bind-note
 6             es5:function:bind
+
+6.1           dom:window:raf
