@@ -108,7 +108,17 @@
         hashchange: 'onhashchange' in window,
         wheel: 'onwheel' in testel,
         base64: !!(window.atob && window.btoa),
-        raf: !!(window.requestAnimationFrame && window.cancelAnimationFrame)
+        raf: !!(window.requestAnimationFrame && window.cancelAnimationFrame),
+        // IE 8 (not 7) says that window.Event exists IE 9 lies and says it has
+        // a CustomEvent object but you can't call it as a contructor (e.g. new
+        // CustomEvent();)
+        events: (function() {
+          try {
+            window.CustomEvent();
+            return true;
+          } catch(e) {
+            return false;
+          }})()
       },
       'document': {
         defaultview: !!document.defaultView
@@ -128,14 +138,25 @@
         children: 'children' in svgel,
         classlist: 'classlist' in svgel
       },
-      ie: {
-        getcomputedstyle: !!window.getComputedStyle,
-        eventlisteners: window.attachEvent && !!window.addEventListener,
-        createevent: document.createEventObject && !!document.createEvent
-      }
+      ie: {} // IE specific shims
     },
     console: window.console && console.log
   };
+
+  // Test for IE's non-standard APIs
+  if(!support.dom.window.events && !window.CustomEvent && document.createEventObject) {
+    delete support.dom.window.events;
+    support.dom.ie.events = false;
+  }
+  if(!window.dispatchEvent && document.fireEvent) {
+    support.dom.ie.dispatchevent = false;
+  }
+  if(!window.addEventListener && window.attachEvent) {
+    support.dom.ie.eventlisteners = false;
+  }
+  if(!window.getComputedStyle && testel.currentStyle) {
+    support.dom.ie.getcomputedstyle = false;
+  }
 
   function walk(obj1, obj2, prefix) {
     // console.log('walk', obj1, obj2, prefix);
@@ -216,7 +237,7 @@
   var deps = buildBundle() || walk(reqs || support, support, './modules/');
 
   console.log('LiftJS: built with requirements?', !!reqs);
-  // console.log('LiftJS: AMD deps:', JSON.stringify(deps));
+  console.log('LiftJS: AMD deps:', deps.join(' '));
 
   var now = new Date().getTime();
   var head = document.head || document.getElementsByTagName('head')[0];
