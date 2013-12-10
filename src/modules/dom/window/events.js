@@ -2,7 +2,7 @@ define(function(elmod) {
   "use strict";
 
   try {
-    window.CustomEvent();
+    new window.CustomEvent();
     return false;
   } catch(e) {}
 
@@ -12,7 +12,23 @@ define(function(elmod) {
 
     properties = properties || {};
 
-    var evt = document.createEvent(klass);
+    function getEvent() {
+      try {
+        return document.createEvent(klass);
+      } catch(e) {
+        // FF < 6 doesn't support CustomEvents so just use a regular event and
+        // cram on a .detail property.
+        var old_klass = klass;
+        klass = 'Event';
+        var evt = document.createEvent(klass);
+        if(old_klass == 'CustomEvent') {
+          evt.detail = properties.detail;
+        }
+        return evt;
+      }
+    }
+
+    var evt = getEvent();
     var initFn = evt['init' + klass];
     switch(klass) {
       case 'Event':
@@ -68,8 +84,10 @@ define(function(elmod) {
 
   for(var i = events.length - 1; i >= 0; i--) {
     var name = events[i];
+    var klass = buildEvent(name);
 
-    window[name] = buildEvent(name);
+    klass.prototype = (window[name] || window['Event']).prototype;
+    window[name] = klass;
   }
 
   return true;

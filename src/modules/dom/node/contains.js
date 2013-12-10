@@ -9,7 +9,7 @@ define(function() {
   // node.contains already so this is just for browsers that don't support this
   // now standardized IE extension.
   Node.prototype.contains = function shimNodeContains(arg) {
-    return !!this.compareDocumentPosition(arg) & 16;
+    return !!(this.compareDocumentPosition(arg) & 16);
   };
 
   return true;

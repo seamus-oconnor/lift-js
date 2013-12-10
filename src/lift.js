@@ -114,7 +114,7 @@
         // CustomEvent();)
         events: (function() {
           try {
-            window.CustomEvent();
+            new window.CustomEvent();
             return true;
           } catch(e) {
             return false;
