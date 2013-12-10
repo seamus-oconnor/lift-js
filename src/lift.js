@@ -40,8 +40,8 @@
   //   http://caniuse.com/#feat=indexeddb
   // - History State Mangement:
   //   http://caniuse.com/#feat=history
-  // - TransitionEnd
-  //
+  // - Text selection:
+  //   http://stackoverflow.com/questions/11128130/select-text-in-javascript
 
 (function() {
   "use strict";

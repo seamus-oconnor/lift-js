@@ -20,5 +20,6 @@
 4           es5:function:bind
 
 16          es6:number:isfinite
+16          dom:node:transitionend
 
 23          dom:window:raf

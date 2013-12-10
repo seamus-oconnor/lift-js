@@ -60,6 +60,7 @@
 ##########  IE 10+  ##########
 
 10          dom:node:classlist
+10          dom:node:transitionend
 10          dom:window:base64
 10          dom:window:raf
 

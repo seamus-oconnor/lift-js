@@ -12,3 +12,5 @@
 7           es5:function:bind
 
 24          dom:window:raf
+
+26          dom:node:transitionend
