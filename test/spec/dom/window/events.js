@@ -1,9 +1,11 @@
 describe("DOM Element #addEventListeners", function() {
   it("should catch click event", function(done) {
-    var a = document.createElement('a');
-    a.addEventListener('click', function() { done(); }, false);
+    var input = document.createElement('a');
+    input.type = 'checkbox';
+    input.addEventListener('click', function() { done(); }, false);
+    wasteland.appendChild(input);
     var evt = new MouseEvent('click');
-    a.dispatchEvent(evt);
+    input.dispatchEvent(evt);
   });
 
   it("should catch a custom event", function(done) {

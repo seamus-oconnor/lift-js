@@ -42,7 +42,7 @@ define(function(elmod) {
           !!properties.bubbles,
           !!properties.cancelable,
           properties.view || window,
-          properties.detail || 1
+          properties.detail || 0
         );
         break;
       case 'MouseEvent':
@@ -50,16 +50,16 @@ define(function(elmod) {
           !!properties.bubbles,
           !!properties.cancelable,
           properties.view || window,
-          properties.detail,
-          properties.screenX,
-          properties.screenY,
-          properties.clientX,
-          properties.clientY,
-          properties.ctrlKey,
-          properties.altKey,
-          properties.shiftKey,
-          properties.metaKey,
-          properties.button,
+          properties.detail || 0,
+          properties.screenX || 0,
+          properties.screenY || 0,
+          properties.clientX || 0,
+          properties.clientY || 0,
+          properties.ctrlKey || 0,
+          properties.altKey || false,
+          properties.shiftKey || false,
+          properties.metaKey || false,
+          properties.button || 0,
           properties.relatedTarget || null
         );
 

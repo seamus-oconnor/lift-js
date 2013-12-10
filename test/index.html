@@ -27,14 +27,30 @@ curl.config({
 });
 </script>
 
+<style type="text/css">
+#wasteland {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+
 </head>
 <body>
 
+<h1>Lift JS</h1>
+
 <div id="mocha"></div>
 
-<div id="note"></h1>
+<div id="note"></div>
 <script>
 document.getElementById('note').innerHTML = useBuilt ? 'Using Built Bundles' : 'Using Dynamic Modules'
+</script>
+
+<div id="wasteland"></div>
+<script>
+var wasteland = document.getElementById('wasteland');
 </script>
 
 <script src="lib/mocha.js"></script>
@@ -57,6 +73,7 @@ document.getElementById('note').innerHTML = useBuilt ? 'Using Built Bundles' : '
 <script src="spec/dom/window/events.js"></script>
 <script src="spec/dom/window/base64.js"></script>
 <script src="spec/dom/window/hashchange.js"></script>
+<script src="spec/dom/window/raf.js"></script>
 
 <script>
 require([], function() {
