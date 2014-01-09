@@ -9,7 +9,7 @@ define(function() {
   function shimStartsWith(search, pos) {
     /*jshint validthis:true */
     pos = pos || 0;
-    return this.indexOf(search, position) === pos;
+    return this.indexOf(search, pos) === pos;
   }
 
   if(Object.defineProperty) {

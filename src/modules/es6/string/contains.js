@@ -7,7 +7,7 @@ define(function() {
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/contains
 
 
-  function shimContains(start) {
+  function shimContains(str, start) {
     /*jshint validthis:true */
     return this.indexOf(str, start) !== -1;
   }

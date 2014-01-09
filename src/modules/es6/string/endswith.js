@@ -9,8 +9,8 @@ define(function() {
   function shimEndsWith(search, pos) {
     /*jshint validthis:true */
     pos = pos || this.length;
-    pos = pos - searchString.length;
-    var last_index = this.lastIndexOf(searchString);
+    pos = pos - search.length;
+    var last_index = this.lastIndexOf(search);
     return last_index !== -1 && last_index === pos;
   }
 

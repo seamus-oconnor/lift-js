@@ -12,7 +12,10 @@ define(function() {
 
   for(var i = console_methods.length; i--;) {
     var name = console_methods[i];
-    if(!window.console[name]) window.console[name] = noop;
+    if(!window.console[name]) {
+      window.console[name] = noop;
+      is_shimmed = true;
+    }
   }
 
   return is_shimmed;
