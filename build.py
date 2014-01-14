@@ -64,7 +64,10 @@ def main():
   if builddir is None:
     builddir = os.path.abspath("build")
 
-  shutil.rmtree(builddir)
+  logger.debug("Building into: %s", builddir)
+
+  if os.path.exists(builddir):
+    shutil.rmtree(builddir)
   os.mkdir(builddir)
 
   bundles = {}
