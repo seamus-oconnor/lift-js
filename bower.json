@@ -1,0 +1,22 @@
+{
+  "name": "lift.js",
+  "description": "Lift old browsers up to a modern level",
+  "version": "0.1.0",
+  "authors": [
+    "Séamus O'Connor <seamus.oconnor@pneumaticweb.com>"
+  ],
+  "main": "dist/lift.js",
+  "keywords": [
+    "shim"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {}
+}

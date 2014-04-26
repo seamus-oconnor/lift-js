@@ -45,7 +45,7 @@ def main():
     usage()
     return 2
 
-  builddir = None
+  builddir = os.path.abspath("dist")
 
   for o, a in opts:
     if o in ("-v", "--verbose"):
@@ -61,10 +61,8 @@ def main():
 
   os.chdir(os.path.dirname(__file__))
 
-  if builddir is None:
-    builddir = os.path.abspath("build")
-
-  shutil.rmtree(builddir)
+  if os.path.exists(builddir):
+    shutil.rmtree(builddir)
   os.mkdir(builddir)
 
   bundles = {}
