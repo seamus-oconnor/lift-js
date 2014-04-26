@@ -61,6 +61,8 @@ def main():
 
   os.chdir(os.path.dirname(__file__))
 
+  logger.debug("Building into: %s", builddir)
+
   if os.path.exists(builddir):
     shutil.rmtree(builddir)
   os.mkdir(builddir)
