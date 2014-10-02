@@ -5,9 +5,9 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<link rel="stylesheet" type="text/css" href="lib/mocha.css">
+<link rel="stylesheet" type="text/css" href="lib/mocha/mocha.css">
 
-<script src="lib/curl.js"></script>
+<script src="lib/curl/dist/curl/curl.js"></script>
 <script>
 var useBuilt = location.search.indexOf("built=true") > -1;
 curl.config({
@@ -53,8 +53,8 @@ document.getElementById('note').innerHTML = useBuilt ? 'Using Built Bundles' : '
 var wasteland = document.getElementById('wasteland');
 </script>
 
-<script src="lib/mocha.js"></script>
-<script src="lib/expect.js"></script>
+<script src="lib/mocha/mocha.js"></script>
+<script src="lib/expect/index.js"></script>
 <script>mocha.setup('bdd');</script>
 
 <script src="spec/lift.js"></script>

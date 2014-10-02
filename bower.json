@@ -18,5 +18,10 @@
     "test",
     "tests"
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "curl": "~0.8.10",
+    "expect": "~0.3.1",
+    "mocha": "~1.21.4"
+  }
 }

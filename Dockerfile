@@ -11,7 +11,7 @@ MAINTAINER "Séamus O'Connor"
 # Update the repository
 RUN apt-get update --fix-missing
 
-RUN apt-get upgrade
+RUN apt-get upgrade -y
 
 # Get Debian packages
 RUN apt-get install -y python g++ make checkinstall fakeroot wget git nginx
@@ -31,21 +31,9 @@ RUN mkdir tmp/node && \
 RUN npm -g update npm
 
 # Install global utilities via NPM
-RUN npm -g install grunt-cli@0.1.13 \
-    phantomjs@1.9.7-3 \
-    bower@1.3.2
-
-# Copy a configuration file from the current directory
-ADD package.json /
-
-# Install grunt modules
-RUN npm install
-
-ADD bower.json /
-
-RUN bower --allow-root install
-
-### Setup Nginx ###
+RUN npm -g install grunt-cli \
+    phantomjs \
+    bower
 
 # Remove the default Nginx configuration file
 RUN rm -v /etc/nginx/nginx.conf

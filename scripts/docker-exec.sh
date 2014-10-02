@@ -8,4 +8,8 @@ vmdir=/var/liftjs
 
 command='bash'
 
-docker run -w $vmdir -v $projectdir:$vmdir:rw soconnor/liftjs bash -c "$command"
+if [[ "$@"  != '' ]]; then
+  command="$@"
+fi
+
+docker run --rm -w $vmdir -v $projectdir:$vmdir:rw -i -t soconnor/liftjs bash -c "$command"
