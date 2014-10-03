@@ -22,6 +22,10 @@ module.exports = function(grunt) {
       }
     },
     mocha: {
+      options: {
+        logErrors: true,
+        run: false,
+      },
       test: {
         src: ['tests/*.html']
       }
@@ -36,7 +40,7 @@ module.exports = function(grunt) {
     },
     watch: {
       scripts: {
-        files: ['src/builder.js', 'tests/spec/build_spec.js', 'tests/*.html'],
+        files: ['src/builder.js', 'tests/spec/**/*.js', 'tests/*.html'],
         tasks: ['test'],
       },
     },

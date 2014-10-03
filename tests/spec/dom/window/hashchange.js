@@ -5,6 +5,7 @@ describe("window #onhashchange", function() {
     window.onhashchange = function() {
       window.location.hash = '';
       window.scrollTo(0, top);
+      window.onhashchange = null;
       done();
     };
     window.location.hash = '#testing';

@@ -1,3 +1,5 @@
+/* global define */
+
   // TODO:
   // - Check Jquery to see what other shims are required to match it's API.
   // - matches():
@@ -163,17 +165,19 @@
     var list = [];
     prefix = prefix || '';
     for(var name in obj1) {
-      var val1 = obj1[name];
-      var val2 = obj2[name];
+      if(obj1.hasOwnProperty(name)) {
+        var val1 = obj1[name];
+        var val2 = obj2[name];
 
-      if(val1 === '*') {
-        val1 = val2;
-      }
+        if(val1 === '*') {
+          val1 = val2;
+        }
 
-      if(typeof val1 === 'object') {
-        list = list.concat(walk(val1, val2, prefix + name + '/'));
-      } else if(!obj2[name]) {
-        list.push(prefix + name);
+        if(typeof val1 === 'object') {
+          list = list.concat(walk(val1, val2, prefix + name + '/'));
+        } else if(!obj2[name]) {
+          list.push(prefix + name);
+        }
       }
     }
 
@@ -298,13 +302,13 @@
   }
 
   define(deps, function() {
-    console.log("LiftJS: Time to load deps: " + (new Date().getTime() - now) + "ms");
+    console.log('LiftJS: Time to load deps: ' + (new Date().getTime() - now) + "ms");
 
     // Remove shimmed non-AMD complient define() function;
     if(define === _define) {
       delete window.define;
       liftJS.ready = true;
-      if(typeof liftJS.onload == "function") {
+      if(typeof liftJS.onload === 'function') {
         liftJS.onload();
       }
     }

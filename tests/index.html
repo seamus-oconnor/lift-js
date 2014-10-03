@@ -5,9 +5,9 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<link rel="stylesheet" type="text/css" href="lib/mocha/mocha.css">
+<link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
 
-<script src="lib/curl/dist/curl/curl.js"></script>
+<script src="../bower_components/curl/dist/curl/curl.js"></script>
 <script>
 var useBuilt = location.search.indexOf("built=true") > -1;
 curl.config({
@@ -20,7 +20,7 @@ curl.config({
   },
   packages: {
     liftjs: {
-      location: useBuilt ? '/dist/js/' : '/src/js/',
+      location: useBuilt ? '../dist/' : '../src/',
       main: 'lift'
     }
   }
@@ -53,8 +53,8 @@ document.getElementById('note').innerHTML = useBuilt ? 'Using Built Bundles' : '
 var wasteland = document.getElementById('wasteland');
 </script>
 
-<script src="lib/mocha/mocha.js"></script>
-<script src="lib/expect/index.js"></script>
+<script src="../bower_components/mocha/mocha.js"></script>
+<script src="../bower_components/expect/index.js"></script>
 <script>mocha.setup('bdd');</script>
 
 <script src="spec/lift.js"></script>
@@ -80,7 +80,6 @@ var wasteland = document.getElementById('wasteland');
 <script src="spec/es6/string/endswith.js"></script>
 <script src="spec/es6/string/repeat.js"></script>
 <script src="spec/es6/string/startswith.js"></script>
-<script src="spec/es6/string/toarray.js"></script>
 
 <script src="spec/dom/node/children.js"></script>
 <script src="spec/dom/node/classlist.js"></script>
@@ -97,9 +96,10 @@ var wasteland = document.getElementById('wasteland');
 <script src="spec/dom/window/raf.js"></script>
 
 <script>
+mocha.checkLeaks();
+mocha.globals(['require']);
 require([], function() {
-  mocha.checkLeaks();
-  mocha.globals(['require']);
+  console.log('here')
   mocha.run();
 });
 </script>

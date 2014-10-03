@@ -5,16 +5,16 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<link rel="stylesheet" type="text/css" href="lib/mocha/mocha.css">
+<link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
 
-<script src="/src/js/lift.js"></script>
+<script src="../src/lift.js"></script>
 
 </head>
 <body>
 
 <div id="mocha"></div>
-<script src="lib/mocha/mocha.js"></script>
-<script src="lib/expect/index.js"></script>
+<script src="../bower_components/mocha/mocha.js"></script>
+<script src="../bower_components/expect/index.js"></script>
 <script>mocha.setup('bdd');</script>
 
 <script src="spec/no-amd.js"></script>
@@ -22,7 +22,9 @@
 <script>
 mocha.checkLeaks();
 mocha.globals(['require']);
-mocha.run();
+window.onload = function() {
+  mocha.run();
+}
 </script>
 
 </body>
