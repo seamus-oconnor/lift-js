@@ -98,8 +98,7 @@
         repeat: !!String.prototype.repeat,
         startswith: !!String.prototype.startsWith,
         endswith: !!String.prototype.endsWith,
-        contains: !!String.prototype.contains,
-        toarray: !!String.prototype.toArray
+        contains: !!String.prototype.contains
       }
     },
     dom: {
@@ -114,11 +113,12 @@
         // CustomEvent();)
         events: (function() {
           try {
-            new window.CustomEvent();
+            new window.CustomEvent('foo');
             return true;
           } catch(e) {
             return false;
-          }})()
+          }
+        })()
       },
       'document': {
         defaultview: !!document.defaultView
@@ -136,7 +136,7 @@
       },
       svg: {
         children: 'children' in svgel,
-        classlist: 'classlist' in svgel
+        classlist: 'classList' in svgel
       },
       ie: {} // IE specific shims
     },
@@ -193,22 +193,24 @@
 
   var browser;
   for(var name in browsers) {
-    var match = ua.match(browsers[name]);
-    if(match) {
-      browser = {
-        match: match[0],
-        name: name,
-        major: +match[2],
-        minor: +match[3]
-      };
-      break;
+    if(browsers.hasOwnProperty(name)) {
+      var match = ua.match(browsers[name]);
+      if(match) {
+        browser = {
+          match: match[0],
+          name: name,
+          major: +match[2],
+          minor: +match[3]
+        };
+        break;
+      }
     }
   }
 
   var reqs = null, bundle_versions = {};
 
   function buildBundle() {
-    if(!reqs || !browser) return;
+    if(!reqs || !browser) { return; }
 
     var versions = bundle_versions[browser.name] || [];
     var last_ver = '';
@@ -216,11 +218,17 @@
     for(var i = 0; i < versions.length; i++) {
       var ver = versions[i];
       var still_unsupported = ver === '*';
-      var major = ver.split('.'), minor = null;
-      major = +major[0]; minor = +major[1];
-      // console.log(ver[0], ver[1], '---', browser.major, browser.minor, ver[0] > browser.major, (ver[0] == browser.major && ver[1] > browser.minor));
-      if(major > browser.major || (major == browser.major && minor > browser.minor)) {
-        return ['./bundles/' + browser.name + (still_unsupported ? last_ver + '+' : last_ver + '-' + ver)];
+
+      if(still_unsupported) {
+        return ['./bundles/' + browser.name + last_ver + '+'];
+      } else {
+        var verParts = ver.split('.'), minor = null;
+        var major = +verParts[0];
+        minor = +verParts[1];
+        // console.log(ver[0], ver[1], '---', browser.major, browser.minor, ver[0] > browser.major, (ver[0] == browser.major && ver[1] > browser.minor));
+        if(major > browser.major || (major === browser.major && minor > browser.minor)) {
+          return ['./bundles/' + browser.name + last_ver + '-' + ver];
+        }
       }
       last_ver = ver;
     }
@@ -235,6 +243,8 @@
   // modules. If the right bundle can't be loaded we need to build a list of
   // dependencies for the unsupported features.
   var deps = buildBundle() || walk(reqs || support, support, './modules/');
+
+  console.log(reqs);
 
   console.log('LiftJS: built with requirements?', !!reqs);
   console.log('LiftJS: AMD deps:', deps.join(' '));

@@ -14,3 +14,8 @@
 24          dom:window:raf
 
 26          dom:node:transitionend
+
+*           es6:string:contains
+*           es6:string:endswith
+*           es6:string:repeat
+*           es6:string:startswith

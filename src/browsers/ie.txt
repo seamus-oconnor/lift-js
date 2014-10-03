@@ -53,7 +53,7 @@
 
 9           dom:ie:getcomputedstyle
 9           dom:ie:eventlisteners
-9           dom:ie:createevent
+9           dom:ie:events
 
 9           console
 
@@ -75,7 +75,6 @@
 *           es6:string:startswith
 *           es6:string:endswith
 *           es6:string:contains
-*           es6:string:toarray
 *           dom:window:wheel
 *           dom:node:dataset
 *           dom:svg:children
