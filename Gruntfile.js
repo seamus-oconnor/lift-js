@@ -1,6 +1,7 @@
 /* jshint node:true */
 
 module.exports = function(grunt) {
+  grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -20,6 +21,11 @@ module.exports = function(grunt) {
         gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d'
       }
     },
+    mocha: {
+      test: {
+        src: ['tests/*.html']
+      }
+    },
     mochaTest: {
       test: {
         options: {
@@ -30,7 +36,7 @@ module.exports = function(grunt) {
     },
     watch: {
       scripts: {
-        files: ['src/builder.js', 'tests/spec/build_spec.js'],
+        files: ['src/builder.js', 'tests/spec/build_spec.js', 'tests/*.html'],
         tasks: ['test'],
       },
     },
@@ -39,6 +45,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test', [
     // 'build',
     'mochaTest',
+    'mocha',
   ]);
 };
 

@@ -14,7 +14,7 @@ RUN apt-get update --fix-missing
 RUN apt-get upgrade -y
 
 # Get Debian packages
-RUN apt-get install -y python g++ make checkinstall fakeroot wget git nginx
+RUN apt-get install -y python g++ make checkinstall fakeroot wget git nginx fontconfig
 
 # Download and Install Node JS
 RUN mkdir tmp/node && \
@@ -32,7 +32,6 @@ RUN npm -g update npm
 
 # Install global utilities via NPM
 RUN npm -g install grunt-cli \
-    phantomjs \
     bower
 
 # Remove the default Nginx configuration file
