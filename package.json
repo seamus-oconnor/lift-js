@@ -1,8 +1,11 @@
 {
   "name": "lift.js",
+  "author": "Séamus O'Connor",
+  "license": "MIT",
+  "homepage": "https://github.com/seamus-oconnor/lift-js",
   "version": "0.0.1",
   "description": "JS Shims",
-  "main": "dist/lift.js",
+  "main": "src/lift.js",
   "dependencies": {},
   "devDependencies": {
     "bluebird": "^0.11.6",
@@ -23,8 +26,18 @@
     "rimraf": "^2.2.8",
     "winston": "^0.8.0"
   },
+  "private": true,
+  "testling": {
+    "harness": "mocha-bdd",
+    "scripts": "tests/spec/*.js",
+    "browsers": [
+      "ie/8..latest",
+      "chrome/latest",
+      "firefox/latest"
+    ]
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --ui bdd"
   },
   "repository": {
     "type": "git",
@@ -33,10 +46,7 @@
   "keywords": [
     "shims"
   ],
-  "author": "Séamus O'Connor",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/seamus-oconnor/lift-js/issues"
-  },
-  "homepage": "https://github.com/seamus-oconnor/lift-js"
+  }
 }

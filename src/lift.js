@@ -308,7 +308,7 @@
   // discovered dependencies.
   define(deps, function() {
     var howLong = (new Date().getTime() - now);
-    console.log('LiftJS: Time to load deps: ' + howLong + 'ms');
+    console.log('LiftJS: loaded deps in ' + howLong + 'ms');
 
     // Remove shimmed non-AMD complient define() function;
     if(define === liftJSDefine) {
