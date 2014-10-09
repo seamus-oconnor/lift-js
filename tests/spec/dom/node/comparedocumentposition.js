@@ -7,6 +7,8 @@ describe("DOM Element #dataset", function() {
   div.innerHTML = '<div><p></p><span><b><i></i></b></span></div>';
   var p = get("p"), span = get("span"), b = get("b"), i = get("i");
   var other = document.createElement('div');
+  // PhantomJS needs at least one element to be in the DOM.
+  document.body.appendChild(div);
 
   var DOCUMENT_POSITION_DISCONNECTED = 1;
   var DOCUMENT_POSITION_PRECEDING = 2;

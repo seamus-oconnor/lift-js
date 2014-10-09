@@ -1,11 +1,10 @@
 define(function() {
   "use strict";
 
-  if(Object.keys) return false;
+  if(Object.keys) { return false; }
 
   // Originally from:
   // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
   var hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString');
   var dontEnums = [
     'toString',

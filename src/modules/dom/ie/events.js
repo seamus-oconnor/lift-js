@@ -1,8 +1,6 @@
 define(function(elmod) {
   "use strict";
 
-  if(window.CustomEvent || document.createEvent) return false;
-
   function shimCreateEvent(klass, type, properties) {
     if(!type) { throw new TypeError("Not enough arguments to Event.constructor."); }
     if(properties !== undefined && typeof properties !== 'object') { throw new TypeError("Value can't be converted to a dictionary."); }
@@ -50,17 +48,10 @@ define(function(elmod) {
         evt.view = properties.view || window;
         evt.detail = properties.detail;
         break;
-    }
+      }
 
     return evt;
   }
-
-  var events = [
-    'Event',
-    'CustomEvent',
-    'UIEvent',
-    'MouseEvent'
-  ];
 
   function buildEvent(name) {
     return function(type, properties) {
@@ -68,11 +59,58 @@ define(function(elmod) {
     };
   }
 
-  for(var i = events.length - 1; i >= 0; i--) {
-    var name = events[i];
+  function dispatchEvent(evt) {
+    /*jshint validthis:true */
 
-    window[name] = buildEvent(name);
+    this.fireEvent('on' + evt.type, evt);
+
+    return evt.returnValue === false;
   }
 
-  return true;
+  if(!window.CustomEvent && !document.createEvent) {
+
+    var events = [
+      'Event',
+      'CustomEvent',
+      'UIEvent',
+      'MouseEvent'
+    ];
+
+    for(var i = events.length - 1; i >= 0; i--) {
+      var name = events[i];
+
+      window[name] = buildEvent(name);
+    }
+
+    return true;
+  }
+
+  if(!window.dispatchEvent) {
+    // TODO: Sanity (insanity?) check like this needed?
+    if(!document.fireEvent) {
+      console.warn("Browser has support for neither document.dispatchEvent or document.fireEvent.");
+      return null;
+    }
+
+    if(!Element.prototype.dispatchEvent) {
+      Element.prototype.dispatchEvent = dispatchEvent;
+    }
+
+    if(!document.dispatchEvent) {
+      document.dispatchEvent = dispatchEvent;
+    }
+
+    if(!window.dispatchEvent) {
+      window.dispatchEvent = function(evt) {
+        var events = elmod.window_events[evt.type];
+        for(var i = 0, _len = events.length; i < _len; i++) {
+          events[i](evt);
+        }
+      };
+    }
+
+    return true;
+  }
+
+  return false;
 });

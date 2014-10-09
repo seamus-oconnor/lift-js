@@ -42,38 +42,38 @@ describe('Feature parser', function() {
 describe('Browser File', function() {
   it('should be parse ok', function() {
     var data = '*  es5:date:now';
-    var bundle = liftBuilder.parseBrowserBundles(data, { 'es5': '*' });
+    var bundle = liftBuilder.parseFeatureFile(data, { 'es5': '*' });
     expect(bundle).toEqual({'*': ['es5:date:now']});
   });
 
   it('should be ignore comments', function() {
     var data = '# IGNORE ME\n*  es5:date:now';
-    var bundle = liftBuilder.parseBrowserBundles(data, { 'es5': '*' });
+    var bundle = liftBuilder.parseFeatureFile(data, { 'es5': '*' });
     expect(bundle).toEqual({'*': ['es5:date:now']});
   });
 
   it('should be handle spaces', function() {
     var data = '       # IGNORE ME\n\n    \n\n   *    \t\t  es5:date:now\n\n\n';
-    var bundle = liftBuilder.parseBrowserBundles(data, { 'es5': '*' });
+    var bundle = liftBuilder.parseFeatureFile(data, { 'es5': '*' });
     expect(bundle).toEqual({'*': ['es5:date:now']});
   });
 
   it('should be error on invalid syntax', function() {
     var data = 'Testing';
     expect(function() {
-      liftBuilder.parseBrowserBundles(data, { 'es5': '*' });
+      liftBuilder.parseFeatureFile(data, { 'es5': '*' });
     }).toThrow();
   });
 
   it('should be parse wildcard versions', function() {
     var data = '* foo\n9 bar\n8 baz\n* foo:blork';
-    var bundle = liftBuilder.parseBrowserBundles(data, { 'foo': '*', 'bar': true });
+    var bundle = liftBuilder.parseFeatureFile(data, { 'foo': '*', 'bar': true });
     expect(bundle).toEqual({"9.0":["foo","bar","foo:blork"],"*":["foo","foo:blork"]});
   });
 
   it('should be match two requirements', function() {
     var data = '* foo\n9 bar\n8 baz\n* foo:blork';
-    var bundle = liftBuilder.parseBrowserBundles(data, { 'foo': '*' });
+    var bundle = liftBuilder.parseFeatureFile(data, { 'foo': '*' });
     expect(bundle).toEqual({'*': ['foo', 'foo:blork']});
   });
 });

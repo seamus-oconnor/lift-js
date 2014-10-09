@@ -4,25 +4,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-exec');
 
   grunt.initConfig({
-    bump: {
-      options: {
-        files: ['package.json', 'bower.json'],
-        updateConfigs: [],
-        commit: true,
-        commitMessage: 'Release v%VERSION%',
-        commitFiles: ['package.json', 'bower.json'],
-        createTag: true,
-        tagName: 'v%VERSION%',
-        tagMessage: 'Version %VERSION%',
-        push: true,
-        pushTo: 'origin',
-        gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d'
-      }
+    exec: {
+      // build: 'node ./build.js "es5/object/getownpropertynames"'
+      build: 'node ./build.js "*"'
     },
     mocha: {
       options: {
+        log: true,
         logErrors: true,
         run: false,
       },
@@ -40,16 +31,20 @@ module.exports = function(grunt) {
     },
     watch: {
       scripts: {
-        files: ['src/builder.js', 'tests/spec/**/*.js', 'tests/*.html'],
+        files: ['src/**/*.js', 'tests/spec/**/*.js', 'tests/*.html'],
         tasks: ['test'],
       },
     },
   });
 
   grunt.registerTask('test', [
-    // 'build',
+    'build',
     'mochaTest',
     'mocha',
+  ]);
+
+  grunt.registerTask('build', [
+    'exec'
   ]);
 };
 

@@ -7,9 +7,8 @@
 
 <link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
 
-<script src="../bower_components/curl/dist/curl/curl.js"></script>
+<script src="../bower_components/curl/src/curl.js"></script>
 <script>
-var useBuilt = location.search.indexOf("built=true") > -1;
 curl.config({
   apiName: 'require',
   preloads: ['liftjs'],
@@ -20,7 +19,7 @@ curl.config({
   },
   packages: {
     liftjs: {
-      location: useBuilt ? '../dist/' : '../src/',
+      location: '../dist/',
       main: 'lift'
     }
   }
@@ -42,11 +41,6 @@ curl.config({
 <h1>Lift JS</h1>
 
 <div id="mocha"></div>
-
-<div id="note"></div>
-<script>
-document.getElementById('note').innerHTML = useBuilt ? 'Using Built Bundles' : 'Using Dynamic Modules'
-</script>
 
 <div id="wasteland"></div>
 <script>
@@ -99,7 +93,6 @@ var wasteland = document.getElementById('wasteland');
 mocha.checkLeaks();
 mocha.globals(['require']);
 require([], function() {
-  console.log('here')
   mocha.run();
 });
 </script>

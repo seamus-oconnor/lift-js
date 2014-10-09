@@ -115,8 +115,7 @@
         // CustomEvent();)
         events: (function() {
           try {
-            new window.CustomEvent('foo');
-            return true;
+            return !!new window.CustomEvent('foo');
           } catch(e) {
             return false;
           }
@@ -127,8 +126,8 @@
       },
       node: {
         // IE 9 supports .children on <div>s but not SVG elements inline in an HTML5
-        children: 'children' in testel,
-        classlist: 'classList' in testel,
+        children: 'children' in testel && 'children' in svgel,
+        classlist: 'classList' in testel && 'classList' in svgel,
         contains: 'contains' in testel,
         dataset: 'dataset' in testel,
         textcontent: 'textContent' in testel,
@@ -136,22 +135,15 @@
         comparedocumentposition: !!testel.compareDocumentPosition,
         transitionend: 'transition' in testel.style
       },
-      svg: {
-        children: 'children' in svgel,
-        classlist: 'classList' in svgel
-      },
       ie: {} // IE specific shims
     },
     console: window.console && console.log
   };
 
   // Test for IE's non-standard APIs
-  if(!support.dom.window.events && !window.CustomEvent && document.createEventObject) {
+  if(!support.dom.window.events && (document.createEventObject || document.fireEvent)) {
     delete support.dom.window.events;
     support.dom.ie.events = false;
-  }
-  if(!window.dispatchEvent && document.fireEvent) {
-    support.dom.ie.dispatchevent = false;
   }
   if(!window.addEventListener && window.attachEvent) {
     support.dom.ie.eventlisteners = false;
@@ -211,10 +203,10 @@
     }
   }
 
-  var reqs = null, bundle_versions = {};
+  var reqs, bundle_versions = {};
 
   function buildBundle() {
-    if(!reqs || !browser) { return; }
+    if(reqs === undefined || !browser) { return; }
 
     var versions = bundle_versions[browser.name] || [];
     var last_ver = '';
@@ -234,11 +226,13 @@
           return ['./bundles/' + browser.name + last_ver + '-' + ver];
         }
       }
+
       last_ver = ver;
     }
 
     return [];
   }
+
   // -- BUILD REQUIREMENTS --
 
   // If there are built reqs (i.e. array.indexOf, string.trim, etc) then we know
@@ -248,10 +242,8 @@
   // dependencies for the unsupported features.
   var deps = buildBundle() || walk(reqs || support, support, './modules/');
 
-  console.log(reqs);
-
-  console.log('LiftJS: built with requirements?', !!reqs);
-  console.log('LiftJS: AMD deps:', deps.join(' '));
+  console.log('LiftJS: Optimized build?', reqs !== undefined);
+  console.log('LiftJS: AMD deps: ' + (deps.length ? '[\n  ' + deps.join(',\n  ') + '\n]' : 'none'));
 
   var now = new Date().getTime();
   var head = document.head || document.getElementsByTagName('head')[0];
@@ -259,7 +251,7 @@
   var scripts = document.getElementsByTagName('script');
   for(var i = scripts.length - 1; i >= 0; i--) {
     var script = scripts[i];
-    var url_match = script.src.match(/^https?:\/\/[^\/]+(\/.+\/)lift[^\/]*\.js$/);
+    var url_match = script.src.match(/^((https?:\/\/|file:\/\/\/)[^\/]+(\/.+\/))lift[^\/]*\.js$/);
     if(url_match) {
       baseUrl = url_match[1];
       break;
@@ -267,16 +259,22 @@
   }
 
   // Very crude AMD based define that will only work within the limited scope
-  // needed for LiftJS modules.
-  function _define(deps, fn) {
+  // needed for LiftJS modules. Does not work with nested dependencies.
+  function liftJSDefine(deps, fn) {
+    if(arguments.length === 1) {
+      fn = deps;
+      deps = [];
+    }
+    var count = deps.length;
+
     function makeScript(id, callback) {
       var s = document.createElement('script');
       s.src = baseUrl + id + '.js';
       s.onload = callback;
+      s.onerror = function() { console.warn('Unable to load ' + s.src); };
       head.appendChild(s);
     }
 
-    var count = deps.length;
     function done() {
       count--;
       if(count === 0) {
@@ -284,8 +282,12 @@
       }
     }
 
-    for(var i = deps.length - 1; i >= 0; i--) {
-      makeScript(deps[i], done);
+    if(count === 0) {
+      fn();
+    } else {
+      for(var i = deps.length - 1; i >= 0; i--) {
+        makeScript(deps[i], done);
+      }
     }
   }
 
@@ -295,17 +297,21 @@
     reqs: reqs
   };
 
-  if(!(typeof define === "function" && define.amd)) { // no AMD define()
-    window.define = _define;
+  if(!(typeof window.define === 'function' && define.amd)) { // no AMD define()
+    window.define = liftJSDefine;
     liftJS.ready = false;
     window.LiftJS = liftJS;
+    window.require = function() {};
   }
 
+  // Define the liftjs module depending on a bundle of AMD modules or runtime
+  // discovered dependencies.
   define(deps, function() {
-    console.log('LiftJS: Time to load deps: ' + (new Date().getTime() - now) + "ms");
+    var howLong = (new Date().getTime() - now);
+    console.log('LiftJS: Time to load deps: ' + howLong + 'ms');
 
     // Remove shimmed non-AMD complient define() function;
-    if(define === _define) {
+    if(define === liftJSDefine) {
       delete window.define;
       liftJS.ready = true;
       if(typeof liftJS.onload === 'function') {

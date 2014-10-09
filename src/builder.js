@@ -5,13 +5,17 @@ var path = require('path');
 var util = require('util');
 var chalk = require('chalk');
 var winston = require('winston');
+var requirejs = require('requirejs');
+var Promise = require("bluebird");
 
 
 const HR = '---------------------------------------';
-const BUILD_DIR = path.join(__dirname, '..', 'dist');
 const SRC_DIR = __dirname;
+const PROJECT_DIR = path.join(SRC_DIR, '..');
+const BUILD_DIR = path.join(PROJECT_DIR, 'dist');
+const TMP_DIR = path.join(PROJECT_DIR, 'tmp');
 const BROWSERS_DIR = path.join(SRC_DIR, 'browsers');
-const DEFINE_RE = /\s*define\s*\(([^,]+,\s*)?function(.+)/;
+// const DEFINE_RE = /^\s*define\s*\(([^,]+,\s*)?function\s*\((.+)$/;
 
 
 var logger = new (winston.Logger)({
@@ -154,14 +158,14 @@ function unique(arr) {
   });
 }
 
-function parseBrowserBundles(bundleFileData, reqs) {
-  // logger.debug("buildBundles()");
+function parseFeatureFile(featureData, reqs) {
+  // logger.debug("parseFeatureFile()");
 
   var featureSupport = [];
   var versions = [];
   var bundles = {};
 
-  var lines = bundleFileData.split('\n');
+  var lines = featureData.split('\n');
 
   lines.forEach(function(line, i) {
     line = line.trim();
@@ -211,85 +215,121 @@ function parseBrowserBundles(bundleFileData, reqs) {
 }
 
 
-function appendFeatureToBundle(feature, bundlePath) {
-  var bundleFp = fs.openSync(bundlePath, 'a');
+// function appendFeatureToBundle(feature, bundlePath) {
+//   var bundleFp = fs.openSync(bundlePath, 'a');
 
-  try {
-    var sourcePath = feature.split(':');
+//   try {
+//     var sourcePath = feature.split(':');
 
-    var moduleId = sourcePath.join('/');
-    sourcePath[sourcePath.length - 1] += '.js';
+//     var moduleId = sourcePath.join('/');
+//     sourcePath[sourcePath.length - 1] += '.js';
 
-    logger.debug("%s%s", ' \t\t\t\t', moduleId);
+//     logger.debug("%s%s", ' \t\t\t\t', moduleId);
 
-    var modulePath = path.join(SRC_DIR, 'modules', path.join.apply(path, sourcePath));
-    var sourceLines = fs.readFileSync(modulePath).toString().split('\n');
+//     var modulePath = path.join(SRC_DIR, 'modules', path.join.apply(path, sourcePath));
+//     var sourceLines = fs.readFileSync(modulePath).toString().split('\n');
 
-    for(var i = 0; i < sourceLines.length; i++) {
-      var line = sourceLines[i];
-      var matches = line.match(DEFINE_RE);
+//     for(var i = 0; i < sourceLines.length; i++) {
+//       var line = sourceLines[i];
+//       var matches = line.match(DEFINE_RE);
 
-      if(matches) {
-        line = util.format('define(\'liftjs/modules/%s\', %sfunction%s', moduleId, matches[1] || '[], ', matches[2]);
-      }
+//       if(matches) {
+//         console.log('matched!', line);
+//         line = util.format('define(\'liftjs/modules/%s\', %sfunction%s', moduleId, matches[1] || '[], ', matches[2]);
+//       }
 
-      fs.writeSync(bundleFp, line + '\n');
-    }
-  } finally {
-    fs.closeSync(bundleFp);
-  }
-}
+//       fs.writeSync(bundleFp, line + '\n');
+//     }
+//   } finally {
+//     fs.closeSync(bundleFp);
+//   }
+// }
 
 
-function buildBrowserBundle(browser, reqs) {
+function buildBrowserBundles(browser, reqs) {
   // logger.debug('parsing %s', browser);
 
-  var data = fs.readFileSync(path.join(BROWSERS_DIR, browser + '.txt')).toString();
+  var featureData = fs.readFileSync(path.join(BROWSERS_DIR, browser + '.txt')).toString();
+  var features = parseFeatureFile(featureData, reqs);
+  var needsBundleFile = Object.keys(features).length > 0;
+  var prevVersion = '';
+  var promises = [];
+  var versions = Object.keys(features);
+  var browserBuildPath = path.join(BUILD_DIR, 'bundles');
 
-  var bundles = parseBrowserBundles(data, reqs);
-
-  var needsBundleFile = Object.keys(bundles).length > 0;
   if(needsBundleFile) {
     logger.debug('%s:', chalk.bold.cyan(browser.toUpperCase()));
     logger.debug('Supported In Version\t\tFeature\n' + HR);
   }
 
-  var prevVersion = '';
-  var versions = [];
+  versions.forEach(function(version) {
+    var stillUnsupported = version === '*';
 
-  for(var version in bundles) {
-    if(bundles.hasOwnProperty(version)) {
-      var features = bundles[version];
-      var stillUnsupported = version === '*';
+    logger.debug(' %s', stillUnsupported ? '-' : version);
 
-      versions.push(version);
+    var bundleFilename = browser + (prevVersion + (stillUnsupported ? '+' : '-' + version)) + '.js';
+    var mainFilePath = path.join(browserBuildPath, bundleFilename);
 
-      logger.debug(' %s', stillUnsupported ? '-' : version);
+    var deps = features[version].map(function(feature) {
+      var sourcePath = feature.split(':');
+      return 'liftjs/' + sourcePath.join('/');
+    });
 
-      var bundleFilename = browser + (prevVersion + (stillUnsupported ? '+' : '-' + version)) + '.js';
-      var bundlePath = path.join(BUILD_DIR, 'bundles', bundleFilename);
-      var bundleFp = fs.openSync(bundlePath, 'a');
 
-      try {
-        for(var i = 0; i < features.length; i++) {
-          var feature = features[i];
-          appendFeatureToBundle(feature, bundlePath);
-        }
+    var mainFp = fs.openSync(mainFilePath, 'w');
+    try {
+      fs.writeSync(mainFp, 'require(["');
 
-        fs.writeSync(bundleFp, 'define(function() {});\n');
+      fs.writeSync(mainFp, deps.join('", "'));
+
+      fs.writeSync(mainFp, '"]);\n');
+    } finally {
+      fs.closeSync(mainFp);
+    }
+
+    var bundleConfig = {
+      skipModuleInsertion: true,
+      optimize: 'none',
+      baseUrl: 'dist/bundles/',
+      name: path.basename(bundleFilename, '.js'),
+      wrap: true,
+      out: mainFilePath,
+      // logLevel: 4, // change to 0 for trace
+      paths: {
+        liftjs: '../modules'
+      }
+    };
+
+    promises.push(new Promise(function(resolve, reject) {
+      requirejs.optimize(bundleConfig, function(/* buildResponse */) {
+        //buildResponse is just a text output of the modules included. Load the
+        //built file for the contents. Use bundleConfig.out to get the optimized
+        //file contents.
+        // var contents = fs.readFileSync(bundleConfig.out, 'utf8');
 
         logger.debug('');
         console.log(chalk.blue('Created bundle ' + bundleFilename));
         logger.debug('');
-      } finally {
-        fs.closeSync(bundleFp);
-      }
 
-      prevVersion = version;
-    }
-  }
+        // console.log(contents);
 
-  return versions;
+        resolve();
+      }, function(err) {
+        console.error(err);
+        //optimization err callback
+        reject(err);
+      });
+    }));
+
+    prevVersion = version;
+  });
+
+
+  return new Promise(function(resolve/* , reject */) {
+    Promise.all(promises).then(function() {
+      resolve(versions);
+    });
+  });
 }
 
 
@@ -301,7 +341,7 @@ function customizeLiftJS(reqs, browserVersions, source) {
     if(line.trim() === '// -- BUILD REQUIREMENTS --') {
       var pad = line.match(/(\s*)/)[1];
       sourceLines.splice(i, 1,
-        pad + 'reqs = ' + JSON.stringify(reqs) + ';',
+        pad + 'reqs = ' + (Object.keys(reqs).length ? JSON.stringify(reqs) : null) + ';',
         pad + 'bundle_versions = ' + JSON.stringify(browserVersions) + ';'
       );
     }
@@ -315,7 +355,7 @@ exports.turnOffLogging = turnOffLogging;
 exports.increaseVerbosity = increaseVerbosity;
 exports.Version = Version;
 exports.unique = unique;
-exports.parseBrowserBundles = parseBrowserBundles;
-exports.buildBrowserBundle = buildBrowserBundle;
+exports.parseFeatureFile = parseFeatureFile;
 exports.buildFeatureTree = buildFeatureTree;
+exports.buildBrowserBundles = buildBrowserBundles;
 exports.customizeLiftJS = customizeLiftJS;

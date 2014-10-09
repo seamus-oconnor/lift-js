@@ -3,12 +3,14 @@
 /* jshint node:true */
 
 var fs = require('fs');
-var fse = require('fs-extra')
+var fse = require('fs-extra');
 var path = require('path');
 var rimraf = require('rimraf');
 var chalk = require('chalk');
 var argv = require('minimist')(process.argv.slice(2), { boolean: [ 'v', 'verbose', 'h', 'help' ] });
 var liftBuilder = require('./src/builder');
+var Promise = require("bluebird");
+
 
 const BUILD_DIR = path.join(__dirname, 'dist');
 const SRC_DIR = path.join(__dirname, 'src');
@@ -68,29 +70,27 @@ function prettyKeys(d, indent) {
 }
 
 
-function main() {
-  cleanDist();
+function buildOptimizedLiftJs() {
+  var reqs = liftBuilder.buildFeatureTree(FEATURES);
+  var browserVersions = {};
+  var promises = [];
 
-  fse.copySync(path.join(SRC_DIR, 'modules'), path.join(BUILD_DIR, 'modules'));
+  console.log('Selected features:\n%s', prettyKeys(reqs, 1));
 
-  if(FEATURES.length > 0) {
-    var reqs = liftBuilder.buildFeatureTree(FEATURES);
-    var browserVersions = {};
+  // Create dist/bundles dir
+  fs.mkdirSync(path.join(BUILD_DIR, 'bundles'));
 
-    console.log('Selected features:\n%s', prettyKeys(reqs, 1));
+  fs.readdirSync(BROWSERS_DIR).forEach(function(filename) {
+    var browser = path.basename(filename, '.txt');
 
-    // Create dist/bundles dir
-    fs.mkdir(path.join(BUILD_DIR, 'bundles'));
+    // Build browser AMD modules into dist/bundles/[browser]-[ver].js
+    promises.push(liftBuilder.buildBrowserBundles(browser, reqs).then(function(bundle) {
+      browserVersions[browser] = bundle;
+    }));
+  });
 
-    fs.readdirSync(BROWSERS_DIR).forEach(function(filename) {
-      var browser = path.basename(filename, '.txt');
-
-      // Build browser AMD modules into dist/bundles/[browser]-[ver].js
-      browserVersions[browser] = liftBuilder.buildBrowserBundle(browser, reqs);
-    });
-
+  return Promise.all(promises).then(function() {
     // Copy all AMD modules into the dist/modules dir
-
     var liftJsSource = fs.readFileSync(path.join(SRC_DIR, 'lift.js')).toString();
 
     // Parse lift.js and output reqs and browser_ranges as JSON.
@@ -102,13 +102,23 @@ function main() {
     } finally {
       fs.closeSync(outFp);
     }
+  });
+}
+
+
+function main() {
+  cleanDist();
+
+  fse.copySync(path.join(SRC_DIR, 'modules'), path.join(BUILD_DIR, 'modules'));
+
+  if(FEATURES.length > 0) {
+    buildOptimizedLiftJs().then(function() {
+      console.log("-- Build Complete --");
+    });
   } else {
     console.log('No specific features. Building unoptimzed.');
     fse.copySync(path.join(SRC_DIR, 'lift.js'), path.join(BUILD_DIR, 'lift.js'));
   }
-
-
-  console.log("-- Build Complete --");
 
   return 0;
 }
@@ -127,4 +137,4 @@ function main() {
 
 // console.log('Building lift-js into ', chalk.blue(BUILD_DIR));
 
-process.exit(main());
+main();

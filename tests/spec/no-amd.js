@@ -4,11 +4,14 @@ describe("no AMD", function() {
   });
 
   it("should have loaded", function(done) {
-    if(!LiftJS.ready) {
-      LiftJS.onload = function() {
-        expect(LiftJS.ready).to.be(true);
-        done();
-      };
+    function loaded() {
+      expect(LiftJS.ready).to.be(true);
+      done();
+    }
+    if(LiftJS.ready) {
+      loaded();
+    } else {
+      LiftJS.onload = loaded;
     }
   });
 });

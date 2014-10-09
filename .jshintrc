@@ -112,6 +112,7 @@
 
     "maxerr"        : 100,      // Maximum errors before stopping.
     "predef"        : [         // Extra globals.
+      "define"
     ],
     "indent"        : 2         // Specify indentation spacing
 }
