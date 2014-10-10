@@ -19,7 +19,7 @@ curl.config({
   },
   packages: {
     liftjs: {
-      location: '../dist/',
+      location: location.search.indexOf('use=built') === -1 ? '../src/' : '../dist/',
       main: 'lift'
     }
   }
@@ -34,6 +34,7 @@ curl.config({
   left: 0;
 }
 </style>
+
 
 </head>
 <body>
@@ -50,6 +51,7 @@ var wasteland = document.getElementById('wasteland');
 <script src="../bower_components/mocha/mocha.js"></script>
 <script src="../bower_components/expect/index.js"></script>
 <script>mocha.setup('bdd');</script>
+<script src="helpers.js"></script>
 
 <script src="spec/lift.js"></script>
 
@@ -90,11 +92,7 @@ var wasteland = document.getElementById('wasteland');
 <script src="spec/dom/window/raf.js"></script>
 
 <script>
-mocha.checkLeaks();
-mocha.globals(['require']);
-require([], function() {
-  mocha.run();
-});
+require([], runMochaTests);
 </script>
 
 </body>

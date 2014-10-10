@@ -10,16 +10,14 @@ define(function() {
    * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
    */
 
-  /*global self, document, DOMException */
+  /*global DOMException */
 
   /*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/
   // NOTE: Heavily modified from above to work with the rest of lift JS.
 
   var div = document.createElement('div');
-  div.innerHTML = '<svg></svg>';
-  var svg = div.firstChild;
 
-  if(('classList' in div) && svg && ('classList' in svg)) return false;
+  if('classList' in div) { return false; }
 
   var strTrim = String.prototype.trim || function() {
     return this.replace(/^\s+|\s+$/g, '');

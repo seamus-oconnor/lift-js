@@ -7,7 +7,15 @@
 
 <link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
 
-<script src="../dist/lift.js"></script>
+<script>
+(function() {
+  var s = document.createElement('script');
+  var path = location.search.indexOf('use=built') === -1 ? '../src' : '../dist';
+  s.src = path + '/lift.js';
+  document.getElementsByTagName('head')[0].appendChild(s);
+})();
+</script>
+<!-- <script src="../dist/lift.js"></script> -->
 
 </head>
 <body>
@@ -16,15 +24,12 @@
 <script src="../bower_components/mocha/mocha.js"></script>
 <script src="../bower_components/expect/index.js"></script>
 <script>mocha.setup('bdd');</script>
+<script src="helpers.js"></script>
 
 <script src="spec/no-amd.js"></script>
 
 <script>
-mocha.checkLeaks();
-mocha.globals(['require']);
-window.onload = function() {
-  mocha.run();
-}
+window.onload = runMochaTests;
 </script>
 
 </body>

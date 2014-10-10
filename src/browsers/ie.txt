@@ -59,8 +59,7 @@
 
 ##########  IE 10+  ##########
 
-# IE 10 has basic Element support for .classList but not on <svg> nodes.
-# 10          dom:node:classlist
+10          dom:node:classlist
 10          dom:node:transitionend
 10          dom:window:base64
 10          dom:window:raf
@@ -78,5 +77,5 @@
 *           es6:string:contains
 *           dom:window:wheel
 *           dom:node:dataset
-*           dom:node:children
-*           dom:node:classlist
+*           dom:svg:children
+*           dom:svg:classlist

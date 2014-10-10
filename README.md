@@ -1,3 +1,5 @@
+[![Sauce Test Status](https://saucelabs.com/buildstatus/seamusoconnor)](https://saucelabs.com/u/seamusoconnor)
+
 Lift JS
 =======
 
