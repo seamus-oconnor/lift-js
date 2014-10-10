@@ -1,4 +1,4 @@
-[![Sauce Test Status](https://saucelabs.com/buildstatus/seamusoconnor)](https://saucelabs.com/u/seamusoconnor)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/seamusoconnor.svg)](https://saucelabs.com/u/seamusoconnor)
 
 Lift JS
 =======
