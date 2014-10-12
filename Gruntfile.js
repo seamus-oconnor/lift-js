@@ -113,6 +113,7 @@ var gruntConfig = {
       updateConfigs: [],
       commitFiles: ['-a'],
       pushTo: 'origin',
+      push: false,
     }
   },
 };

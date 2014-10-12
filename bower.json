@@ -1,7 +1,7 @@
 {
   "name": "lift.js",
   "description": "Lift old browsers up to a modern level",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "authors": [
     "Séamus O'Connor <seamus.oconnor@pneumaticweb.com>"
   ],
@@ -10,7 +10,7 @@
     "shim"
   ],
   "license": "MIT",
-  "private": true,
+  "private": false,
   "ignore": [
     "**/.*",
     "node_modules",
