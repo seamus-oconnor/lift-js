@@ -106,7 +106,15 @@ var gruntConfig = {
         // tags: ["master"]
       }
     }
-  }
+  },
+  bump: {
+    options: {
+      files: ['bower.json'],
+      updateConfigs: [],
+      commitFiles: ['-a'],
+      pushTo: 'origin',
+    }
+  },
 };
 
 module.exports = function(grunt) {
