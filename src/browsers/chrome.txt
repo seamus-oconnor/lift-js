@@ -1,6 +1,6 @@
 # version   feature
 
-5           dom:window:hashchange
+5           window:hashchange
 
 6           es5:object:seal
 6           es5:object:freeze
@@ -11,7 +11,7 @@
 
 7           es5:function:bind
 
-24          dom:window:raf
+24          window:raf
 
 26          dom:node:transitionend
 

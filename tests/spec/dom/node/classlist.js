@@ -1,43 +1,64 @@
 describe("DOM Element #classlist", function() {
   var div = document.createElement('div');
+  div.innerHTML = '<svg></svg>';
+  var svg = div.firstChild;
 
   beforeEach(function() {
     div.className = 'foo bar';
+    svg.setAttribute('class', 'foo bar');
   });
 
-  it("should exist", function() {
-    expect(div.classList).to.be.ok();
-  });
+  var nodes = {
+    html: div
+  };
 
-  it("should have class 'foo'", function() {
-    expect(div.classList.contains('foo')).to.be(true);
-  });
+  if(svg) {
+    nodes.svg = svg;
 
-  it("should add class 'baz'", function() {
-    expect(div.classList.add('baz')).to.be(undefined);
-    expect(div.className).to.be('foo bar baz');
-  });
+    it("does support svg", function() {
+      expect(svg).to.be.ok();
+    });
+  }
 
-  it("should remove class 'foo'", function() {
-    expect(div.classList.remove('foo')).to.be(undefined);
-    expect(div.className).to.be('bar');
-  });
+  for(var type in nodes) {
+    if(nodes.hasOwnProperty(type)) {
+      var el = nodes[type];
 
-  it("should toggle class 'foo'", function() {
-    expect(div.classList.toggle('foo')).to.be(false);
-    expect(div.className).to.be('bar');
-    expect(div.classList.toggle('foo')).to.be(true);
-    expect(div.className).to.be('bar foo');
-  });
+      it("should exist on " + type + " nodes", function() {
+        expect(el.classList).to.be.ok();
+      });
 
-  it("should be indexable at 0 and 1", function() {
-    expect(div.classList.item(0)).to.be('foo');
-    expect(div.classList.item(1)).to.be('bar');
-    expect(div.classList.item(2)).to.be(null);
-  });
+      it("should have class 'foo' on " + type + " nodes", function() {
+        expect(el.classList.contains('foo')).to.be(true);
+      });
 
-  it("should be a string 'foo bar'", function() {
-    expect(div.classList + '').to.be('foo bar');
-    expect(div.classList.toString()).to.be('foo bar');
-  });
+      it("should add class 'baz' on " + type + " nodes", function() {
+        expect(el.classList.add('baz')).to.be(undefined);
+        expect(el.getAttribute('class')).to.be('foo bar baz');
+      });
+
+      it("should remove class 'foo' from " + type + " nodes", function() {
+        expect(el.classList.remove('foo')).to.be(undefined);
+        expect(el.getAttribute('class')).to.be('bar');
+      });
+
+      it("should toggle class 'foo' on " + type + " nodes", function() {
+        expect(el.classList.toggle('foo')).to.be(false);
+        expect(el.getAttribute('class')).to.be('bar');
+        expect(el.classList.toggle('foo')).to.be(true);
+        expect(el.getAttribute('class')).to.be('bar foo');
+      });
+
+      it("should be indexable at 0 and 1 on " + type + " nodes", function() {
+        expect(el.classList.item(0)).to.be('foo');
+        expect(el.classList.item(1)).to.be('bar');
+        expect(el.classList.item(2)).to.be(null);
+      });
+
+      it("should be a string 'foo bar' on " + type + " nodes", function() {
+        expect(el.classList + '').to.be('foo bar');
+        expect(el.classList.toString()).to.be('foo bar');
+      });
+    }
+  }
 });

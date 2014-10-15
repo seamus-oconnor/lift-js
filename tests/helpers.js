@@ -1,7 +1,4 @@
 function runMochaTests() {
-  mocha.checkLeaks();
-  mocha.globals(['require', 'mochaResults']);
-
   var runner = mocha.run();
 
   var failedTests = [];

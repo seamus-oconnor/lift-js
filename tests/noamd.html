@@ -10,12 +10,11 @@
 <script>
 (function() {
   var s = document.createElement('script');
-  var path = location.search.indexOf('use=built') === -1 ? '../src' : '../dist';
-  s.src = path + '/lift.js';
+  var useRuntime = location.search.indexOf('liftjs=runtime') !== -1;
+  s.src = '../dist/lift' + (useRuntime ? '-runtime' : '') + '.js';
   document.getElementsByTagName('head')[0].appendChild(s);
 })();
 </script>
-<!-- <script src="../dist/lift.js"></script> -->
 
 </head>
 <body>

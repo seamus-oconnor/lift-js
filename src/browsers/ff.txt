@@ -2,7 +2,7 @@
 
 3.5         es5:array:map
 
-3.6         dom:window:hashchange
+3.6         window:hashchange
 
 4           es5:object:create
 4           es5:object:defineproperty
@@ -14,12 +14,13 @@
 4           es5:object:issealed
 4           es5:object:isfrozen
 4           es5:object:isextensible
-#4           es5:object:getownpropertydescriptor
+# 4         es5:object:getownpropertydescriptor
 4           es5:object:getownpropertynames
 4           es5:array:isarray
 4           es5:function:bind
+6           window:eventconstructor
 
 16          es6:number:isfinite
 16          dom:node:transitionend
 
-23          dom:window:raf
+23          window:raf

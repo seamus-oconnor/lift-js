@@ -7,22 +7,31 @@
 
 <link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
 
-<script src="../bower_components/curl/src/curl.js"></script>
+<!-- <script src="../bower_components/curl/src/curl.js"></script> -->
+<script src="../bower_components/requirejs/require.js"></script>
 <script>
-curl.config({
-  apiName: 'require',
-  preloads: ['liftjs'],
+// curl.config({
+//   apiName: 'require',
+//   preloads: ['liftjs'],
+//   baseUrl: '',
+//   packages: [
+//     {
+//       location: '../dist/',
+//       name: 'liftjs',
+//       main: 'lift'
+//     }
+//   ]
+// });
+require.config({
+  deps: ['liftjs'],
   baseUrl: '',
-  paths: {
-    local: './',
-    bundle: 'js/lib/liftjs/bundles'
-  },
-  packages: {
-    liftjs: {
-      location: location.search.indexOf('use=built') === -1 ? '../src/' : '../dist/',
-      main: 'lift'
+  packages: [
+    {
+      location: '../dist/',
+      name: 'liftjs',
+      main: 'lift' + (location.search.indexOf('liftjs=runtime') !== -1 ? '-runtime' : '' )
     }
-  }
+  ]
 });
 </script>
 
@@ -86,10 +95,10 @@ var wasteland = document.getElementById('wasteland');
 <script src="spec/dom/node/textcontent.js"></script>
 <script src="spec/dom/node/transitionend.js"></script>
 
-<script src="spec/dom/window/events.js"></script>
-<script src="spec/dom/window/base64.js"></script>
-<script src="spec/dom/window/hashchange.js"></script>
-<script src="spec/dom/window/raf.js"></script>
+<script src="spec/window/events.js"></script>
+<script src="spec/window/base64.js"></script>
+<script src="spec/window/hashchange.js"></script>
+<script src="spec/window/raf.js"></script>
 
 <script>
 require([], runMochaTests);

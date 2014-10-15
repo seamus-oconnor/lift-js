@@ -1,22 +1,36 @@
 /* jshint node:true */
 
 var browsers = [
-  { browserName: "firefox", version: "19", platform: "XP" },
-  // { browserName: "chrome", platform: "XP" },
-  // { browserName: "chrome", platform: "linux" },
-  // { browserName: "internet explorer", platform: "WIN8", version: "10" },
-  // { browserName: "internet explorer", platform: "VISTA", version: "9" },
-  // { browserName: "opera", platform: "Windows 2008", version: "12" }
+  { browserName: "firefox", platform: "Windows 8.1" },
+  { browserName: "firefox", platform: "Windows 7" },
+  { browserName: "firefox", platform: "XP" },
+  { browserName: "chrome", platform: "Windows 8.1" },
+  { browserName: "chrome", platform: "Windows 7" },
+  { browserName: "chrome", platform: "XP" },
+  { browserName: "internet explorer", platform: "Windows 7", version: "11" },
+  { browserName: "internet explorer", platform: "Windows 7", version: "10" },
+  { browserName: "internet explorer", platform: "Windows 7", version: "9" },
+  { browserName: "internet explorer", platform: "Windows 7", version: "8" },
+  { browserName: "internet explorer", platform: "Windows 8", version: "11" },
+  { browserName: "internet explorer", platform: "Windows 8", version: "10" },
+  { browserName: "internet explorer", platform: "Windows 8", version: "9" },
+  { browserName: "internet explorer", platform: "Windows 8", version: "8" },
+  { browserName: "internet explorer", platform: "XP", version: "11" },
+  { browserName: "internet explorer", platform: "XP", version: "10" },
+  { browserName: "internet explorer", platform: "XP", version: "9" },
+  { browserName: "internet explorer", platform: "XP", version: "8" },
+  { browserName: "safari", platform: "OS X 10.9", version: "7" },
+  { browserName: "safari", platform: "OS X 10.8", version: "6" },
 ];
 
 
 var popularBrowsers = [
-  { browserName: "firefox", version: "32", platform: "XP" },
-  // { browserName: "chrome", platform: "XP" },
-  // { browserName: "chrome", platform: "linux" },
-  // { browserName: "internet explorer", platform: "WIN8", version: "10" },
-  // { browserName: "internet explorer", platform: "VISTA", version: "9" },
-  // { browserName: "opera", platform: "Windows 2008", version: "12" }
+  // { browserName: "firefox", version: "32", platform: "XP" },
+  { browserName: "internet explorer", platform: "Windows 7", version: "11" },
+  { browserName: "internet explorer", platform: "Windows 7", version: "10" },
+  { browserName: "chrome", platform: "Windows 7" },
+  { browserName: "firefox", platform: "Windows 7" },
+  { browserName: "safari", platform: "OS X 10.9", version: "7" },
 ];
 
 const DEV_HOST = 'http://127.0.0.1';
@@ -30,12 +44,18 @@ var distTestUrls = [
 });
 
 var srcTestUrls = distTestUrls.map(function(url) {
-  return url + '?use=built';
+  return url + '?liftjs=runtime';
 });
 
 
 var gruntConfig = {
   clean: ['dist/'],
+  copy: {
+    'liftjs-runtime': {
+      src: 'src/lift.js',
+      dest: 'dist/lift-runtime.js'
+    },
+  },
   connect: {
     server: {
       options: {
@@ -55,7 +75,7 @@ var gruntConfig = {
   },
   mocha: {
     options: {
-      // log: true,
+      log: true,
       logErrors: true,
       run: false,
     },
@@ -79,6 +99,7 @@ var gruntConfig = {
       tasks: [
         'clean',
         'exec:optimized',
+        'copy:liftjs-runtime',
         '_mochaTests',
       ],
     },
@@ -86,12 +107,10 @@ var gruntConfig = {
   'saucelabs-mocha': {
     quick: {
       options: {
-        urls: distTestUrls.concat(srcTestUrls),
+        urls: [ DEV_HOST + TEST_PATH + '/index.html' ],
         tunnelTimeout: 5,
-        // build: process.env.TRAVIS_JOB_ID,
-        concurrency: 1,
         browsers: popularBrowsers,
-        testname: 'mocha tests',
+        testname: 'popular browsers',
         // tags: ["master"]
       }
     },
@@ -99,17 +118,16 @@ var gruntConfig = {
       options: {
         urls: distTestUrls.concat(srcTestUrls),
         tunnelTimeout: 5,
-        // build: process.env.TRAVIS_JOB_ID,
-        concurrency: 1,
+        build: '<%= grunt.template.today("isoDateTime") %>',
         browsers: browsers,
-        testname: 'mocha tests',
+        testname: 'all browsers',
         // tags: ["master"]
       }
     }
   },
   bump: {
     options: {
-      files: ['bower.json'],
+      files: ['bower.json', 'package.json'],
       updateConfigs: [],
       commitFiles: ['-a'],
       pushTo: 'origin',
@@ -124,6 +142,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-bump');
@@ -138,6 +157,7 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'clean',
     'exec:optimized',
+    'copy:liftjs-runtime',
   ]);
 
   grunt.registerTask('test', [
@@ -154,11 +174,11 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test:all', [
     'test',
-    'test:browsers',
     'saucelabs-mocha:all',
   ]);
 
   grunt.registerTask('dev', [
+    'build',
     'connect',
     'watch'
   ]);

@@ -53,6 +53,14 @@
   testel.innerHTML = '<svg></svg>';
   var svgel = testel.firstChild || {};
 
+  function test(fn) {
+    try {
+      return fn();
+    } catch(e) {
+      return false;
+    }
+  }
+
   var support = {
     es5: {
       array: {
@@ -103,31 +111,25 @@
         contains: !!String.prototype.contains
       }
     },
+    'window': {
+      innersize: !!window.innerWidth,
+      hashchange: 'onhashchange' in window,
+      wheel: 'onwheel' in testel,
+      base64: !!(window.atob && window.btoa),
+      raf: !!(window.requestAnimationFrame && window.cancelAnimationFrame),
+      // IE 8 (not 7) says that window.Event exists IE 9 lies and says it has
+      // a CustomEvent object but you can't call it as a contructor (e.g. new
+      // CustomEvent();)
+      eventconstructor: test(function() { return !!new window.CustomEvent('foo'); }),
+      console: window.console && console.log
+    },
     dom: {
-      'window': {
-        innersize: !!window.innerWidth,
-        hashchange: 'onhashchange' in window,
-        wheel: 'onwheel' in testel,
-        base64: !!(window.atob && window.btoa),
-        raf: !!(window.requestAnimationFrame && window.cancelAnimationFrame),
-        // IE 8 (not 7) says that window.Event exists IE 9 lies and says it has
-        // a CustomEvent object but you can't call it as a contructor (e.g. new
-        // CustomEvent();)
-        events: (function() {
-          try {
-            return !!new window.CustomEvent('foo');
-          } catch(e) {
-            return false;
-          }
-        })()
-      },
       'document': {
         defaultview: !!document.defaultView
       },
       node: {
-        // IE 9 supports .children on <div>s but not SVG elements inline in an HTML5
-        children: 'children' in testel && 'children' in svgel,
-        classlist: 'classList' in testel && 'classList' in svgel,
+        children: 'children' in testel,
+        classlist: 'classList' in testel,
         contains: 'contains' in testel,
         dataset: 'dataset' in testel,
         textcontent: 'textContent' in testel,
@@ -135,18 +137,19 @@
         comparedocumentposition: !!testel.compareDocumentPosition,
         transitionend: 'transition' in testel.style
       },
+      svg: {
+        children: 'children' in svgel,
+        classlist: 'classList' in svgel
+      },
       ie: {} // IE specific shims
     },
-    console: window.console && console.log
   };
 
   // Test for IE's non-standard APIs
-  if(!support.dom.window.events && (document.createEventObject || document.fireEvent)) {
-    delete support.dom.window.events;
+  if( !window.createEvent && document.createEventObject &&
+      !window.addEventListener && window.attachEvent &&
+      !window.dispatchEvent && document.fireEvent ) {
     support.dom.ie.events = false;
-  }
-  if(!window.addEventListener && window.attachEvent) {
-    support.dom.ie.eventlisteners = false;
   }
   if(!window.getComputedStyle && testel.currentStyle) {
     support.dom.ie.getcomputedstyle = false;

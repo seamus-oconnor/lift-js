@@ -6,7 +6,7 @@
 
 ##########  IE 8+  ##########
 
-8           dom:window:hashchange
+8           window:hashchange
 
 ##########  IE 9+  ##########
 
@@ -42,8 +42,8 @@
 
 9           es5:string:trim
 
-9           dom:window:innersize
-9           dom:window:hashchange
+9           window:innersize
+9           window:hashchange
 
 9           dom:document:defaultview
 
@@ -52,17 +52,16 @@
 9           dom:node:comparedocumentposition
 
 9           dom:ie:getcomputedstyle
-9           dom:ie:eventlisteners
 9           dom:ie:events
 
-9           console
+9           window:console
 
 ##########  IE 10+  ##########
 
 10          dom:node:classlist
 10          dom:node:transitionend
-10          dom:window:base64
-10          dom:window:raf
+10          window:base64
+10          window:raf
 
 ##########  IE 11+  ##########
 
@@ -75,7 +74,8 @@
 *           es6:string:startswith
 *           es6:string:endswith
 *           es6:string:contains
-*           dom:window:wheel
+*           window:wheel
 *           dom:node:dataset
 *           dom:svg:children
 *           dom:svg:classlist
+*           window:eventconstructor

@@ -272,7 +272,7 @@ function buildBrowserBundles(browser, reqs) {
 
     var deps = features[version].map(function(feature) {
       var sourcePath = feature.split(':');
-      return 'liftjs/' + sourcePath.join('/');
+      return 'liftjs/modules/' + sourcePath.join('/');
     });
 
 
@@ -296,7 +296,7 @@ function buildBrowserBundles(browser, reqs) {
       out: mainFilePath,
       // logLevel: 4, // change to 0 for trace
       paths: {
-        liftjs: '../modules'
+        liftjs: '../'
       }
     };
 
