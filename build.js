@@ -3,9 +3,7 @@
 /* jshint node:true */
 
 var fs = require('fs');
-var fse = require('fs-extra');
 var path = require('path');
-var rimraf = require('rimraf');
 var chalk = require('chalk');
 var argv = require('minimist')(process.argv.slice(2), { boolean: [ 'v', 'verbose', 'h', 'help' ] });
 var liftBuilder = require('./src/builder');
@@ -18,14 +16,6 @@ const BROWSERS_DIR = path.join(SRC_DIR, 'browsers');
 const FEATURES = argv._;
 
 
-function cleanDist() {
-  if(fs.existsSync(BUILD_DIR)) {
-    rimraf.sync(BUILD_DIR);
-  }
-
-  fs.mkdir(BUILD_DIR);
-}
-
 // function fail() {
 //   console.error(chalk.red(arguments.join(' ')));
 //   process.exit(1);
@@ -35,7 +25,6 @@ function usage() {
   console.log('usage: node build.js [es5:*, es6:string*]');
   process.exit(0);
 }
-
 
 if(argv.h || argv.help) {
   usage();
@@ -69,16 +58,26 @@ function prettyKeys(d, indent) {
   return output;
 }
 
+function cleanDir(dir) {
+  fs.readdirSync(dir).forEach(function(fileName) {
+    fs.unlinkSync(path.join(dir, fileName));
+  });
+}
 
 function buildOptimizedLiftJs() {
   var reqs = liftBuilder.buildFeatureTree(FEATURES);
   var browserVersions = {};
   var promises = [];
+  var BUNDLES_DIR = path.join(BUILD_DIR, 'bundles');
 
   console.log('Selected features:\n%s', prettyKeys(reqs, 1));
 
   // Create dist/bundles dir
-  fs.mkdirSync(path.join(BUILD_DIR, 'bundles'));
+  if(fs.existsSync(BUNDLES_DIR)) {
+    cleanDir(BUNDLES_DIR);
+  } else {
+    fs.mkdirSync(BUNDLES_DIR);
+  }
 
   fs.readdirSync(BROWSERS_DIR).forEach(function(filename) {
     var browser = path.basename(filename, '.txt');
@@ -91,11 +90,11 @@ function buildOptimizedLiftJs() {
 
   return Promise.all(promises).then(function() {
     // Copy all AMD modules into the dist/modules dir
-    var liftJsSource = fs.readFileSync(path.join(SRC_DIR, 'lift.js')).toString();
+    var liftJsSource = fs.readFileSync(path.join(BUILD_DIR, 'lift.js')).toString();
 
     // Parse lift.js and output reqs and browser_ranges as JSON.
     var customLiftJS = liftBuilder.customizeLiftJS(reqs, browserVersions, liftJsSource);
-    var outFp = fs.openSync(path.join(BUILD_DIR, 'lift.js'), 'w');
+    var outFp = fs.openSync(path.join(BUILD_DIR, 'lift-optimized.js'), 'w');
 
     try {
       fs.writeSync(outFp, customLiftJS);
@@ -107,34 +106,13 @@ function buildOptimizedLiftJs() {
 
 
 function main() {
-  cleanDist();
-
-  fse.copySync(path.join(SRC_DIR, 'modules'), path.join(BUILD_DIR, 'modules'));
-
   if(FEATURES.length > 0) {
     buildOptimizedLiftJs().then(function() {
       console.log("-- Build Complete --");
     });
   } else {
-    console.log('No specific features. Building unoptimzed.');
-    fse.copySync(path.join(SRC_DIR, 'lift.js'), path.join(BUILD_DIR, 'lift.js'));
+    console.log('Nothing to do');
   }
-
-  return 0;
 }
-
-// TODO: copy dist/ to output / BUILD_DIR directory
-// logger.debug('Default build dir ' + BUILD_DIR);
-
-// if(argv.o || argv.BUILD_DIR) {
-//   var BUILD_DIR = argv.o || argv.BUILD_DIR;
-//   BUILD_DIR = path.join(process.cwd(), BUILD_DIR);
-
-//   if(!fs.existsSync(BUILD_DIR)) {
-//     fail('Invalid build directory:', BUILD_DIR);
-//   }
-// }
-
-// console.log('Building lift-js into ', chalk.blue(BUILD_DIR));
 
 main();

@@ -206,12 +206,10 @@
     }
   }
 
-  var reqs, bundle_versions = {};
-
   function buildBundle() {
     if(reqs === undefined || !browser) { return; }
 
-    var versions = bundle_versions[browser.name] || [];
+    var versions = bundleVersions[browser.name] || [];
     var last_ver = '';
 
     for(var i = 0; i < versions.length; i++) {
@@ -236,7 +234,9 @@
     return [];
   }
 
-  // -- BUILD REQUIREMENTS --
+  // Replaced with build.js optimizations
+  var reqs, bundleVersions = {};
+
 
   // If there are built reqs (i.e. array.indexOf, string.trim, etc) then we know
   // that there are built bundles for known browsers too. If we were able to

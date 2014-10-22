@@ -36,42 +36,68 @@ var popularBrowsers = [
 const DEV_HOST = 'http://127.0.0.1';
 const TEST_PATH = '/tests';
 
-var distTestUrls = [
+var srcTestUrls = [
   '/index.html',
   '/noamd.html',
 ].map(function(url) {
   return DEV_HOST + TEST_PATH + url;
 });
 
-var srcTestUrls = distTestUrls.map(function(url) {
-  return url + '?liftjs=runtime';
+var optimizedTestUrls = srcTestUrls.map(function(url) {
+  return url + '?liftjs=optimized';
 });
+
+
+var JS_COPYRIGHT_HEADER = "" +
+  "/*!\n" +
+  "* LiftJS Javascript Library v<%= bower.version %>\n" +
+  "* http://liftjs.github.io/\n" +
+  "*\n" +
+  "* Copyright 2013 - <%= grunt.template.today('yyyy') %> Pneumatic Web Technologies Corp. and other contributors\n" +
+  "* Released under the MIT license\n" +
+  "* http://liftjs.github.io/license\n" +
+  "*/\n" +
+  "\n\n";
 
 
 var gruntConfig = {
   clean: ['dist/'],
-  copy: {
-    'liftjs-runtime': {
-      src: 'src/lift.js',
-      dest: 'dist/lift-runtime.js'
+  mkdir: {
+    build: {
+      options: {
+        create: ['dist/']
+      },
     },
   },
-  connect: {
-    server: {
+  uglify: {
+    beautify: {
       options: {
-        base: '',
-        port: 80,
-      }
-    }
+        ASCIIOnly: true,
+        mangle: false,
+        width: 80,
+        compress: {
+          drop_console: true,
+        },
+        beautify: {
+          beautify: true,
+          indent_level: 2,
+        },
+        preserveComments: 'some',
+        banner: JS_COPYRIGHT_HEADER
+      },
+      files: [
+        { expand: true, src: ['**/*.js'], dest: 'dist/modules/', cwd: 'src/modules' },
+        { expand: true, src: ['lift.js'], dest: 'dist/', flatten: true, cwd: 'src/' },
+      ]
+    },
   },
   exec: {
-    // build: 'node ./build.js "es5/object/getownpropertynames"'
-    optimized: {
+    all: {
       cmd: 'node ./build.js "*"'
     },
-    unoptimzied: {
-      cmd: 'node ./build.js'
-    }
+    getownpropertynames: {
+      cmd: 'node ./build.js "es5/object/getownpropertynames"'
+    },
   },
   mocha: {
     options: {
@@ -81,7 +107,7 @@ var gruntConfig = {
     },
     test: {
       options: {
-        urls: distTestUrls.concat(srcTestUrls)
+        urls: srcTestUrls.concat(optimizedTestUrls)
       }
     }
   },
@@ -93,13 +119,19 @@ var gruntConfig = {
       src: ['tests/spec/build_spec.js']
     }
   },
+  connect: {
+    server: {
+      options: {
+        base: '',
+        port: 80,
+      }
+    }
+  },
   watch: {
     scripts: {
       files: ['src/**/*.js', 'tests/spec/**/*.js', 'tests/*.html'],
       tasks: [
-        'clean',
-        'exec:optimized',
-        'copy:liftjs-runtime',
+        'build',
         '_mochaTests',
       ],
     },
@@ -116,7 +148,7 @@ var gruntConfig = {
     },
     all: {
       options: {
-        urls: distTestUrls.concat(srcTestUrls),
+        urls: srcTestUrls.concat(optimizedTestUrls),
         tunnelTimeout: 5,
         build: '<%= grunt.template.today("isoDateTime") %>',
         browsers: browsers,
@@ -142,10 +174,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-mkdir');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-bump');
+
+  gruntConfig.bower = grunt.file.readJSON('bower.json');
 
   grunt.initConfig(gruntConfig);
 
@@ -156,8 +191,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     'clean',
-    'exec:optimized',
-    'copy:liftjs-runtime',
+    'mkdir',
+    'uglify:beautify',
+    'exec:all',
   ]);
 
   grunt.registerTask('test', [

@@ -335,16 +335,30 @@ function buildBrowserBundles(browser, reqs) {
 
 function customizeLiftJS(reqs, browserVersions, source) {
   var sourceLines = source.split('\n');
+  var foundBuildOptimizationsLine = false;
+  var BUILD_OPTIMIZATIONS_RE = /^(\s*)(var reqs, bundleVersions = \{\},)/;
 
   for(var i = 0; i < sourceLines.length; i++) {
     var line = sourceLines[i];
-    if(line.trim() === '// -- BUILD REQUIREMENTS --') {
-      var pad = line.match(/(\s*)/)[1];
-      sourceLines.splice(i, 1,
-        pad + 'reqs = ' + (Object.keys(reqs).length ? JSON.stringify(reqs) : null) + ';',
-        pad + 'bundle_versions = ' + JSON.stringify(browserVersions) + ';'
+    var matches = line.match(BUILD_OPTIMIZATIONS_RE);
+    if(matches) {
+      foundBuildOptimizationsLine = true;
+
+      var pad = matches[1];
+      // Replace `var reqs, bundleVersions...` with a single `var`
+      sourceLines[i] = line.replace(BUILD_OPTIMIZATIONS_RE, pad + 'var');
+      // push the optimzied req and bundleVersions above the current line
+      sourceLines.splice(i, 0,
+        pad + 'var reqs = ' + (Object.keys(reqs).length ? JSON.stringify(reqs) : null) + ';',
+        pad + 'var bundleVersions = ' + JSON.stringify(browserVersions) + ';'
       );
     }
+  }
+
+  if(foundBuildOptimizationsLine) {
+    console.log(chalk.blue('Created optimized lift JS'));
+  } else {
+    console.error('Unable to find spot to  in lift.js');
   }
 
   return sourceLines.join('\n');

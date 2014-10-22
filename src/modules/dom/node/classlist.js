@@ -1,3 +1,5 @@
+/*global DOMException */
+
 define(function() {
   "use strict";
 
@@ -10,14 +12,15 @@ define(function() {
    * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
    */
 
-  /*global DOMException */
 
   /*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/
   // NOTE: Heavily modified from above to work with the rest of lift JS.
 
   var div = document.createElement('div');
+  div.innerHTML = '<svg></svg>';
+  var svg = div.firstChild;
 
-  if('classList' in div) { return false; }
+  if(('classList' in div) && svg && ('classList' in svg)) { return false; }
 
   var strTrim = String.prototype.trim || function() {
     return this.replace(/^\s+|\s+$/g, '');
@@ -41,8 +44,8 @@ define(function() {
   // on non-DOMExceptions. Error's toString() is sufficient here.
   DOMEx.prototype = Error.prototype;
 
-  function ClassList(elem) {
-    var classes = strTrim.call(elem.className).split(/\s+/);
+  function DOMTokenList(elem) {
+    var classes = strTrim.call(elem.getAttribute('class') || '').split(/\s+/);
     var self = this;
 
     function checkTokenAndGetIndex(token) {
@@ -56,7 +59,7 @@ define(function() {
     }
 
     function updateClassName() {
-      elem.className = self.toString();
+      elem.setAttribute('class', self.toString());
     }
 
     this.item = function(i) {
@@ -123,7 +126,11 @@ define(function() {
 
   function classListGetter() {
     /*jshint validthis:true */
-    return new ClassList(this);
+    if(!(this instanceof Element)) {
+      throw new TypeError("'classList' getter called on an object that does not implement interface Element.");
+    }
+
+    return new DOMTokenList(this);
   }
 
   var elemCtrProto = Element.prototype;

@@ -7,11 +7,13 @@
 
 <link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
 
+<title>Lift JS Tests - No AMD</title>
+
 <script>
 (function() {
   var s = document.createElement('script');
-  var useRuntime = location.search.indexOf('liftjs=runtime') !== -1;
-  s.src = '../dist/lift' + (useRuntime ? '-runtime' : '') + '.js';
+  var useOptimized = location.search.indexOf('liftjs=optimized') !== -1;
+  s.src = '../dist/lift' + (useOptimized ? '-optimized' : '') + '.js';
   document.getElementsByTagName('head')[0].appendChild(s);
 })();
 </script>

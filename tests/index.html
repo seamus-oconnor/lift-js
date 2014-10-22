@@ -7,29 +7,22 @@
 
 <link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
 
-<!-- <script src="../bower_components/curl/src/curl.js"></script> -->
+<title>Lift JS Tests</title>
+
 <script src="../bower_components/requirejs/require.js"></script>
 <script>
-// curl.config({
-//   apiName: 'require',
-//   preloads: ['liftjs'],
-//   baseUrl: '',
-//   packages: [
-//     {
-//       location: '../dist/',
-//       name: 'liftjs',
-//       main: 'lift'
-//     }
-//   ]
-// });
+var useSrc = location.search.indexOf('liftjs=source') !== -1;
+var useOptimized = location.search.indexOf('liftjs=optimized') !== -1;
+var titleLabel = useOptimized ? 'optimized' : useSrc ? 'source' : 'dist';
+
 require.config({
   deps: ['liftjs'],
   baseUrl: '',
   packages: [
     {
-      location: '../dist/',
+      location: useSrc ? '../src' : '../dist/',
       name: 'liftjs',
-      main: 'lift' + (location.search.indexOf('liftjs=runtime') !== -1 ? '-runtime' : '' )
+      main: 'lift' + (useOptimized ? '-optimized' : '' )
     }
   ]
 });
@@ -48,7 +41,10 @@ require.config({
 </head>
 <body>
 
-<h1>Lift JS</h1>
+<h1>Lift JS <small></small></h1>
+<script>
+document.getElementsByTagName('h1')[0].lastChild.appendChild(document.createTextNode(titleLabel));
+</script>
 
 <div id="mocha"></div>
 
