@@ -10,5 +10,6 @@
 
 define(function() {
   "use strict";
-  return Object.freeze ? !1 : (Object.freeze = function() {}, !0);
+  return Object.freeze ? !1 : (console.warn("Unable to properly shim Object.freeze()."), 
+  Object.freeze = function() {}, !0);
 });

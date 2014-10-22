@@ -1,7 +1,7 @@
 {
   "name": "lift.js",
   "description": "Lift old browsers up to a modern level",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "authors": [
     "Séamus O'Connor <seamus.oconnor@pneumaticweb.com>"
   ],

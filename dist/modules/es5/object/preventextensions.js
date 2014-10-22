@@ -10,6 +10,6 @@
 
 define(function() {
   "use strict";
-  return Object.preventExtensions ? !1 : (Object.preventExtensions = function() {}, 
-  !0);
+  return Object.preventExtensions ? !1 : (console.warn("Unable to properly shim Object.preventExtensions()."), 
+  Object.preventExtensions = function() {}, !0);
 });

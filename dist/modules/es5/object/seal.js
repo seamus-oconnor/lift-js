@@ -10,5 +10,6 @@
 
 define(function() {
   "use strict";
-  return Object.seal ? !1 : (Object.seal = function() {}, !0);
+  return Object.seal ? !1 : (console.warn("Unable to properly shim Object.seal()."), 
+  Object.seal = function() {}, !0);
 });

@@ -73,7 +73,8 @@ define(function(elmod) {
     return this.fireEvent("on" + evt.type, evt), evt.returnValue === !1;
   }
   if (window.addEventListener) return !1;
-  if (!window.attachEvent) return null;
+  if (!window.attachEvent) return console.warn("Browser has support for neither window.addEventListener or window.attachEvent."), 
+  null;
   var attached_events_list = [], window_events = {};
   if (window.attachEvent && (window.addEventListener = shimWindowAddEventListener), 
   window.detachEvent && (window.removeEventListener = shimWindowRemoveEventListener), 
@@ -83,7 +84,8 @@ define(function(elmod) {
   Element.prototype.detachEvent && (Element.prototype.removeEventListener = shimRemoveEventListener), 
   window.CustomEvent || document.createEvent || (window.CustomEvent = shimCreateEvent("Event")), 
   !window.dispatchEvent) {
-    if (!document.fireEvent) return null;
+    if (!document.fireEvent) return console.warn("Browser has support for neither document.dispatchEvent or document.fireEvent."), 
+    null;
     Element.prototype.dispatchEvent || (Element.prototype.dispatchEvent = dispatchEvent), 
     document.dispatchEvent || (document.dispatchEvent = dispatchEvent), window.dispatchEvent || (window.dispatchEvent = function(evt) {
       for (var events = elmod.window_events[evt.type], i = 0, _len = events.length; _len > i; i++) events[i](evt);

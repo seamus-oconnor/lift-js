@@ -45,7 +45,8 @@ define(function() {
     -1 !== i && events.splice(i, 1), shimRemoveEventListener.call(this, name, fn, use_capture);
   }
   if (window.addEventListener) return !1;
-  if (!window.attachEvent) return null;
+  if (!window.attachEvent) return console.warn("Browser has support for neither window.addEventListener or window.attachEvent."), 
+  null;
   var attached_events_list = [], window_events = {};
   return window.attachEvent && (window.addEventListener = shimWindowAddEventListener), 
   window.detachEvent && (window.removeEventListener = shimWindowRemoveEventListener), 

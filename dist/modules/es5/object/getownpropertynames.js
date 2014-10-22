@@ -10,7 +10,8 @@
 
 define(function() {
   "use strict";
-  return Object.getOwnPropertyNames ? !1 : (Object.getOwnPropertyNames = function(o) {
+  return Object.getOwnPropertyNames ? !1 : (console.warn("Unable to properly shim Object.getOwnPropertyNames()."), 
+  Object.getOwnPropertyNames = function(o) {
     var result = [];
     for (var prop in o) o.hasOwnProperty(prop) && result.push(prop);
   }, !0);

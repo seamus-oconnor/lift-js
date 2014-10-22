@@ -34,12 +34,11 @@ define(function() {
     if (("get" in d || "set" in d) && ("value" in d || "writable" in d)) throw new TypeError("identity-confused descriptor");
     return d;
   }
-  if (Object.defineProperties) return !1;
-  if (Object.defineProperty) return Object.defineProperties = function(obj, properties) {
+  return Object.defineProperties ? !1 : Object.defineProperty ? (Object.defineProperties = function(obj, properties) {
     if ("object" != typeof obj || null === obj) throw new TypeError("object required");
     properties = Object(properties);
     for (var keys = Object.keys(properties), descs = [], i = 0; i < keys.length; i++) descs.push([ keys[i], convertToDescriptor(properties[keys[i]]) ]);
     for (i = 0; i < descs.length; i++) Object.defineProperty(obj, descs[i][0], descs[i][1]);
     return obj;
-  }, !0;
+  }, !0) : void console.warn("Unable to implement Object.defineProperties as Object.defineProperty is not available.");
 });

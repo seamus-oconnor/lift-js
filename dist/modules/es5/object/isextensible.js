@@ -10,5 +10,6 @@
 
 define(function() {
   "use strict";
-  return Object.isExtensible ? !1 : (Object.isExtensible = function() {}, !0);
+  return Object.isExtensible ? !1 : (console.warn("Unable to properly shim Object.isExtensible()."), 
+  Object.isExtensible = function() {}, !0);
 });

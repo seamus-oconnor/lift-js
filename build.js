@@ -94,6 +94,7 @@ function buildOptimizedLiftJs() {
 
     // Parse lift.js and output reqs and browser_ranges as JSON.
     var customLiftJS = liftBuilder.customizeLiftJS(reqs, browserVersions, liftJsSource);
+
     var outFp = fs.openSync(path.join(BUILD_DIR, 'lift-optimized.js'), 'w');
 
     try {
@@ -109,6 +110,10 @@ function main() {
   if(FEATURES.length > 0) {
     buildOptimizedLiftJs().then(function() {
       console.log("-- Build Complete --");
+    }, function(e) {
+      console.error(e + '');
+      console.log("-- Build Failed --");
+      process.exit(1);
     });
   } else {
     console.log('Nothing to do');

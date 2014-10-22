@@ -41,7 +41,9 @@
   function liftJSDefine(deps, fn) {
     function makeScript(id, callback) {
       var s = document.createElement("script");
-      s.src = baseUrl + id + ".js", s.onload = callback, s.onerror = function() {}, head.appendChild(s);
+      s.src = baseUrl + id + ".js", s.onload = callback, s.onerror = function() {
+        console.warn("Unable to load " + s.src);
+      }, head.appendChild(s);
     }
     function done() {
       count--, 0 === count && fn();
@@ -153,7 +155,9 @@
       break;
     }
   }
-  for (var reqs, bundleVersions = {}, deps = buildBundle() || walk(reqs || support, support, "./modules/"), now = new Date().getTime(), head = document.head || document.getElementsByTagName("head")[0], baseUrl = "/", scripts = document.getElementsByTagName("script"), i = scripts.length - 1; i >= 0; i--) {
+  var reqs, bundleVersions = {}, deps = buildBundle() || walk(reqs || support, support, "./modules/");
+  console.log("LiftJS: Optimized build?", void 0 !== reqs), console.log("LiftJS: AMD deps: " + (deps.length ? "[\n  " + deps.join(",\n  ") + "\n]" : "none"));
+  for (var now = new Date().getTime(), head = document.head || document.getElementsByTagName("head")[0], baseUrl = "/", scripts = document.getElementsByTagName("script"), i = scripts.length - 1; i >= 0; i--) {
     var script = scripts[i], url_match = script.src.match(/^((https?:\/\/|file:\/\/\/)[^\/]+(\/.+\/))lift[^\/]*\.js$/);
     if (url_match) {
       baseUrl = url_match[1];
@@ -167,8 +171,8 @@
   };
   "function" == typeof window.define && define.amd || (window.define = liftJSDefine, 
   liftJS.ready = !1, window.LiftJS = liftJS, window.require = function() {}), define(deps, function() {
-    new Date().getTime() - now;
-    return define === liftJSDefine && (delete window.define, liftJS.ready = !0, "function" == typeof liftJS.onload && liftJS.onload()), 
-    liftJS;
+    var howLong = new Date().getTime() - now;
+    return console.log("LiftJS: loaded deps in " + howLong + "ms"), define === liftJSDefine && (delete window.define, 
+    liftJS.ready = !0, "function" == typeof liftJS.onload && liftJS.onload()), liftJS;
   });
 }();

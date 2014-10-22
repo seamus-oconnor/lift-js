@@ -10,5 +10,6 @@
 
 define(function() {
   "use strict";
-  return Object.isSealed ? !1 : (Object.isSealed = function() {}, !0);
+  return Object.isSealed ? !1 : (console.warn("Unable to properly shim Object.isSealed()."), 
+  Object.isSealed = function() {}, !0);
 });

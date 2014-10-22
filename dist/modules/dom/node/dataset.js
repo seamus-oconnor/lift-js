@@ -62,6 +62,8 @@ define(function() {
         return getDatasetObject(this);
       }
     });
-  } catch (e) {}
+  } catch (e) {
+    console.warn("No support for element.datalist in this browser");
+  }
   return !0;
 });
