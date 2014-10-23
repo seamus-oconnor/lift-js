@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -16,14 +16,14 @@ define(function() {
       e: e,
       target: e.target || e.srcElement,
       type: "wheel",
-      deltaMode: "MozMousePixelScroll" == e.type ? 0 : 1,
+      deltaMode: "MozMousePixelScroll" === e.type ? 0 : 1,
       deltaX: 0,
       delatZ: 0,
       preventDefault: function() {
         e.preventDefault ? e.preventDefault() : e.returnValue = !1;
       }
     };
-    "mousewheel" == support ? (event.deltaY = -1 / 40 * e.wheelDelta, e.wheelDeltaX && (event.deltaX = -1 / 40 * e.wheelDeltaX)) : event.deltaY = e.detail;
+    "mousewheel" === support ? (event.deltaY = -1 / 40 * e.wheelDelta, e.wheelDeltaX && (event.deltaX = -1 / 40 * e.wheelDeltaX)) : event.deltaY = e.detail;
     var new_e = document.createEvent("MouseEvents");
     new_e.initMouseEvent("wheel", e.bubbles, e.cancelable, e.view, e.wheelData ? e.wheelData / -40 : e.detail, e.screenX, e.screenY, e.clientX, e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, e.relatedTarget), 
     (e.target || e.srcElement).dispatchEvent(new_e);

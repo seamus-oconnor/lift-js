@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -19,8 +19,8 @@ define(function() {
     }
     if ("object" != typeof desc || null === desc) throw new TypeError("bad desc");
     var d = {};
-    if (hasProperty(desc, "enumerable") && (d.enumerable = !!obj.enumerable), hasProperty(desc, "configurable") && (d.configurable = !!obj.configurable), 
-    hasProperty(desc, "value") && (d.value = obj.value), hasProperty(desc, "writable") && (d.writable = !!desc.writable), 
+    if (hasProperty(desc, "enumerable") && (d.enumerable = !!desc.enumerable), hasProperty(desc, "configurable") && (d.configurable = !!desc.configurable), 
+    hasProperty(desc, "value") && (d.value = desc.value), hasProperty(desc, "writable") && (d.writable = !!desc.writable), 
     hasProperty(desc, "get")) {
       var g = desc.get;
       if (!isCallable(g) && "undefined" !== g) throw new TypeError("bad get");

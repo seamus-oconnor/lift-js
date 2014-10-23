@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -29,7 +29,7 @@ define(function() {
   try {
     return new window.CustomEvent(), !1;
   } catch (e) {}
-  return CustomEvent.prototype = window.Event.prototype, MouseEvent.prototype = window.MouseEvent.prototype, 
+  return CustomEvent.prototype = window.Event.prototype, MouseEvent.prototype = (window.MouseEvent || window.Event).prototype, 
   document.createEvent && (window.CustomEvent = CustomEvent, window.MouseEvent = MouseEvent), 
   !1;
 });

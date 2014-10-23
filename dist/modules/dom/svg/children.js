@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -11,20 +11,21 @@
 define(function() {
   "use strict";
   var div = document.createElement("div");
-  if ("children" in div) return !1;
-  if (Object.defineProperty) {
-    var classListPropDesc = {
-      get: function() {
-        return classListGetter.call(this);
-      },
-      enumerable: !0,
-      configurable: !0
-    };
-    try {
-      Object.defineProperty(svgProto, "classList", classListPropDesc);
-    } catch (ex) {
-      -2146823252 === ex.number && (classListPropDesc.enumerable = !1, Object.defineProperty(svgProto, "classList", classListPropDesc));
-    }
-  } else Object.prototype.__defineGetter__ && svgProto.__defineGetter__("classList", classListGetter);
+  div.innerHTML = "<svg></svg>";
+  var svg = div.firstChild;
+  if ("classList" in div && svg && "classList" in svg) return !1;
+  var descriptor = {
+    get: function() {
+      for (var arr = [], child = this.firstChild; child; ) 1 === child.nodeType && arr.push(child), 
+      child = child.nextSibling;
+      return arr;
+    },
+    enumerable: !0
+  };
+  try {
+    Object.defineProperty(Element.prototype, "children", descriptor);
+  } catch (e) {
+    delete descriptor.enumerable, Object.defineProperty(Element.prototype, "children", descriptor);
+  }
   return !0;
 });

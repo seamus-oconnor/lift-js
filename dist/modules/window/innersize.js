@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -13,7 +13,7 @@ define(function() {
   function windowResize() {
     window.innerHeight = root.offsetHeight, window.innerWidth = root.offsetWidth;
   }
-  if (window.innerWidth && window.innerHeight) return !0;
+  if (window.innerWidth && window.innerHeight) return !1;
   var root = document.documentElement;
   return window.addEventListener ? window.addEventListener("resize", windowResize, !1) : window.attachEvent("onresize", windowResize), 
   windowResize(), !0;

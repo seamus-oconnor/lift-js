@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -69,6 +69,11 @@ define(function(elmod) {
     }
     return evt;
   }
+  function buildEvent(name) {
+    return function(type, properties) {
+      return shimCreateEvent(name, type, properties);
+    };
+  }
   function dispatchEvent(evt) {
     return this.fireEvent("on" + evt.type, evt), evt.returnValue === !1;
   }
@@ -82,7 +87,7 @@ define(function(elmod) {
   HTMLDocument.prototype.detachEvent && (HTMLDocument.prototype.removeEventListener = shimRemoveEventListener), 
   Element.prototype.attachEvent && (Element.prototype.addEventListener = shimAddEventListener), 
   Element.prototype.detachEvent && (Element.prototype.removeEventListener = shimRemoveEventListener), 
-  window.CustomEvent || document.createEvent || (window.CustomEvent = shimCreateEvent("Event")), 
+  window.CustomEvent || document.createEvent || (window.CustomEvent = buildEvent("Event")), 
   !window.dispatchEvent) {
     if (!document.fireEvent) return console.warn("Browser has support for neither document.dispatchEvent or document.fireEvent."), 
     null;

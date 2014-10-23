@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -14,7 +14,7 @@ define(function() {
   var location = window.location, oldURL = location.href, oldHash = location.hash;
   return setInterval(function() {
     var newURL = location.href, newHash = location.hash;
-    newHash != oldHash && "function" == typeof window.onhashchange && (window.onhashchange({
+    newHash !== oldHash && "function" == typeof window.onhashchange && (window.onhashchange({
       type: "hashchange",
       oldURL: oldURL,
       newURL: newURL

@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -11,7 +11,9 @@
 define(function() {
   "use strict";
   var div = document.createElement("div");
-  if ("children" in div) return !1;
+  div.innerHTML = "<svg></svg>";
+  var svg = div.firstChild;
+  if ("classList" in div && svg && "classList" in svg) return !1;
   var descriptor = {
     get: function() {
       for (var arr = [], child = this.firstChild; child; ) 1 === child.nodeType && arr.push(child), 

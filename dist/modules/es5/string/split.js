@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -16,10 +16,10 @@ define(function() {
     separator = new RegExp(separator.source, flags + "g");
     var separator2, match, lastIndex, lastLength;
     for (compliantExecNpcg || (separator2 = new RegExp("^" + separator.source + "$(?!\\s)", flags)), 
-    limit = limit === undef ? -1 >>> 0 : limit >>> 0; (match = separator.exec(this)) && (lastIndex = match.index + match[0].length, 
+    limit = void 0 === limit ? -1 >>> 0 : limit >>> 0; (match = separator.exec(this)) && (lastIndex = match.index + match[0].length, 
     !(lastIndex > lastLastIndex && (output.push(this.slice(lastLastIndex, match.index)), 
     !compliantExecNpcg && match.length > 1 && match[0].replace(separator2, function() {
-      for (var i = 1; i < arguments.length - 2; i++) arguments[i] === undef && (match[i] = undef);
+      for (var i = 1; i < arguments.length - 2; i++) void 0 === arguments[i] && (match[i] = void 0);
     }), match.length > 1 && match.index < this.length && Array.prototype.push.apply(output, match.slice(1)), 
     lastLength = match[0].length, lastLastIndex = lastIndex, output.length >= limit))); ) separator.lastIndex === match.index && separator.lastIndex++;
     return lastLastIndex === this.length ? (lastLength || !separator.test("")) && output.push("") : output.push(this.slice(lastLastIndex)), 

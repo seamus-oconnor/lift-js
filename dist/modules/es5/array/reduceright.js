@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.1.2
+* LiftJS Javascript Library v0.2.0
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -10,13 +10,16 @@
 
 define(function() {
   "use strict";
-  return Array.prototype.reduceRight ? !1 : (Array.prototype.reduceRight = function(callback, opt_initialValue) {
-    if (!this) throw new TypeError("this is null or not defined");
+  return Array.prototype.reduceRight ? !1 : (Array.prototype.reduceRight = function(callback) {
+    if (null === this || "undefined" == typeof this) throw new TypeError("Array.prototype.reduce called on null or undefined");
     if ("function" != typeof callback) throw new TypeError(callback + " is not a function");
-    var index, value, length = this.length >>> 0, isValueSet = !1;
-    for (1 < arguments.length && (value = opt_initialValue, isValueSet = !0), index = length - 1; index > -1; --index) this.hasOwnProperty(index) || (isValueSet ? value = callback(value, this[index], index, this) : (value = this[index], 
-    isValueSet = !0));
-    if (!isValueSet) throw new TypeError("Reduce of empty array with no initial value");
+    var value, t = Object(this), len = t.length >>> 0, k = len - 1;
+    if (arguments.length >= 2) value = arguments[1]; else {
+      for (;k >= 0 && !(k in t); ) k--;
+      if (0 > k) throw new TypeError("Reduce of empty array with no initial value");
+      value = t[k--];
+    }
+    for (;k >= 0; k--) k in t && (value = callback(value, t[k], k, t));
     return value;
   }, !0);
 });
