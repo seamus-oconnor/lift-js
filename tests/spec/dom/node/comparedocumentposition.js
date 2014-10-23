@@ -1,3 +1,5 @@
+/*jshint bitwise:false*/
+
 describe("DOM Element #dataset", function() {
   function get(tag) {
     return div.getElementsByTagName(tag)[0];

@@ -1,11 +1,13 @@
-define(function() {
- "use strict";
+/*jshint proto:true*/
 
-  if(Object.getPrototypeOf) return false;
+define(function() {
+  "use strict";
+
+  if(Object.getPrototypeOf) { return false; }
 
   // Originally from:
   // http://forrst.com/posts/Object_getPrototypeOf_shim-eNB
-  if(typeof this.__proto__ === "object") {
+  if(typeof this.__proto__ === 'object') {
     Object.getPrototypeOf = function shimObjectGetPrototypeOf(obj) {
       return obj.__proto__;
     };

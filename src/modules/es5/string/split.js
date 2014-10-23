@@ -1,9 +1,9 @@
 define(function() {
   "use strict";
 
-  var compliantExecNpcg = /()??/.exec("")[1] === undefined; // NPCG: nonparticipating capturing group
+  var compliantExecNpcg = /()??/.exec('')[1] === undefined; // NPCG: nonparticipating capturing group
 
-  if(compliantExecNpcg) return false;
+  if(compliantExecNpcg) { return false; }
 
   // Originally From:
   // http://blog.stevenlevithan.com/archives/cross-browser-split
@@ -46,23 +46,23 @@ define(function() {
     /*jshint validthis:true */
 
     // If `separator` is not a regex, use `nativeSplit`
-    if (Object.prototype.toString.call(separator) !== "[object RegExp]") {
-        return nativeSplit.call(this, separator, limit);
+    if (Object.prototype.toString.call(separator) !== '[object RegExp]') {
+      return nativeSplit.call(this, separator, limit);
     }
 
     var output = [];
-    var flags = (separator.ignoreCase ? "i" : "") +
-              (separator.multiline  ? "m" : "") +
-              (separator.extended   ? "x" : "") + // Proposed for ES6
-              (separator.sticky     ? "y" : ""); // Firefox 3+
+    var flags = (separator.ignoreCase ? 'i' : '') +
+              (separator.multiline  ? 'm' : '') +
+              (separator.extended   ? 'x' : '') + // Proposed for ES6
+              (separator.sticky     ? 'y' : ''); // Firefox 3+
     var lastLastIndex = 0;
       // Make `global` and avoid `lastIndex` issues by working with a copy
-    separator = new RegExp(separator.source, flags + "g");
+    separator = new RegExp(separator.source, flags + 'g');
     var separator2, match, lastIndex, lastLength;
     // this += ""; // Type-convert
     if (!compliantExecNpcg) {
       // Doesn't need flags gy, but they don't hurt
-      separator2 = new RegExp("^" + separator.source + "$(?!\\s)", flags);
+      separator2 = new RegExp('^' + separator.source + '$(?!\\s)', flags);
     }
     /* Values for `limit`, per the spec:
      * If undefined: 4294967295 // Math.pow(2, 32) - 1
@@ -71,7 +71,8 @@ define(function() {
      * If negative number: 4294967296 - Math.floor(Math.abs(limit))
      * If other: Type-convert, then use the above rules
      */
-    limit = limit === undef ?
+    /*jshint bitwise:false, boss:true, loopfunc:true*/
+    limit = limit === undefined ?
       -1 >>> 0 : // Math.pow(2, 32) - 1
       limit >>> 0; // ToUint32(limit)
     while (match = separator.exec(this)) {
@@ -84,8 +85,8 @@ define(function() {
         if (!compliantExecNpcg && match.length > 1) {
           match[0].replace(separator2, function () {
             for (var i = 1; i < arguments.length - 2; i++) {
-              if (arguments[i] === undef) {
-                match[i] = undef;
+              if (arguments[i] === undefined) {
+                match[i] = undefined;
               }
             }
           });

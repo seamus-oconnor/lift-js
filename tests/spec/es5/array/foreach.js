@@ -20,7 +20,7 @@ describe("Array.prototype.forEach", function() {
   });
 
   it("should have the correct index", function() {
-    [0,1,2,3,4,5,6].forEach(function(item, i, arr) {
+    [0,1,2,3,4,5,6].forEach(function(item, i/*, arr*/) {
       expect(item).to.be(i);
     });
   });

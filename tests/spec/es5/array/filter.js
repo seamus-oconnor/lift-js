@@ -4,13 +4,13 @@ describe("Array.prototype.filter", function() {
   });
 
   it("should return [12, 44]", function() {
-    expect([12, 4, 8, 1, 44].filter(function(item, index, array) {
+    expect([12, 4, 8, 1, 44].filter(function(item/*, index, array*/) {
       return item >= 10;
     })).to.eql([12, 44]);
   });
 
   it("should have the correct index", function() {
-    [0,1,2,3,4,5,6].filter(function(item, i, arr) {
+    [0,1,2,3,4,5,6].filter(function(item, i/*, arr*/) {
       expect(item).to.be(i);
     });
   });

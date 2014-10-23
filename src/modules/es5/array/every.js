@@ -1,7 +1,9 @@
+/*jshint bitwise:false*/
+
 define(function() {
   "use strict";
 
-  if(Array.prototype.every) return false;
+  if(Array.prototype.every) { return false; }
 
   // Originally from:
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every
@@ -14,8 +16,8 @@ define(function() {
 
     t = Object(this);
     len = t.length >>> 0;
-    if (typeof fun !== 'function') {
-        throw new TypeError();
+    if(typeof fun !== 'function') {
+      throw new TypeError();
     }
 
     thisp = arguments[1];

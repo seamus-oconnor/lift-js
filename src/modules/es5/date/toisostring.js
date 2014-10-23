@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(Date.prototype.toISOString) return false;
+  if(Date.prototype.toISOString) { return false; }
 
   // Oringally from:
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toIsoString

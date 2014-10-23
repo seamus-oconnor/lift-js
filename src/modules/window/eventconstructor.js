@@ -2,6 +2,7 @@ define(function() {
   "use strict";
 
   try {
+    /*jshint nonew:false*/
     new window.CustomEvent();
     return false;
   } catch(e) {}
@@ -39,7 +40,7 @@ define(function() {
     );
     return evt;
   }
-  MouseEvent.prototype = window.MouseEvent.prototype;
+  MouseEvent.prototype = (window.MouseEvent || window.Event).prototype;
 
   if(document.createEvent) {
     window.CustomEvent = CustomEvent;

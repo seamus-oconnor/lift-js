@@ -3,7 +3,7 @@ define(function() {
 
   // Copied from: http://stackoverflow.com/questions/8334286/cross-browser-compare-document-position
 
-  if(window.Node && window.Node.prototype.compareDocumentPosition) return false;
+  if(window.Node && window.Node.prototype.compareDocumentPosition) { return false; }
 
   // IE 8 doesn't have Node so we have to use Element
   (window.Node || window.Element).prototype.compareDocumentPosition = function shimCompareDocumentPosition(other) {
@@ -26,9 +26,9 @@ define(function() {
 
     function identifyWhichIsFirst(node) {
       if (node === other) {
-        return "other";
+        return 'other';
       } else if (node === reference) {
-        return "reference";
+        return 'reference';
       }
     }
 
@@ -65,7 +65,7 @@ define(function() {
         return Node.DOCUMENT_POSITION_PRECEDING;
       default:
         return Node.DOCUMENT_POSITION_FOLLOWING;
-    }
+      }
 
     throw new Error("Shim version of compareDocumentPosition didn't work right.");
   };

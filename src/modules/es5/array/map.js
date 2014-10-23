@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(Array.prototype.map) return false;
+  if(Array.prototype.map) { return false; }
 
   // Originally from:
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
@@ -20,6 +20,8 @@ define(function() {
 
     // 2. Let lenValue be the result of calling the Get internal method of O with the argument "length".
     // 3. Let len be ToUint32(lenValue).
+
+    /*jshint bitwise:false*/
     var len = O.length >>> 0;
 
     // 4. If IsCallable(callback) is false, throw a TypeError exception.

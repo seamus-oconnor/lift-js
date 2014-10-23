@@ -1,7 +1,9 @@
+/*global ActiveXObject*/
+
 define(function() {
   "use strict";
 
-  if(window.XMLHttpRequest) return false;
+  if(window.XMLHttpRequest) { return false; }
 
   // TODO: Build out shim version
   var $todo = function() {
@@ -48,7 +50,7 @@ define(function() {
     onload: $todo,
     onerror: $todo,
     onreadystatechange: $todo
-  }
+  };
 
   window.XMLHttpRequest = shimXMLHttpRequest;
 });

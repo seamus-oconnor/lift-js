@@ -1,7 +1,8 @@
+
 define(function() {
   "use strict";
 
-  if(Array.from) return false;
+  if(Array.from) { return false; }
 
   // Copied from: https://github.com/paulmillr/es6-shim/blob/master/es6-shim.js
   Array.from = function shimArrayFrom(iterable) {
@@ -14,6 +15,7 @@ define(function() {
 
     var Arr = this;
     var list = Object(iterable);
+    /*jshint bitwise:false*/
     var length = list.length >>> 0;
     var result = typeof this === 'function' ? Object(new Arr(length)) : new Array(length);
 

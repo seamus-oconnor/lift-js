@@ -1,7 +1,9 @@
+/*jshint bitwise:false*/
+
 define(function() {
   "use strict";
 
-  if(String.prototype.repeat) return false;
+  if(String.prototype.repeat) { return false; }
 
   // Copied from: https://github.com/monolithed/ECMAScript-6/blob/master/ES6.js
   String.prototype.repeat = function shimStringRepeat(count) {

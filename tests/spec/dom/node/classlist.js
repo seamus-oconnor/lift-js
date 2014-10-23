@@ -1,3 +1,5 @@
+/*jshint loopfunc:true*/
+
 describe("DOM Element #classlist", function() {
   var div = document.createElement('div');
   div.innerHTML = '<svg></svg>';
@@ -5,7 +7,6 @@ describe("DOM Element #classlist", function() {
 
   beforeEach(function() {
     div.className = 'foo bar';
-    svg.setAttribute('class', 'foo bar');
   });
 
   var nodes = {
@@ -13,6 +14,10 @@ describe("DOM Element #classlist", function() {
   };
 
   if(svg) {
+    beforeEach(function() {
+      svg.setAttribute('class', 'foo bar');
+    });
+
     nodes.svg = svg;
 
     it("does support svg", function() {

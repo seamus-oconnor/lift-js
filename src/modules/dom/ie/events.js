@@ -1,3 +1,5 @@
+/*global HTMLDocument*/
+
 define(function(elmod) {
   "use strict";
 
@@ -37,6 +39,8 @@ define(function(elmod) {
   }
 
   function shimAddEventListener(name, fn, use_capture) {
+    /*jshint validthis:true*/
+
     if(use_capture) {
       throw new Error('Capture not supported in IE');
     }
@@ -53,6 +57,7 @@ define(function(elmod) {
   }
 
   function shimRemoveEventListener(name, fn, use_capture) {
+    /*jshint validthis:true*/
     if(use_capture) {
       throw new Error('Capture not supported in IE');
     }
@@ -67,6 +72,7 @@ define(function(elmod) {
   }
 
   function shimWindowAddEventListener(name, fn, use_capture) {
+    /*jshint validthis:true*/
     if(use_capture) {
       throw new Error('Capture not supported in IE');
     }
@@ -78,13 +84,15 @@ define(function(elmod) {
   }
 
   function shimWindowRemoveEventListener(name, fn, use_capture) {
+    /*jshint validthis:true*/
+
     if(use_capture) {
       throw new Error('Capture not supported in IE');
     }
 
     var events = window_events[name] || [];
     var i = events.indexOf(fn);
-    if(i !== -1) events.splice(i, 1);
+    if(i !== -1) { events.splice(i, 1); }
 
     shimRemoveEventListener.call(this, name, fn, use_capture);
   }
@@ -193,7 +201,7 @@ define(function(elmod) {
   }
 
   if(!window.CustomEvent && !document.createEvent) {
-    window.CustomEvent = shimCreateEvent('Event');
+    window.CustomEvent = buildEvent('Event');
 
     // return true;
   }

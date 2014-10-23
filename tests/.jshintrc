@@ -114,6 +114,8 @@
     "predef"        : [         // Extra globals.
         "describe",
         "it",
+        "expect",
+        "beforeEach"
     ],
     "indent"        : 2         // Specify indentation spacing
 }

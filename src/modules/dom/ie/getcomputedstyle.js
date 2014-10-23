@@ -4,7 +4,13 @@ define(function() {
   // Originally from:
   // https://github.com/shawnbot/aight/blob/master/js/computed-style.js
 
-  if(window.getComputedStyle) return false;
+  if(window.getComputedStyle) { return false; }
+
+  function NotSupportedError(message) {
+    this.message = message;
+  }
+  NotSupportedError.prototype = new Error();
+  NotSupportedError.prototype.name = 'NotSupportedError';
 
   window.getComputedStyle = function shimGetComputedStyle() {
     var Push = Array.prototype.push;
@@ -17,29 +23,29 @@ define(function() {
       rootSize;
 
       fontSize = fontSize !== null ? fontSize : /%|em/.test(suffix) && element.parentElement ? getComputedStylePixel(element.parentElement, 'fontSize', null) : 16;
-      rootSize = property == 'fontSize' ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
+      rootSize = property === 'fontSize' ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
 
-      return suffix == '%' ? size / 100 * rootSize :
-             suffix == 'cm' ? size * 0.3937 * 96 :
-             suffix == 'em' ? size * fontSize :
-             suffix == 'in' ? size * 96 :
-             suffix == 'mm' ? size * 0.3937 * 96 / 10 :
-             suffix == 'pc' ? size * 12 * 96 / 72 :
-             suffix == 'pt' ? size * 96 / 72 :
+      return suffix === '%' ? size / 100 * rootSize :
+             suffix === 'cm' ? size * 0.3937 * 96 :
+             suffix === 'em' ? size * fontSize :
+             suffix === 'in' ? size * 96 :
+             suffix === 'mm' ? size * 0.3937 * 96 / 10 :
+             suffix === 'pc' ? size * 12 * 96 / 72 :
+             suffix === 'pt' ? size * 96 / 72 :
              size;
     }
 
     function setShortStyleProperty(style, property) {
       var
-      borderSuffix = property == 'border' ? 'Width' : '',
+      borderSuffix = property === 'border' ? 'Width' : '',
       t = property + 'Top' + borderSuffix,
       r = property + 'Right' + borderSuffix,
       b = property + 'Bottom' + borderSuffix,
       l = property + 'Left' + borderSuffix;
 
-      style[property] = (style[t] == style[r] && style[t] == style[b] && style[t] == style[l] ? [ style[t] ] :
-                         style[t] == style[b] && style[l] == style[r] ? [ style[t], style[r] ] :
-                         style[l] == style[r] ? [ style[t], style[r], style[b] ] :
+      style[property] = (style[t] === style[r] && style[t] === style[b] && style[t] === style[l] ? [ style[t] ] :
+                         style[t] === style[b] && style[l] === style[r] ? [ style[t], style[r] ] :
+                         style[l] === style[r] ? [ style[t], style[r], style[b] ] :
                          [ style[t], style[r], style[b], style[l] ]).join(' ');
     }
 
@@ -49,16 +55,28 @@ define(function() {
       currentStyle = element.currentStyle,
       fontSize = getComputedStylePixel(element, 'fontSize');
 
-      for (var property in currentStyle) {
-        Push.call(style, property == 'styleFloat' ? 'float' : property.replace(/[A-Z]/, function (match) {
+      function dasherize(property) {
+        property.replace(/[A-Z]/, function(match) {
           return '-' + match.toLowerCase();
-        }));
+        });
+      }
 
-        if (property == 'width') style[property] = element.offsetWidth + 'px';
-        else if (property == 'height') style[property] = element.offsetHeight + 'px';
-        else if (property == 'styleFloat') style['float'] = currentStyle[property];
-        else if (/margin.|padding.|border.+W/.test(property) && style[property] != 'auto') style[property] = Math.round(getComputedStylePixel(element, property, fontSize)) + 'px';
-        else style[property] = currentStyle[property];
+      for (var property in currentStyle) {
+        if(currentStyle.hasOwnProperty(property)) {
+          Push.call(style, property === 'styleFloat' ? 'float' : dasherize(property));
+
+          if (property === 'width') {
+            style[property] = element.offsetWidth + 'px';
+          } else if (property === 'height') {
+            style[property] = element.offsetHeight + 'px';
+          } else if (property === 'styleFloat') {
+            style['float'] = currentStyle[property];
+          } else if (/margin.|padding.|border.+W/.test(property) && style[property] !== 'auto') {
+            style[property] = Math.round(getComputedStylePixel(element, property, fontSize)) + 'px';
+          } else {
+            style[property] = currentStyle[property];
+          }
+        }
       }
 
       setShortStyleProperty(style, 'margin');
@@ -84,7 +102,7 @@ define(function() {
           property.match(/^(?:cssText|length|\d+)$/)) ? '' : this[property];
       },
       item: function (index) {
-        if (property === undefined) {
+        if(index === undefined) {
           throw new TypeError('Not enough arguments to CSSStyleDeclaration.item');
         }
         return this[parseInt(index, 10)];

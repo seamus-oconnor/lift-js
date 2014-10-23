@@ -190,6 +190,9 @@
     // opera: /Opera .../, TODO: Old Opera Presto or new Opera Webkit?
   };
 
+  var reqs, bundleVersions = {};
+  /*! BUILD OPTIMIZATIONS */
+
   var browser;
   for(var name in browsers) {
     if(browsers.hasOwnProperty(name)) {
@@ -233,10 +236,6 @@
 
     return [];
   }
-
-  // Replaced with build.js optimizations
-  var reqs, bundleVersions = {};
-
 
   // If there are built reqs (i.e. array.indexOf, string.trim, etc) then we know
   // that there are built bundles for known browsers too. If we were able to

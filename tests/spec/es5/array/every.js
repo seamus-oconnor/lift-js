@@ -1,5 +1,5 @@
 describe("Array.prototype.every", function() {
-  function isBigEnough(item, i, arr) {
+  function isBigEnough(item/*, i, arr*/) {
     return item >= 10;
   }
 
@@ -16,7 +16,7 @@ describe("Array.prototype.every", function() {
   });
 
   it("should have the correct index", function() {
-    [0,1,2,3,4,5,6].every(function(item, i, arr) {
+    [0,1,2,3,4,5,6].every(function(item, i/*, arr*/) {
       expect(item).to.be(i);
     });
   });

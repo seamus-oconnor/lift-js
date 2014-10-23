@@ -3,7 +3,7 @@ define(function() {
 
   var test = document.createElement('div');
 
-  if('textContent' in test) return false;
+  if('textContent' in test) { return false; }
 
   Object.defineProperty(Element.prototype, 'textContent', {
     get: function getTextContent() {

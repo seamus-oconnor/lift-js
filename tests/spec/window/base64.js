@@ -9,24 +9,33 @@ describe("window #atob and #btoa", function() {
 
   it("should encode", function() {
     for(var input in map) {
-      expect(window.btoa(input)).to.be(map[input]);
+      if(map.hasOwnProperty(input)) {
+        expect(window.btoa(input)).to.be(map[input]);
+      }
     }
   });
 
   it("should decode", function() {
     for(var input in map) {
-      expect(window.atob(map[input])).to.be(input);
+      if(map.hasOwnProperty(input)) {
+        expect(window.atob(map[input])).to.be(input);
+      }
     }
   });
 
   it("should roundtrip", function() {
     for(var input in map) {
-      expect(window.atob(window.btoa(input))).to.be(input);
-      expect(window.atob(window.btoa(map[input]))).to.be(map[input]);
+      if(map.hasOwnProperty(input)) {
+        expect(window.atob(window.btoa(input))).to.be(input);
+        expect(window.atob(window.btoa(map[input]))).to.be(map[input]);
+      }
     }
   });
 
   it("should throw exception", function() {
     expect(window.btoa).withArgs("\u6F22\u5B57").to.throwError();
+    expect(window.atob).withArgs("ABCD1").to.throwError();
+    expect(window.atob).withArgs("ABCD1=").to.throwError();
+    expect(window.atob).withArgs("ABCD1==").to.throwError();
   });
 });

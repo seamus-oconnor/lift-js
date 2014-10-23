@@ -1,12 +1,26 @@
+/*jshint bitwise:false*/
+
 define(function() {
   "use strict";
 
-  if(window.atob && window.btoa) return false;
+  if(window.atob && window.btoa) { return false; }
 
-  // Originally from:
-  // https://github.com/davidchambers/Base64.js/blob/master/base64.js
+  /* Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
+   * Version: 1.0
+   * LastModified: Dec 25 1999
+   * This library is free.  You can redistribute it and/or modify it.
+   */
 
-  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  var base64EncodeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  var base64DecodeChars = new Array(
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
+    -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+    -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1);
 
   function InvalidCharacterError(message) {
     this.message = message;
@@ -14,59 +28,114 @@ define(function() {
   InvalidCharacterError.prototype = new Error();
   InvalidCharacterError.prototype.name = 'InvalidCharacterError';
 
-  // encoder
-  // [https://gist.github.com/999166] by [https://github.com/nignag]
-  if(!window.btoa) {
-    window.btoa = function(input) {
-      for (
-        // initialize result and counter
-        var block, charCode, idx = 0, map = chars, output = '';
-        // if the next input index does not exist:
-        //   change the mapping table to "="
-        //   check if d has no fractional digits
-        input.charAt(idx | 0) || (map = '=', idx % 1);
-        // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-        output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-      ) {
-        charCode = input.charCodeAt(idx += 3 / 4);
+  function base64encode(str) {
+    var out, i, len;
+    var c1, c2, c3;
 
-        if(charCode > 0xFF) {
-          throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
-        }
-
-        block = block << 8 | charCode;
+    len = str.length;
+    i = 0;
+    out = '';
+    while(i < len) {
+      c1 = str.charCodeAt(i++);
+      if(c1 > 0xFF) {
+        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
       }
-
-      return output;
-    };
+      if(i === len) {
+        out += base64EncodeChars.charAt(c1 >> 2);
+        out += base64EncodeChars.charAt((c1 & 0x3) << 4);
+        out += '==';
+        break;
+      }
+      c2 = str.charCodeAt(i++);
+      if(i === len) {
+        out += base64EncodeChars.charAt(c1 >> 2);
+        out += base64EncodeChars.charAt(((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4));
+        out += base64EncodeChars.charAt((c2 & 0xF) << 2);
+        out += '=';
+        break;
+      }
+      c3 = str.charCodeAt(i++);
+      out += base64EncodeChars.charAt(c1 >> 2);
+      out += base64EncodeChars.charAt(((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4));
+      out += base64EncodeChars.charAt(((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6));
+      out += base64EncodeChars.charAt(c3 & 0x3F);
+    }
+    return out;
   }
 
-  // decoder
-  // [https://gist.github.com/1020396] by [https://github.com/atk]
-  if(!window.atob) {
-    window.atob = function (input) {
-      input = input.replace(/=+$/, '');
-      if (input.length % 4 == 1) {
-        throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-      }
-      for (
-        // initialize result and counters
-        var bc = 0, bs, buffer, idx = 0, output = '';
-        // get next character
-        buffer = input.charAt(idx++);
-        // character found in table? initialize bit storage and add its ascii value;
-        ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-          // and if not first of each 4 characters,
-          // convert the first 8 bits to one ascii character
-          bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-      ) {
-        // try to find character in table (0-63, not found => -1)
-        buffer = chars.indexOf(buffer);
+  function base64decode(str) {
+    var c1, c2, c3, c4;
+
+    str = str.replace(/=+$/, '');
+
+    var len = str.length;
+    if(len % 4 === 1) {
+      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
+    }
+
+    var i = 0;
+    var out = '';
+    while(i < len) {
+      /* c1 */
+      do {
+        c1 = base64DecodeChars[str.charCodeAt(i++) & 0xff];
+      } while(i < len && c1 === -1);
+
+      if(c1 === -1) {
+        break;
       }
 
-      return output;
-    };
+      /* c2 */
+      do {
+        c2 = base64DecodeChars[str.charCodeAt(i++) & 0xff];
+      } while(i < len && c2 === -1);
+
+      if(c2 === -1) {
+        break;
+      }
+
+      out += String.fromCharCode((c1 << 2) | ((c2 & 0x30) >> 4));
+
+      /* c3 */
+      do {
+        c3 = str.charCodeAt(i++) & 0xff;
+        if(c3 === 61) {
+          return out;
+        }
+        c3 = base64DecodeChars[c3];
+      } while(i < len && c3 === -1);
+
+      if(c3 === -1) {
+        break;
+      }
+
+      out += String.fromCharCode(((c2 & 0XF) << 4) | ((c3 & 0x3C) >> 2));
+
+      /* c4 */
+      do {
+        c4 = str.charCodeAt(i++) & 0xff;
+        if(c4 === 61) {
+          return out;
+        }
+        c4 = base64DecodeChars[c4];
+      } while(i < len && c4 === -1);
+
+      if(c4 === -1) {
+        break;
+      }
+
+      out += String.fromCharCode(((c3 & 0x03) << 6) | c4);
+    }
+
+    return out;
+  }
+
+  if(!window.btoa) {
+    window.btoa = base64encode;
+  }
+  if(!window.atob) {
+    window.atob = base64decode;
   }
 
   return true;
-}());
+});

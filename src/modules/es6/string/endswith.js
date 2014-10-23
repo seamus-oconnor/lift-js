@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(String.prototype.endsWith) return false;
+  if(String.prototype.endsWith) { return false; }
 
   // Originally from:
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith

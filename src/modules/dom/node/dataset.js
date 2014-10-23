@@ -3,7 +3,7 @@ define(function() {
 
   var test = document.createElement('div');
 
-  if('dataset' in test) return false;
+  if('dataset' in test) { return false; }
 
   // TODO:
   // http://johndyer.name/native-browser-get-set-properties-in-javascript/

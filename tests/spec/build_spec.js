@@ -1,4 +1,5 @@
-/* jshint node:true */
+/*jshint node:true*/
+/*global -expect*/
 
 var liftBuilder = require('../../src/builder');
 var expect = require('expect');

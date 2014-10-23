@@ -49,9 +49,6 @@ document.getElementsByTagName('h1')[0].lastChild.appendChild(document.createText
 <div id="mocha"></div>
 
 <div id="wasteland"></div>
-<script>
-var wasteland = document.getElementById('wasteland');
-</script>
 
 <script src="../bower_components/mocha/mocha.js"></script>
 <script src="../bower_components/expect/index.js"></script>
@@ -97,6 +94,7 @@ var wasteland = document.getElementById('wasteland');
 <script src="spec/window/raf.js"></script>
 
 <script>
+/*global require*/
 require([], runMochaTests);
 </script>
 

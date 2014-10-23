@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(document.getElementsByClassName) return false;
+  if(document.getElementsByClassName) { return false; }
 
   // TODO: Implement fallback that doesn't depend on .querySelectorAll()
 

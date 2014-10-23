@@ -3,7 +3,7 @@ define(function() {
 
   var test = document.createElement('div');
 
-  if('transition' in test) return false;
+  if('transition' in test) { return false; }
 
   var vendors = {
     'MozTransition': 'transitionend',

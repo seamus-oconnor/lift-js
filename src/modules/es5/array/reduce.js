@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(Array.prototype.reduce) return false;
+  if(Array.prototype.reduce) { return false; }
 
   // Originally from:
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
@@ -14,6 +14,7 @@ define(function() {
       throw new TypeError(callback + ' is not a function');
     }
 
+    /*jshint bitwise:false*/
     var index, value,
         length = this.length >>> 0,
         isValueSet = false;

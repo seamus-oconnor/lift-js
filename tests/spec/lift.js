@@ -1,3 +1,5 @@
+/*global require*/
+
 describe("lift.js", function() {
   var liftjs;
 

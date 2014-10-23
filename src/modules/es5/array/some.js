@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(Array.prototype.some) return false;
+  if(Array.prototype.some) { return false; }
 
   // Originally from:
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
@@ -10,6 +10,7 @@ define(function() {
       throw new TypeError("this is null or not defined");
     }
 
+    /*jshint bitwise:false*/
     var thisp, i,
         t = Object(this),
         len = t.length >>> 0;

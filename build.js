@@ -7,7 +7,9 @@ var path = require('path');
 var chalk = require('chalk');
 var argv = require('minimist')(process.argv.slice(2), { boolean: [ 'v', 'verbose', 'h', 'help' ] });
 var liftBuilder = require('./src/builder');
-var Promise = require("bluebird");
+if(!global.Promise) {
+  global.Promise = require('bluebird');
+}
 
 
 const BUILD_DIR = path.join(__dirname, 'dist');

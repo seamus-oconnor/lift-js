@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(Object.create) return false;
+  if(Object.create) { return false; }
 
   // Originally from:
   // http://stackoverflow.com/questions/10141086/understanding-crockfords-object-create-shim

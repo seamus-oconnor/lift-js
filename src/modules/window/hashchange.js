@@ -3,7 +3,7 @@ define(function() {
 
   // Originally from:
   // https://developer.mozilla.org/en-US/docs/Web/Reference/Events/hashchange
-  if('onhashchange' in window) return false;
+  if('onhashchange' in window) { return false; }
 
   var location = window.location;
   var oldURL = location.href;
@@ -15,7 +15,7 @@ define(function() {
     var newHash = location.hash;
 
     // if the hash has changed and a handler has been bound...
-    if(newHash != oldHash && typeof window.onhashchange === "function") {
+    if(newHash !== oldHash && typeof window.onhashchange === "function") {
       // execute the handler
       window.onhashchange({
         type: "hashchange",

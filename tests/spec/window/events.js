@@ -1,4 +1,12 @@
 describe("DOM Element #addEventListeners", function() {
+  var wasteland;
+
+  beforeEach(function() {
+    wasteland = document.createElement('div');
+    document.getElementById('wasteland').innerHTML = '';
+    document.getElementById('wasteland').appendChild(wasteland);
+  });
+
   it("should catch a click event", function(done) {
     var anchor = document.createElement('a');
     anchor.addEventListener('click', function(e) {

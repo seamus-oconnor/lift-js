@@ -16,12 +16,13 @@ describe("Array.prototype.indexOf", function() {
   });
 
   it("should not find objects", function() {
-    var stuff = [1, 'foo', {a:1}, null, undefined, Infinity, NaN, new Date(), /a/, window];
+    var stuff = [1, 'foo', {a:1}, null, 100, Infinity, NaN, new Date(), /a/, window];
     // not the same strict equality
     expect(stuff.indexOf({a:1})).to.be(-1);
     expect(stuff.indexOf(NaN)).to.be(-1);
     expect(stuff.indexOf(new Date())).to.be(-1);
     expect(stuff.indexOf(/a/)).to.be(-1);
+    expect(stuff.indexOf(undefined)).to.be(-1);
     expect(stuff.indexOf(2)).to.be(-1);
     expect(stuff.indexOf('bar')).to.be(-1);
   });

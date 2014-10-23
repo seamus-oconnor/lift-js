@@ -2,8 +2,10 @@ define(function() {
   "use strict";
 
   var div = document.createElement('div');
+  div.innerHTML = '<svg></svg>';
+  var svg = div.firstChild;
 
-  if('children' in div) { return false; }
+  if(('classList' in div) && svg && ('classList' in svg)) { return false; }
 
   var descriptor = {
     'get': function() {

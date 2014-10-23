@@ -9,45 +9,38 @@ define(function() {
             document.onmousewheel !== undefined ? "mousewheel" : // Webkit and IE support at least "mousewheel"
             "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
 
-  if(support === 'wheel') return false;
-
-  if(window.addEventListener) {
-    window.addEventListener(support, wheelMoved, false);
-    // handle MozMousePixelScroll in older Firefox
-    window.addEventListener('MozMousePixelScroll', wheelMoved, false);
-  } else {
-    window.attachEvent('on' + support, wheelMoved);
-  }
+  if(support === 'wheel') { return false; }
 
   function wheelMoved(e) {
     e = e || window.event;
 
     // create a normalized event object
     var event = {
-        // keep a ref to the original event object
-        e: e,
-        target: e.target || e.srcElement,
-        type: "wheel",
-        deltaMode: e.type == "MozMousePixelScroll" ? 0 : 1,
-        deltaX: 0,
-        delatZ: 0,
-        preventDefault: function() {
-            if(e.preventDefault)
-              e.preventDefault();
-            else
-              e.returnValue = false;
+      // keep a ref to the original event object
+      e: e,
+      target: e.target || e.srcElement,
+      type: "wheel",
+      deltaMode: e.type === 'MozMousePixelScroll' ? 0 : 1,
+      deltaX: 0,
+      delatZ: 0,
+      preventDefault: function() {
+        if(e.preventDefault) {
+          e.preventDefault();
+        } else {
+          e.returnValue = false;
         }
+      }
     };
 
     // calculate deltaY (and deltaX) according to the event
-    if ( support == "mousewheel" ) {
-        event.deltaY = - 1/40 * e.wheelDelta;
-        // Webkit also support wheelDeltaX
-        if(e.wheelDeltaX) {
-          event.deltaX = - 1/40 * e.wheelDeltaX;
-        }
+    if(support === 'mousewheel') {
+      event.deltaY = - 1/40 * e.wheelDelta;
+      // Webkit also support wheelDeltaX
+      if(e.wheelDeltaX) {
+        event.deltaX = - 1/40 * e.wheelDeltaX;
+      }
     } else {
-        event.deltaY = e.detail;
+      event.deltaY = e.detail;
     }
 
     // it's time to fire the callback
@@ -72,6 +65,14 @@ define(function() {
     );
 
     (e.target || e.srcElement).dispatchEvent(new_e);
+  }
+
+  if(window.addEventListener) {
+    window.addEventListener(support, wheelMoved, false);
+    // handle MozMousePixelScroll in older Firefox
+    window.addEventListener('MozMousePixelScroll', wheelMoved, false);
+  } else {
+    window.attachEvent('on' + support, wheelMoved);
   }
 
   return true;

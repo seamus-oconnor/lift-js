@@ -2,18 +2,18 @@
 
 var fs = require('fs');
 var path = require('path');
-var util = require('util');
 var chalk = require('chalk');
 var winston = require('winston');
 var requirejs = require('requirejs');
-var Promise = require("bluebird");
+if(!global.Promise) {
+  global.Promise = require('bluebird');
+}
 
 
 const HR = '---------------------------------------';
 const SRC_DIR = __dirname;
 const PROJECT_DIR = path.join(SRC_DIR, '..');
 const BUILD_DIR = path.join(PROJECT_DIR, 'dist');
-const TMP_DIR = path.join(PROJECT_DIR, 'tmp');
 const BROWSERS_DIR = path.join(SRC_DIR, 'browsers');
 // const DEFINE_RE = /^\s*define\s*\(([^,]+,\s*)?function\s*\((.+)$/;
 
@@ -336,19 +336,16 @@ function buildBrowserBundles(browser, reqs) {
 function customizeLiftJS(reqs, browserVersions, source) {
   var sourceLines = source.split('\n');
   var foundBuildOptimizationsLine = false;
-  var BUILD_OPTIMIZATIONS_RE = /^(\s*)(var reqs, bundleVersions = \{\},)/;
 
   for(var i = 0; i < sourceLines.length; i++) {
     var line = sourceLines[i];
-    var matches = line.match(BUILD_OPTIMIZATIONS_RE);
-    if(matches) {
+    if(line.trim() === '/*! BUILD OPTIMIZATIONS */') {
       foundBuildOptimizationsLine = true;
 
-      var pad = matches[1];
-      // Replace `var reqs, bundleVersions...` with a single `var`
-      sourceLines[i] = line.replace(BUILD_OPTIMIZATIONS_RE, pad + 'var');
-      // push the optimzied req and bundleVersions above the current line
-      sourceLines.splice(i, 0,
+      var pad = line.match(/^(\s*)/)[1];
+
+      // push the optimzied req and bundleVersions onto the current line
+      sourceLines.splice(i, 1,
         pad + 'var reqs = ' + (Object.keys(reqs).length ? JSON.stringify(reqs) : null) + ';',
         pad + 'var bundleVersions = ' + JSON.stringify(browserVersions) + ';'
       );

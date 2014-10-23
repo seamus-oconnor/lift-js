@@ -14,7 +14,7 @@ describe("Array.prototype.reduceRight", function() {
   });
 
   it("should return 0", function() {
-    expect([12, 4, 8, 1, 44].reduceRight(function(prev, item) {
+    expect([12, 4, 8, 1, 44].reduceRight(function(/*prev, item*/) {
       return 0;
     })).to.eql(0);
   });
@@ -32,7 +32,7 @@ describe("Array.prototype.reduceRight", function() {
   });
 
   it("should have the correct index", function() {
-    [0,1,2,3,4,5,6].reduceRight(function(prev, item, i, arr) {
+    [0,1,2,3,4,5,6].reduceRight(function(prev, item, i/*, arr*/) {
       expect(item).to.be(i);
     });
   });

@@ -1,6 +1,7 @@
 # version   feature
 
 3.5         es5:array:map
+# 3.5         es5:json
 
 3.6         window:hashchange
 

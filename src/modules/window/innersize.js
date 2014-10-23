@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(window.innerWidth && window.innerHeight) return true;
+  if(window.innerWidth && window.innerHeight) { return false; }
 
   var root = document.documentElement;
 

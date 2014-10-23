@@ -16,12 +16,13 @@ describe("Array.prototype.lastIndexOf", function() {
   });
 
   it("should not find objects", function() {
-    var stuff = [1, 'foo', {a:1}, null, undefined, Infinity, NaN, new Date(), /a/, window];
+    var stuff = [1, 'foo', {a:1}, null, 100, Infinity, NaN, new Date(), /a/, window];
     // not the same strict equality
     expect(stuff.lastIndexOf({a:1})).to.be(-1);
     expect(stuff.lastIndexOf(NaN)).to.be(-1);
     expect(stuff.lastIndexOf(new Date())).to.be(-1);
     expect(stuff.lastIndexOf(/a/)).to.be(-1);
+    expect(stuff.lastIndexOf(undefined)).to.be(-1);
     expect(stuff.lastIndexOf(2)).to.be(-1);
     expect(stuff.lastIndexOf('bar')).to.be(-1);
   });

@@ -1,7 +1,8 @@
+
 define(function() {
   "use strict";
 
-  if(Array.prototype.filter) return false;
+  if(Array.prototype.filter) { return false; }
 
   // Originally from:
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
@@ -12,19 +13,23 @@ define(function() {
     }
 
     var objects = Object(this);
+    /*jshint bitwise:false*/
     var len = objects.length >>> 0;
     if (typeof fun !== 'function') {
       throw new TypeError();
     }
 
     var res = [];
+    var i = 0;
     var thisp = arguments[1];
-    for (var i in objects) {
-      if (objects.hasOwnProperty(i)) {
-        if (fun.call(thisp, objects[i], i, objects)) {
-          res.push(objects[i]);
+    while(i < len) {
+      if(objects.hasOwnProperty(i)) {
+        var val = objects[i];
+        if (fun.call(thisp, val, i, objects)) {
+          res.push(val);
         }
       }
+      i++;
     }
 
     return res;

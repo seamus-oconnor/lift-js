@@ -1,5 +1,6 @@
 # version   feature
 
+# 4             es5:json
 5             window:hashchange
 
 5.1           es5:object:seal

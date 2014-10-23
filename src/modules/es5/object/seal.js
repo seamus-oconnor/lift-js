@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(Object.seal) return false;
+  if(Object.seal) { return false; }
 
   // Developer warning in debug mode. During build all console.* are stripped.
   // Making seal() a no-op is mostly ok as browsers that do support

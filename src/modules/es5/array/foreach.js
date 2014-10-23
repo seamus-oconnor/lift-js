@@ -1,7 +1,7 @@
 define(function() {
   "use strict";
 
-  if(Array.prototype.forEach) return false;
+  if(Array.prototype.forEach) { return false; }
 
   // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
   // Production steps of ECMA-262, Edition 5, 15.4.4.18
@@ -15,6 +15,7 @@ define(function() {
         throw new TypeError("this is null or not defined");
       }
 
+      /*jshint bitwise:false*/
       var kValue,
           // 1. Let O be the result of calling ToObject passing the |this| value as the argument.
           O = Object(this),

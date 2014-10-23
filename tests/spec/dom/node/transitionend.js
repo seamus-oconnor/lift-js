@@ -1,4 +1,12 @@
 describe("DOM Element #transitionEnd", function() {
+  var wasteland;
+
+  beforeEach(function() {
+    wasteland = document.createElement('div');
+    document.getElementById('wasteland').innerHTML = '';
+    document.getElementById('wasteland').appendChild(wasteland);
+  });
+
   var support = false;
   var prefixes = ['msT', 'WebkitT', 'OT', 'MozT', 't'];
   var div = document.createElement('a');
@@ -19,6 +27,7 @@ describe("DOM Element #transitionEnd", function() {
         done();
       }, false);
       wasteland.appendChild(a);
+      /*jshint expr:true*/
       document.body.offsetTop; // flush layout
       a.style.color = 'white';
     });

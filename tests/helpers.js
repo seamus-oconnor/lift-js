@@ -1,4 +1,6 @@
-function runMochaTests() {
+/*global mocha*/
+
+window.runMochaTests = function runMochaTests() {
   var runner = mocha.run();
 
   var failedTests = [];
