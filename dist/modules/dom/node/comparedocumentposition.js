@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.2.0
+* LiftJS Javascript Library v0.2.1
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
