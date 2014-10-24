@@ -27,12 +27,6 @@ define(function() {
   }
   var compliantExecNpcg = void 0 === /()??/.exec("")[1];
   if (compliantExecNpcg) return !1;
-  /*!
-   * Cross-Browser Split 1.1.1
-   * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
-   * Available under the MIT License
-   * ECMAScript compliant, uniform cross-browser split method
-   */
   var nativeSplit = String.prototype.split;
   return String.prototype.split = shimSplit, !0;
 });

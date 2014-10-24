@@ -53,7 +53,6 @@ define(function() {
     if (!(this instanceof Element)) throw new TypeError("'classList' getter called on an object that does not implement interface Element.");
     return new DOMTokenList(this);
   }
-  /*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js*/
   var div = document.createElement("div");
   div.innerHTML = "<svg></svg>";
   var svg = div.firstChild;

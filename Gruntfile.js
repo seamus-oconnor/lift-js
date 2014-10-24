@@ -46,6 +46,8 @@ var optimizedTestUrls = srcTestUrls.map(function(url) {
   return url + '?liftjs=optimized';
 });
 
+var NO_AMD_DIST_TEST_URL = DEV_HOST + TEST_PATH + '/noamd.html?liftjs=optimized';
+
 
 var JS_COPYRIGHT_HEADER = "" +
   "/*!\n" +
@@ -55,8 +57,7 @@ var JS_COPYRIGHT_HEADER = "" +
   "* Copyright 2013 - <%= grunt.template.today('yyyy') %> Pneumatic Web Technologies Corp. and other contributors\n" +
   "* Released under the MIT license\n" +
   "* http://liftjs.github.io/license\n" +
-  "*/\n" +
-  "\n\n";
+  "*/\n\n\n";
 
 
 var UGLIFY_OPTIONS = {
@@ -67,7 +68,7 @@ var UGLIFY_OPTIONS = {
     beautify: true,
     indent_level: 2,
   },
-  preserveComments: 'some',
+  preserveComments: false,
   banner: JS_COPYRIGHT_HEADER
 };
 
@@ -164,10 +165,20 @@ var gruntConfig = {
   'saucelabs-mocha': {
     quick: {
       options: {
-        urls: [ DEV_HOST + TEST_PATH + '/index.html' ],
+        urls: [ NO_AMD_DIST_TEST_URL ],
         tunnelTimeout: 5,
         browsers: popularBrowsers,
         testname: 'popular browsers',
+        // tags: ["master"]
+      }
+    },
+    browsers: {
+      options: {
+        urls: [ NO_AMD_DIST_TEST_URL ],
+        tunnelTimeout: 5,
+        build: '<%= grunt.template.today("isoDateTime") %>',
+        browsers: browsers,
+        testname: 'all browsers',
         // tags: ["master"]
       }
     },
@@ -234,10 +245,16 @@ module.exports = function(grunt) {
     '_mochaTests',
   ]);
 
-  grunt.registerTask('test:browsers', [
+  grunt.registerTask('test:quick', [
     'build',
     'connect',
     'saucelabs-mocha:quick',
+  ]);
+
+  grunt.registerTask('test:browsers', [
+    'build',
+    'connect',
+    'saucelabs-mocha:browsers',
   ]);
 
   grunt.registerTask('test:all', [
