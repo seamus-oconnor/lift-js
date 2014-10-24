@@ -163,13 +163,22 @@ var gruntConfig = {
     },
   },
   'saucelabs-mocha': {
+    oneoff: {
+      options: {
+        urls: [ NO_AMD_DIST_TEST_URL ],
+        tunnelTimeout: 5,
+        browsers: [ { platform: "Windows 7", browserName: "internet explorer", version: "9" } ],
+        testname: 'one off test',
+      }
+    },
     quick: {
       options: {
         urls: [ NO_AMD_DIST_TEST_URL ],
         tunnelTimeout: 5,
         browsers: popularBrowsers,
         testname: 'popular browsers',
-        // tags: ["master"]
+        maxRetries: 2,
+        tags: ["master"]
       }
     },
     browsers: {
@@ -178,8 +187,9 @@ var gruntConfig = {
         tunnelTimeout: 5,
         build: '<%= grunt.template.today("isoDateTime") %>',
         browsers: browsers,
-        testname: 'all browsers',
-        // tags: ["master"]
+        testname: 'all browsers - 1 url',
+        maxRetries: 2,
+        tags: ["master"]
       }
     },
     all: {
@@ -188,10 +198,11 @@ var gruntConfig = {
         tunnelTimeout: 5,
         build: '<%= grunt.template.today("isoDateTime") %>',
         browsers: browsers,
-        testname: 'all browsers',
+        testname: 'all browsers - release',
+        maxRetries: 2,
         // tags: ["master"]
       }
-    }
+    },
   },
   bump: {
     options: {
@@ -245,15 +256,18 @@ module.exports = function(grunt) {
     '_mochaTests',
   ]);
 
+  grunt.registerTask('test:oneoff', [
+    'test',
+    'saucelabs-mocha:oneoff',
+  ]);
+
   grunt.registerTask('test:quick', [
-    'build',
-    'connect',
+    'test',
     'saucelabs-mocha:quick',
   ]);
 
   grunt.registerTask('test:browsers', [
-    'build',
-    'connect',
+    'test',
     'saucelabs-mocha:browsers',
   ]);
 
