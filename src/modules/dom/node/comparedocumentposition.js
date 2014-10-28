@@ -67,7 +67,7 @@ define(function() {
         return Node.DOCUMENT_POSITION_FOLLOWING;
     }
 
-    console.warn('Shim version of compareDocumentPosition didn\'t work right.');
+    throw new Error('Shim version of compareDocumentPosition didn\'t work right.');
   };
 
   if(!window.Node) {

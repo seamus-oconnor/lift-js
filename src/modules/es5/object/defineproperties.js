@@ -4,8 +4,9 @@ define(function() {
   if(Object.defineProperties) { return false; }
 
   if(!Object.defineProperty) {
-    console.warn('Unable to implement Object.defineProperties as Object.defineProperty is not available.');
-    return;
+    return {
+      error: "Unable to shim Object.defineProperties. Object.defineProperty is unavailable."
+    };
   }
 
   function convertToDescriptor(desc) {

@@ -12,6 +12,6 @@ describe("lift.js", function() {
 
   it("should have loaded", function() {
     expect(liftjs).to.be.ok();
-    expect(liftjs).to.only.have.keys('reqs', 'browser', 'support');
+    expect(liftjs).to.only.have.keys('reqs', 'browser', 'support'/* , 'log' */);
   });
 });

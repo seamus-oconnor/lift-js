@@ -3,8 +3,6 @@ define(function() {
 
   if(Object.getOwnPropertyNames) { return false; }
 
-  console.warn('Unable to properly shim Object.getOwnPropertyNames().');
-
   Object.getOwnPropertyNames = function getOwnPropertyNames(o) {
     var result = [];
 
@@ -15,5 +13,7 @@ define(function() {
     }
   };
 
-  return true;
+  return {
+    warn: "Unable to properly shim Object.getOwnPropertyNames()."
+  };
 });

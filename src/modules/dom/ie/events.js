@@ -1,6 +1,6 @@
 /*global HTMLDocument*/
 
-define(function(elmod) {
+define(function() {
   'use strict';
 
   // TODO: look at https://github.com/WebReflection/ie8/blob/master/src/ie8.js
@@ -229,7 +229,7 @@ define(function(elmod) {
 
     if(!window.dispatchEvent) {
       window.dispatchEvent = function(evt) {
-        var events = elmod.window_events[evt.type];
+        var events = window_events[evt.type];
         for(var i = 0, _len = events.length; i < _len; i++) {
           events[i](evt);
         }

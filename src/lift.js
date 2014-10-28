@@ -267,31 +267,44 @@
 
   // Very crude AMD based define that will only work within the limited scope
   // needed for LiftJS modules. Does not work with nested dependencies.
-  function liftJSDefine(deps, fn) {
-    if(arguments.length === 1) {
-      fn = deps;
-      deps = [];
+  function liftJSDefine() {
+    var args = Array.prototype.slice.call(arguments);
+    var fn = args.pop(), deps = [], moduleId = null;
+
+    if(arguments.length >= 2) {
+      deps = args.pop();
+    }
+    if(arguments.length >= 3) {
+      moduleId = args.pop();
     }
     var count = deps.length;
+    // liftJS.log.push('define() w/ ' + count + ' deps.' + (count > 0 ? ' deps: ' + deps.join(', ')));
 
     function buildLoad() {
+      // liftJS.log.push('buildLoad');
       var done = false;
 
       return function load() {
         /*jshint validthis:true*/
 
         var rs = this.readyState;
+        // liftJS.log.push('script.load called. Ready state: ' + rs);
         if(!done && (!rs || rs === 'loaded' || rs === 'complete')) {
           done = true;
+
+          // liftJS.log.push('script.load actually loaded');
 
           // Handle memory leak in IE
           this.onload = this.onreadystatechange = null;
           if(head && this.parentNode) {
-              head.removeChild(this);
+            // liftJS.log.push('script.load removing script tag');
+            head.removeChild(this);
           }
 
           count--;
+          // liftJS.log.push('count:' + count);
           if(count === 0) {
+            // liftJS.log.push('script.load: calling callback fn() ' + typeof(fn) + fn);
             fn();
           }
         }
@@ -318,7 +331,8 @@
   var liftJS = {
     browser: browser,
     support: support,
-    reqs: reqs
+    reqs: reqs,
+    // log: []
   };
 
   if(!(typeof window.define === 'function' && define.amd)) { // no AMD define()
@@ -331,6 +345,11 @@
   // Define the liftjs module depending on a bundle of AMD modules or runtime
   // discovered dependencies.
   define(deps, function() {
+    // var el = document.getElementById('LiftJSLog');
+    // if(el) {
+    //   el.innerHTML = liftJS.log.join('<br>');
+    // }
+
     var howLong = (new Date().getTime() - now);
     console.log('LiftJS: loaded deps in ' + howLong + 'ms');
 

@@ -84,7 +84,9 @@ define(function() {
       }
     });
   } catch(e) {
-    console.warn('No support for element.datalist in this browser');
+    return {
+      error: "No support for element.datalist in this browser"
+    };
   }
 
   return true;

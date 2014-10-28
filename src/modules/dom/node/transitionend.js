@@ -22,8 +22,9 @@ define(function() {
   }
 
   if(eventName === null) {
-    console.warn("Unable to shim transitionend");
-    return null;
+    return {
+      error: "Unable to shim transitionend"
+    };
   }
 
   var builtinAEL = Element.prototype.addEventListener;
