@@ -39,16 +39,22 @@
     }
   }
   function liftJSDefine(deps, fn) {
-    function makeScript(id, callback) {
-      var s = document.createElement("script");
-      s.src = baseUrl + id + ".js", s.onload = callback, s.onerror = function() {}, head.appendChild(s);
+    function buildLoad() {
+      var done = !1;
+      return function() {
+        var rs = this.readyState;
+        done || rs && "loaded" !== rs && "complete" !== rs || (done = !0, this.onload = this.onreadystatechange = null, 
+        head && this.parentNode && head.removeChild(this), count--, 0 === count && fn());
+      };
     }
-    function done() {
-      count--, 0 === count && fn();
-    }
+    function error() {}
     1 === arguments.length && (fn = deps, deps = []);
     var count = deps.length;
-    if (0 === count) fn(); else for (var i = deps.length - 1; i >= 0; i--) makeScript(deps[i], done);
+    if (0 === count) fn(); else for (var i = deps.length - 1; i >= 0; i--) {
+      var s = document.createElement("script");
+      s.src = baseUrl + deps[i] + ".js", s.onload = s.onreadystatechange = buildLoad(), 
+      s.onerror = error, head.appendChild(s);
+    }
   }
   var ua = navigator.userAgent, testel = document.createElement("div");
   testel.innerHTML = "<svg></svg>";
@@ -109,7 +115,7 @@
       base64: !(!window.atob || !window.btoa),
       raf: !(!window.requestAnimationFrame || !window.cancelAnimationFrame),
       eventconstructor: test(function() {
-        return !!new window.CustomEvent("foo");
+        return !!new window.CustomEvent("foo") && !!new window.MouseEvent("bar");
       }),
       console: window.console && console.log
     },
@@ -153,14 +159,13 @@
       break;
     }
   }
-  for (var deps = buildBundle() || walk(reqs || support, support, "./modules/"), now = new Date().getTime(), head = document.head || document.getElementsByTagName("head")[0], baseUrl = "/", scripts = document.getElementsByTagName("script"), i = scripts.length - 1; i >= 0; i--) {
-    var script = scripts[i], url_match = script.src.match(/^((https?:\/\/|file:\/\/\/)[^\/]+(\/.+\/))lift[^\/]*\.js$/);
-    if (url_match) {
-      baseUrl = url_match[1];
-      break;
+  var deps = buildBundle() || walk(reqs || support, support, "./modules/"), now = new Date().getTime(), head = document.head || document.getElementsByTagName("head")[0], LIFTJS_URL_RE = /^(.*\/)lift[^\/]*\.js$/, thisScript = function() {
+    if (document.currentScript) return document.currentScript;
+    for (var scripts = document.getElementsByTagName("script"), i = scripts.length - 1; i >= 0; i--) {
+      var script = scripts[i];
+      if (LIFTJS_URL_RE.test(script.src)) return script;
     }
-  }
-  var liftJS = {
+  }(), baseUrl = thisScript.src.match(LIFTJS_URL_RE)[1] || "/", liftJS = {
     browser: browser,
     support: support,
     reqs: reqs
@@ -168,7 +173,14 @@
   "function" == typeof window.define && define.amd || (window.define = liftJSDefine, 
   liftJS.ready = !1, window.LiftJS = liftJS, window.require = function() {}), define(deps, function() {
     new Date().getTime() - now;
-    return define === liftJSDefine && (delete window.define, liftJS.ready = !0, "function" == typeof liftJS.onload && liftJS.onload()), 
-    liftJS;
+    if (define === liftJSDefine) {
+      try {
+        delete window.define;
+      } catch (e) {
+        window.define = void 0;
+      }
+      liftJS.ready = !0, "function" == typeof liftJS.onload && liftJS.onload();
+    }
+    return liftJS;
   });
 }();

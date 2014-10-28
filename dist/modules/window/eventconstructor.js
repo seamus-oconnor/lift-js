@@ -26,10 +26,20 @@ define(function() {
     return evt.initMouseEvent("click", params.bubbles || !1, params.cancelable || !1, params.view || window, params.detail || 0, params.screenX || 0, params.screenY || 0, params.clientX || 0, params.clientY || 0, params.ctrlKey || !1, params.altKey || !1, params.shiftKey || !1, params.metaKey || !1, params.button || 0, params.relatedTarget || null), 
     evt;
   }
+  var shimmed = {
+    customEvent: !1,
+    mouseEvent: !1
+  };
+  CustomEvent.prototype = window.Event.prototype, MouseEvent.prototype = (window.MouseEvent || window.Event).prototype;
   try {
-    return new window.CustomEvent(), !1;
-  } catch (e) {}
-  return CustomEvent.prototype = window.Event.prototype, MouseEvent.prototype = (window.MouseEvent || window.Event).prototype, 
-  document.createEvent && (window.CustomEvent = CustomEvent, window.MouseEvent = MouseEvent), 
-  !1;
+    new window.CustomEvent();
+  } catch (e) {
+    window.CustomEvent = CustomEvent, shimmed.customEvent = !0;
+  }
+  try {
+    new window.MouseEvent();
+  } catch (e) {
+    window.MouseEvent = MouseEvent, shimmed.mouseEvent = !0;
+  }
+  return shimmed;
 });

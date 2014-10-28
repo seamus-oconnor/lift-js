@@ -10,11 +10,11 @@
 
 define(function() {
   "use strict";
-  var is_shimmed = !1;
-  window.console || (window.console = {}, is_shimmed = !0);
+  var shimmed = {};
+  window.console || (window.console = {}, shimmed.console = !0);
   for (var noop = function() {}, console_methods = [ "log", "debug", "info", "warn", "error", "profile", "profileEnd", "time", "timeEnd" ], i = console_methods.length; i--; ) {
     var name = console_methods[i];
-    window.console[name] || (window.console[name] = noop, is_shimmed = !0);
+    window.console[name] || (window.console[name] = noop, shimmed[name] = !0);
   }
-  return is_shimmed;
+  return shimmed;
 });

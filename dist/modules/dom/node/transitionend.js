@@ -12,14 +12,11 @@ define(function() {
   "use strict";
   var test = document.createElement("div");
   if ("transition" in test) return !1;
-  var vendors = {
-    MozTransition: "transitionend",
-    OTransition: "oTransitionEnd",
-    WebkitTransition: "webkitTransitionEnd",
-    msTransition: "MSTransitionEnd"
-  }, eventName = null;
-  for (var name in vendors) name in test.style && (eventName = vendors[name]);
-  if (null === eventName) return null;
+  for (var vendors = [ [ "MozTransition", "transitionend" ], [ "OTransition", "oTransitionEnd" ], [ "WebkitTransition", "webkitTransitionEnd" ], [ "WebkitTransition", "WebkitTransitionEnd" ], [ "msTransition", "MSTransitionEnd" ] ], eventName = null, i = vendors.length - 1; i >= 0; i--) {
+    var vendor = vendors[i];
+    vendor[0] in test.style && (eventName = vendor[1]);
+  }
+  if (null === eventName) return console.warn("Unable to shim transitionend"), null;
   var builtinAEL = Element.prototype.addEventListener;
   Element.prototype.addEventListener = function(name, fn, capture) {
     builtinAEL.call(this, "transitionend" === name ? eventName : name, fn, capture);

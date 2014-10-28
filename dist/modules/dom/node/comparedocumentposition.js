@@ -39,7 +39,7 @@ define(function() {
      default:
       return Node.DOCUMENT_POSITION_FOLLOWING;
     }
-    throw new Error("Shim version of compareDocumentPosition didn't work right.");
+    console.warn("Shim version of compareDocumentPosition didn't work right.");
   }, window.Node || (window.Node = {
     DOCUMENT_POSITION_DISCONNECTED: 1,
     DOCUMENT_POSITION_PRECEDING: 2,
