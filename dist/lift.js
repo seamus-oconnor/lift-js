@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.2.2
+* LiftJS Javascript Library v0.2.3
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -38,7 +38,7 @@
       return [];
     }
   }
-  function liftJSDefine(deps, fn) {
+  function liftJSDefine() {
     function buildLoad() {
       var done = !1;
       return function() {
@@ -48,7 +48,8 @@
       };
     }
     function error() {}
-    1 === arguments.length && (fn = deps, deps = []);
+    var args = Array.prototype.slice.call(arguments), fn = args.pop(), deps = [], moduleId = null;
+    arguments.length >= 2 && (deps = args.pop()), arguments.length >= 3 && (moduleId = args.pop());
     var count = deps.length;
     if (0 === count) fn(); else for (var i = deps.length - 1; i >= 0; i--) {
       var s = document.createElement("script");

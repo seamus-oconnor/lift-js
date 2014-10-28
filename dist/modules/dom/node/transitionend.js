@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.2.2
+* LiftJS Javascript Library v0.2.3
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -16,7 +16,9 @@ define(function() {
     var vendor = vendors[i];
     vendor[0] in test.style && (eventName = vendor[1]);
   }
-  if (null === eventName) return console.warn("Unable to shim transitionend"), null;
+  if (null === eventName) return {
+    error: "Unable to shim transitionend"
+  };
   var builtinAEL = Element.prototype.addEventListener;
   Element.prototype.addEventListener = function(name, fn, capture) {
     builtinAEL.call(this, "transitionend" === name ? eventName : name, fn, capture);

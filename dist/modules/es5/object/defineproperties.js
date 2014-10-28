@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.2.2
+* LiftJS Javascript Library v0.2.3
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -40,5 +40,7 @@ define(function() {
     for (var keys = Object.keys(properties), descs = [], i = 0; i < keys.length; i++) descs.push([ keys[i], convertToDescriptor(properties[keys[i]]) ]);
     for (i = 0; i < descs.length; i++) Object.defineProperty(obj, descs[i][0], descs[i][1]);
     return obj;
-  }, !0) : void console.warn("Unable to implement Object.defineProperties as Object.defineProperty is not available.");
+  }, !0) : {
+    error: "Unable to shim Object.defineProperties. Object.defineProperty is unavailable."
+  };
 });

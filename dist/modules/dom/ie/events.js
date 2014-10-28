@@ -1,5 +1,5 @@
 /*!
-* LiftJS Javascript Library v0.2.2
+* LiftJS Javascript Library v0.2.3
 * http://liftjs.github.io/
 *
 * Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
@@ -8,7 +8,7 @@
 */
 
 
-define(function(elmod) {
+define(function() {
   "use strict";
   function shimCreateEvent(type) {
     function initUIEvent(type, bubbles, cancelable, view, detail) {
@@ -125,7 +125,7 @@ define(function(elmod) {
   }(), document.createEvent || (document.createEvent = shimCreateEvent, shimmed.createEvent = !0), 
   window.dispatchEvent || (Element.prototype.dispatchEvent || (Element.prototype.dispatchEvent = dispatchEvent), 
   document.dispatchEvent || (document.dispatchEvent = dispatchEvent), window.dispatchEvent || (window.dispatchEvent = function(evt) {
-    for (var events = elmod.window_events[evt.type], i = 0, _len = events.length; _len > i; i++) events[i](evt);
+    for (var events = window_events[evt.type], i = 0, _len = events.length; _len > i; i++) events[i](evt);
   }));
   for (var shim in shimmed) if (shimmed.hasOwnProperty(shim)) return shimmed;
   return !1;
