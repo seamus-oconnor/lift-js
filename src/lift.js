@@ -120,7 +120,7 @@
       // IE 8 (not 7) says that window.Event exists IE 9 lies and says it has
       // a CustomEvent object but you can't call it as a contructor (e.g. new
       // CustomEvent();)
-      eventconstructor: test(function() { return !!new window.CustomEvent('foo'); }),
+      eventconstructor: test(function() { return !!new window.CustomEvent('foo') && !!new window.MouseEvent('bar'); }),
       console: window.console && console.log
     },
     dom: {
@@ -142,7 +142,7 @@
         classlist: 'classList' in svgel
       },
       ie: {} // IE specific shims
-    },
+    }
   };
 
   // Test for IE's non-standard APIs
@@ -249,16 +249,21 @@
 
   var now = new Date().getTime();
   var head = document.head || document.getElementsByTagName('head')[0];
-  var baseUrl = '/';
-  var scripts = document.getElementsByTagName('script');
-  for(var i = scripts.length - 1; i >= 0; i--) {
-    var script = scripts[i];
-    var url_match = script.src.match(/^((https?:\/\/|file:\/\/\/)[^\/]+(\/.+\/))lift[^\/]*\.js$/);
-    if(url_match) {
-      baseUrl = url_match[1];
-      break;
+  var LIFTJS_URL_RE = /^(.*\/)lift[^\/]*\.js$/;
+
+  var thisScript = (function() {
+    if(document.currentScript) {
+      return document.currentScript;
+    } else {
+      var scripts = document.getElementsByTagName('script');
+      for(var i = scripts.length - 1; i >= 0; i--) {
+        var script = scripts[i];
+        if(LIFTJS_URL_RE.test(script.src)) { return script; }
+      }
     }
-  }
+  })();
+  var baseUrl = thisScript.src.match(LIFTJS_URL_RE)[1] || '/';
+
 
   // Very crude AMD based define that will only work within the limited scope
   // needed for LiftJS modules. Does not work with nested dependencies.
@@ -269,26 +274,43 @@
     }
     var count = deps.length;
 
-    function makeScript(id, callback) {
-      var s = document.createElement('script');
-      s.src = baseUrl + id + '.js';
-      s.onload = callback;
-      s.onerror = function() { console.warn('Unable to load ' + s.src); };
-      head.appendChild(s);
+    function buildLoad() {
+      var done = false;
+
+      return function load() {
+        /*jshint validthis:true*/
+
+        var rs = this.readyState;
+        if(!done && (!rs || rs === 'loaded' || rs === 'complete')) {
+          done = true;
+
+          // Handle memory leak in IE
+          this.onload = this.onreadystatechange = null;
+          if(head && this.parentNode) {
+              head.removeChild(this);
+          }
+
+          count--;
+          if(count === 0) {
+            fn();
+          }
+        }
+      };
     }
 
-    function done() {
-      count--;
-      if(count === 0) {
-        fn();
-      }
+    function error() {
+      console.warn('Unable to load ' + s.src);
     }
 
     if(count === 0) {
       fn();
     } else {
       for(var i = deps.length - 1; i >= 0; i--) {
-        makeScript(deps[i], done);
+        var s = document.createElement('script');
+        s.src = baseUrl + deps[i] + '.js';
+        s.onload = s.onreadystatechange = buildLoad();
+        s.onerror = error;
+        head.appendChild(s);
       }
     }
   }
@@ -314,11 +336,16 @@
 
     // Remove shimmed non-AMD complient define() function;
     if(define === liftJSDefine) {
-      delete window.define;
-      liftJS.ready = true;
-      if(typeof liftJS.onload === 'function') {
-        liftJS.onload();
-      }
+      try {
+        delete window.define;
+      } catch(e) { window.define = undefined; } // IE can't delete
+
+      // setTimeout(function() {
+        liftJS.ready = true;
+        if(typeof liftJS.onload === 'function') {
+          liftJS.onload();
+        }
+      // }, 1000);
     }
 
     return liftJS;

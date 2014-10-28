@@ -1,10 +1,10 @@
 define(function() {
-  "use strict";
+  'use strict';
 
-  var is_shimmed = false;
+  var shimmed = {};
   if(!window.console) {
     window.console = {};
-    is_shimmed = true;
+    shimmed.console = true;
   }
 
   var noop = function() {};
@@ -14,9 +14,9 @@ define(function() {
     var name = console_methods[i];
     if(!window.console[name]) {
       window.console[name] = noop;
-      is_shimmed = true;
+      shimmed[name] = true;
     }
   }
 
-  return is_shimmed;
+  return shimmed;
 });

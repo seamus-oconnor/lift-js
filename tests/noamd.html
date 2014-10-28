@@ -9,17 +9,12 @@
 
 <title>Lift JS Tests - No AMD</title>
 
-<script>
-(function() {
-  var s = document.createElement('script');
-  var useOptimized = location.search.indexOf('liftjs=optimized') !== -1;
-  s.src = '../dist/lift' + (useOptimized ? '-optimized' : '') + '.js';
-  document.getElementsByTagName('head')[0].appendChild(s);
-})();
-</script>
+<script src="{{ liftJSPath }}"></script>
 
 </head>
 <body>
+
+<h1>Lift JS: No AMD Loader <small>{{ titleLabel }}</small></h1>
 
 <div id="mocha"></div>
 <script src="../bower_components/mocha/mocha.js"></script>

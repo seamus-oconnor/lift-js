@@ -1,11 +1,11 @@
+/*jshint nonew:false*/
 define(function() {
   "use strict";
 
-  try {
-    /*jshint nonew:false*/
-    new window.CustomEvent();
-    return false;
-  } catch(e) {}
+  var shimmed = {
+    customEvent: false,
+    mouseEvent: false
+  };
 
   function CustomEvent(event, params) {
     if(!event) { throw new TypeError("Failed to construct 'CustomEvent': An event name must be provided."); }
@@ -42,10 +42,20 @@ define(function() {
   }
   MouseEvent.prototype = (window.MouseEvent || window.Event).prototype;
 
-  if(document.createEvent) {
+
+  try {
+    new window.CustomEvent();
+  } catch(e) {
     window.CustomEvent = CustomEvent;
-    window.MouseEvent = MouseEvent;
+    shimmed.customEvent = true;
   }
 
-  return false;
+  try {
+    new window.MouseEvent();
+  } catch(e) {
+    window.MouseEvent = MouseEvent;
+    shimmed.mouseEvent = true;
+  }
+
+  return shimmed;
 });

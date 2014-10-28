@@ -1,5 +1,9 @@
 /* jshint node:true */
 
+var tamper = require('tamper');
+var url = require('url');
+var path = require('path');
+
 var browsers = [
   { platform: "Windows 8.1", browserName: "firefox", },
   { platform: "Windows 8.1", browserName: "chrome", },
@@ -150,6 +154,36 @@ var gruntConfig = {
       options: {
         base: '',
         port: 80,
+        middleware: function(connect, options, middlewares) {
+          // inject a custom middleware into the array of default middlewares
+          middlewares.unshift(tamper(function replaceTokens(req/*, res */) {
+            return function(body) {
+              var parsedUrl = url.parse(req.url, true);
+              var urlPath = parsedUrl.pathname;
+              var query = parsedUrl.query;
+
+              if(path.extname(urlPath || '') === '.html') {
+                var useSrc = query.liftjs === 'source';
+                var useOptimized = query.liftjs === 'optimized';
+
+                var data = {
+                  liftJSPath: '../' + (useSrc ? 'src' : 'dist') + '/lift' + (useOptimized ? '-optimized' : '') + '.js',
+                  titleLabel: useOptimized ? 'optimized' : useSrc ? 'source' : 'dist',
+                };
+
+                return body.replace(/\{\{\s*(\S+)\s*\}\}/g, function(match, name) {
+                  if(name in data) {
+                    return data[name];
+                  }
+                });
+              }
+
+              return body;
+            };
+          }));
+
+          return middlewares;
+        },
       }
     }
   },
@@ -165,9 +199,9 @@ var gruntConfig = {
   'saucelabs-mocha': {
     oneoff: {
       options: {
-        urls: [ NO_AMD_DIST_TEST_URL ],
+        urls: [ DEV_HOST + TEST_PATH + '/noamd.html?liftjs=optimized' ],
         tunnelTimeout: 5,
-        browsers: [ { platform: "Windows 7", browserName: "internet explorer", version: "9" } ],
+        browsers: [ { platform: "Windows XP", browserName: "internet explorer", version: "8" } ],
         testname: 'one off test',
       }
     },

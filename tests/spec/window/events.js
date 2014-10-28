@@ -45,6 +45,7 @@ describe("DOM Element #addEventListeners", function() {
 
   it("should catch a custom event", function(done) {
     var div = document.createElement('div');
+    wasteland.appendChild(div);
     div.addEventListener('custom', function(e) {
       expect(e.detail).to.be('foobar');
       done();

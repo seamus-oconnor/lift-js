@@ -3,6 +3,9 @@
 define(function() {
   "use strict";
 
+  // TODO: Also need to shim support for .addEventListener on older browsers
+  // that support XMLHttpRequest but not event listeners.
+
   if(window.XMLHttpRequest) { return false; }
 
   // TODO: Build out shim version

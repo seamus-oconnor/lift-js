@@ -32,8 +32,7 @@ describe("DOM Element #transitionEnd", function() {
       a.style.color = 'white';
     });
   } else {
-    it("doesn't support CSS transitions", function() {
-    });
+    it("doesn't support CSS transitions", function() {});
   }
 
 });

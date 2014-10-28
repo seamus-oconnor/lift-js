@@ -1,5 +1,5 @@
 define(function() {
-  "use strict";
+  'use strict';
 
   // Copied from: http://stackoverflow.com/questions/8334286/cross-browser-compare-document-position
 
@@ -65,9 +65,9 @@ define(function() {
         return Node.DOCUMENT_POSITION_PRECEDING;
       default:
         return Node.DOCUMENT_POSITION_FOLLOWING;
-      }
+    }
 
-    throw new Error("Shim version of compareDocumentPosition didn't work right.");
+    console.warn('Shim version of compareDocumentPosition didn\'t work right.');
   };
 
   if(!window.Node) {

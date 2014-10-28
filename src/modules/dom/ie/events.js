@@ -1,21 +1,17 @@
 /*global HTMLDocument*/
 
 define(function(elmod) {
-  "use strict";
+  'use strict';
 
   // TODO: look at https://github.com/WebReflection/ie8/blob/master/src/ie8.js
+  var shimmed = {};
 
-  // TODO: Is this a bad assumption for removeEventListener, els, and doc?
-  if(window.addEventListener) { return false; }
-
-  // TODO: Sanity (insanity?) check like this needed?
-  if(!window.attachEvent) {
-    console.warn("Browser has support for neither window.addEventListener or window.attachEvent.");
-    return null;
-  }
+  // Assume we have attachEvent because this is IE.
 
   var attached_events_list = [];
   var window_events = {};
+
+  var OVERLOADED_EVENT_NAME = 'click';
 
   //window.attachEvent('onunload', function() {
   //  for(fn in attached_events_list) {
@@ -25,194 +21,204 @@ define(function(elmod) {
   //  }
   //});
 
-  function fixEventObject(e) {
-    e.pageX = e.pageX || (e.clientX + document.documentElement.scrollLeft);
-    e.pageY = e.pageY || (e.clientY + document.documentElement.scrollTop);
-    e.target = e.target || e.srcElement;
-    e.preventDefault = function() {
-      e.returnValue = false;
-    };
+  var HTML_EVENT_NAMES = {
+    'click': true,
+    'mousedown': true,
+    'mousemove': true,
+    'mouseup': true,
+    'mouseover': true,
+    'mouseout': true,
+    'keydown': true,
+    'keypress': true,
+    'keyup': true,
+    'change': true
+  };
 
-    //window.event = null;
+  (function shimListeners() {
+    // Make sure we don't shim something we don't need to
+    function fixEventObject(e) {
+      e.pageX = e.pageX || (e.clientX + document.documentElement.scrollLeft);
+      e.pageY = e.pageY || (e.clientY + document.documentElement.scrollTop);
+      e.target = e.target || e.srcElement;
+      e.preventDefault = function() {
+        e.returnValue = false;
+      };
 
-    return e;
-  }
+      //window.event = null;
 
-  function shimAddEventListener(name, fn, use_capture) {
-    /*jshint validthis:true*/
-
-    if(use_capture) {
-      throw new Error('Capture not supported in IE');
+      return e;
     }
 
-    var self = this;
+    function shimAddEventListener(name, fn, use_capture) {
+      /*jshint validthis:true*/
 
-    var handler = function() {
-      fn.call(self, fixEventObject(window.event));
-    };
+      if(use_capture) {
+        throw new Error('Capture not supported in IE');
+      }
 
-    this.attachEvent('on' + name, handler);
+      var self = this;
 
-    attached_events_list.push({fn: fn, el: this, event: name, callback: handler});
-  }
+      var handler = function() {
+        fn.call(self, fixEventObject(window.event));
+      };
 
-  function shimRemoveEventListener(name, fn, use_capture) {
-    /*jshint validthis:true*/
-    if(use_capture) {
-      throw new Error('Capture not supported in IE');
+      var needsOverride = !HTML_EVENT_NAMES[name];
+
+      this.attachEvent('on' + (needsOverride ? OVERLOADED_EVENT_NAME : name), handler);
+
+      attached_events_list.push({fn: fn, el: this, overridden: needsOverride, type: name, callback: handler});
     }
 
-    for(var i = 0, _len = attached_events_list.length; i < _len; i++) {
-      if(fn === attached_events_list[i].fn) {
-        this.detachEvent('on' + name, attached_events_list[i].callback);
-        attached_events_list.splice(i, 1);
-        break;
+    function shimRemoveEventListener(name, fn, use_capture) {
+      /*jshint validthis:true*/
+      if(use_capture) {
+        throw new Error('Capture not supported in IE');
+      }
+
+      for(var i = 0, _len = attached_events_list.length; i < _len; i++) {
+        var storedEventHandler = attached_events_list[i];
+        if(fn === storedEventHandler.fn && name === storedEventHandler.name) {
+          var evtName = 'on' + (storedEventHandler.overridden ? OVERLOADED_EVENT_NAME : name);
+          this.detachEvent(evtName, storedEventHandler.callback);
+          attached_events_list.splice(i, 1);
+          break;
+        }
       }
     }
-  }
 
-  function shimWindowAddEventListener(name, fn, use_capture) {
-    /*jshint validthis:true*/
-    if(use_capture) {
-      throw new Error('Capture not supported in IE');
+    function shimWindowAddEventListener(name, fn, use_capture) {
+      /*jshint validthis:true*/
+      if(use_capture) {
+        throw new Error('Capture not supported in IE');
+      }
+
+      var events = window_events[name] = window_events[name] || [];
+      events.push(fn);
+
+      shimAddEventListener.call(this, name, fn, use_capture);
     }
 
-    var events = window_events[name] = window_events[name] || [];
-    events.push(fn);
+    function shimWindowRemoveEventListener(name, fn, use_capture) {
+      /*jshint validthis:true*/
 
-    shimAddEventListener.call(this, name, fn, use_capture);
-  }
+      if(use_capture) {
+        throw new Error('Capture not supported in IE');
+      }
 
-  function shimWindowRemoveEventListener(name, fn, use_capture) {
-    /*jshint validthis:true*/
+      var events = window_events[name] || [];
+      var i = events.indexOf(fn);
+      if(i !== -1) { events.splice(i, 1); }
 
-    if(use_capture) {
-      throw new Error('Capture not supported in IE');
+      shimRemoveEventListener.call(this, name, fn, use_capture);
     }
 
-    var events = window_events[name] || [];
-    var i = events.indexOf(fn);
-    if(i !== -1) { events.splice(i, 1); }
+    window.addEventListener = window.addEventListener || shimWindowAddEventListener;
+    window.removeEventListener = window.removeEventListener || shimWindowRemoveEventListener;
 
-    shimRemoveEventListener.call(this, name, fn, use_capture);
-  }
+    HTMLDocument.prototype.addEventListener = HTMLDocument.prototype.addEventListener || shimAddEventListener;
+    HTMLDocument.prototype.removeEventListener = HTMLDocument.prototype.removeEventListener || shimRemoveEventListener;
 
-  // TODO: Need to check for presense of window.addEventListener ?
-  if(window.attachEvent) {
-    window.addEventListener = shimWindowAddEventListener;
-  }
+    Element.prototype.addEventListener = Element.prototype.addEventListener || shimAddEventListener;
+    Element.prototype.removeEventListener = Element.prototype.removeEventListener || shimRemoveEventListener;
 
-  // TODO: Need to check for presense of window.removeEventListener ?
-  if(window.detachEvent) {
-    window.removeEventListener = shimWindowRemoveEventListener;
-  }
-
-  // TODO: Need to check for presense of Document.prototype.addEventListener ?
-  if(HTMLDocument.prototype.attachEvent) {
-    HTMLDocument.prototype.addEventListener = shimAddEventListener;
-  }
-
-  // TODO: Need to check for presense of Document.prototype.removeEventListener ?
-  if(HTMLDocument.prototype.detachEvent) {
-    HTMLDocument.prototype.removeEventListener = shimRemoveEventListener;
-  }
-
-  // TODO: Need to check for presense of Element.prototype.addEventListener ?
-  if(Element.prototype.attachEvent) {
-    Element.prototype.addEventListener = shimAddEventListener;
-  }
-
-  // TODO: Need to check for presense of Element.prototype.removeEventListener ?
-  if(Element.prototype.detachEvent) {
-    Element.prototype.removeEventListener = shimRemoveEventListener;
-  }
-
-  // return true;
+    shimmed.listeners = true;
+  })();
 
 
-
-
-
-
-  function shimCreateEvent(klass, type, properties) {
-    if(!type) { throw new TypeError("Not enough arguments to Event.constructor."); }
-    if(properties !== undefined && typeof properties !== 'object') { throw new TypeError("Value can't be converted to a dictionary."); }
-
-    properties = properties || {};
-
+  function shimCreateEvent(type) {
     var evt = document.createEventObject();
 
     evt.CAPTURING_PHASE = 1;
     evt.AT_TARGET = 2;
     evt.BUBBLING_PHASE = 3;
 
-    evt.type = type;
     evt.eventPhase = undefined;
-    evt.bubbles = !!properties.bubbles;
-    evt.cancelable = !!properties.cancelable;
     evt.timeStamp = new Date().getTime();
 
     evt.stopPropagation = function() {
-      if(this.cancelable) {
-        this.cancelBubble = true;
+      if(evt.cancelable) {
+        evt.cancelBubble = true;
       }
     };
 
     evt.preventDefault = function() {
-      if(this.cancelable) {
-        this.returnValue = false;
+      if(evt.cancelable) {
+        evt.returnValue = false;
       }
     };
 
-    switch(klass) {
+    function initUIEvent(type, bubbles, cancelable, view, detail) {
+      evt.initEvent(type, bubbles, cancelable);
+      evt.view = view;
+      evt.detail = detail;
+    }
+
+    evt.initEvent = function shimInitEvent(type, bubbles, cancelable) {
+      evt.type = type;
+      evt.bubbles = !!bubbles;
+      evt.cancelable = !!cancelable;
+    };
+
+    switch(type) {
+      case 'HTMLEvents':
+      case 'HTMLEvent':
+      case 'Event':
+        // These event types only support initEvent defined above.
+        break;
       case 'MouseEvent':
-        evt.screenX = properties.screenX;
-        evt.screenY = properties.screenY;
-        evt.clientX = properties.clientX;
-        evt.clientY = properties.clientY;
-        evt.ctrlKey = properties.ctrlKey;
-        evt.shiftKey = properties.shiftKey;
-        evt.altKey = properties.altKey;
-        evt.metaKey = properties.metaKey;
-        evt.button = properties.button;
-        evt.relatedTarget = properties.relatedTarget;
-        break;
+      case 'MouseEvents':
+        evt.initMouseEvent = function shimInitMouseEvent(type, bubbles, cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget) {
+          if(arguments.length < 15) { throw new TypeError("Not enough arguments to initMouseEvent."); }
+          initUIEvent(type, bubbles, cancelable, view, detail);
+          evt.screenX = screenX;
+          evt.screenY = screenY;
+          evt.clientX = clientX;
+          evt.clientY = clientY;
+          evt.ctrlKey = ctrlKey;
+          evt.shiftKey = shiftKey;
+          evt.altKey = altKey;
+          evt.metaKey = metaKey;
+          evt.button = button;
+          evt.relatedTarget = relatedTarget;
+        };
+        /* falls through */
       case 'UIEvent':
-        evt.view = properties.view || window;
-        evt.detail = properties.detail;
+      case 'UIEvents':
+        evt.initUIEvent = function shimInitUIEvent(type, bubbles, cancelable, view, detail) {
+          if(arguments.length < 5) { throw new TypeError("Not enough arguments to initUIEvent."); }
+          initUIEvent(type, bubbles, cancelable, view, detail);
+        };
         break;
-      }
+      case 'CustomEvent':
+        evt.initUIEvent = function shimInitUIEvent(type, bubbles, cancelable, view, detail) {
+          initUIEvent(type, bubbles, cancelable, view, detail);
+        };
+        break;
+      default:
+        throw new TypeError("Unsupported event " + type);
+    }
 
     return evt;
   }
 
-  function buildEvent(name) {
-    return function(type, properties) {
-      return shimCreateEvent(name, type, properties);
-    };
+  if(!document.createEvent) {
+    document.createEvent = shimCreateEvent;
+    shimmed.createEvent = true;
   }
 
   function dispatchEvent(evt) {
     /*jshint validthis:true */
 
-    this.fireEvent('on' + evt.type, evt);
+    if(!this.parentNode) {
+      throw new Error('Element must be in DOM before dispatching event');
+    }
+
+    this.fireEvent('on' + (evt.fakeEvent ? OVERLOADED_EVENT_NAME : evt.type), evt);
 
     return evt.returnValue === false;
   }
 
-  if(!window.CustomEvent && !document.createEvent) {
-    window.CustomEvent = buildEvent('Event');
-
-    // return true;
-  }
-
   if(!window.dispatchEvent) {
-    // TODO: Sanity (insanity?) check like this needed?
-    if(!document.fireEvent) {
-      console.warn("Browser has support for neither document.dispatchEvent or document.fireEvent.");
-      return null;
-    }
-
     if(!Element.prototype.dispatchEvent) {
       Element.prototype.dispatchEvent = dispatchEvent;
     }
@@ -229,9 +235,16 @@ define(function(elmod) {
         }
       };
     }
-
-    // return true;
   }
 
+  // Bit of backwards logic in this file. If anything is shimmed then the loop
+  // will be entered. Return the `shimmed` object detailing what was shimmed.
+  for(var shim in shimmed) {
+    if(shimmed.hasOwnProperty(shim)) {
+      return shimmed;
+    }
+  }
+
+  // If we don't return in the above loop then no shims were applied.
   return false;
 });

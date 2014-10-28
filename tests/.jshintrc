@@ -115,7 +115,9 @@
         "describe",
         "it",
         "expect",
-        "beforeEach"
+        "beforeEach",
+        "mocha",
+        "runMochaTests"
     ],
     "indent"        : 2         // Specify indentation spacing
 }

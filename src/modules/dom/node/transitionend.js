@@ -5,21 +5,26 @@ define(function() {
 
   if('transition' in test) { return false; }
 
-  var vendors = {
-    'MozTransition': 'transitionend',
-    'OTransition': 'oTransitionEnd',
-    'WebkitTransition': 'webkitTransitionEnd',
-    'msTransition': 'MSTransitionEnd'
-  };
+  var vendors = [
+    ['MozTransition', 'transitionend'],
+    ['OTransition', 'oTransitionEnd'],
+    ['WebkitTransition', 'webkitTransitionEnd'],
+    ['WebkitTransition', 'WebkitTransitionEnd'], // Safari 6 needs "Webkit..."
+    ['msTransition', 'MSTransitionEnd']
+  ];
 
   var eventName = null;
-  for(var name in vendors) {
-    if(name in test.style) {
-      eventName = vendors[name];
+  for (var i = vendors.length - 1; i >= 0; i--) {
+    var vendor = vendors[i];
+    if(vendor[0] in test.style) {
+      eventName = vendor[1];
     }
   }
 
-  if(eventName === null) { return null; } // Can't shim
+  if(eventName === null) {
+    console.warn("Unable to shim transitionend");
+    return null;
+  }
 
   var builtinAEL = Element.prototype.addEventListener;
   Element.prototype.addEventListener = function(name, fn, capture) {
@@ -33,5 +38,3 @@ define(function() {
 
   return true;
 });
-
-
