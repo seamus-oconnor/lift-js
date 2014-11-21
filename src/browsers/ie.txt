@@ -74,7 +74,7 @@
 *           es6:string:repeat
 *           es6:string:startswith
 *           es6:string:endswith
-*           es6:string:contains
+*           es6:string:includes
 *           window:wheel
 *           dom:node:dataset
 *           dom:svg:children

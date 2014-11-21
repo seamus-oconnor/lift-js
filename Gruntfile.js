@@ -232,7 +232,7 @@ var gruntConfig = {
         tunnelTimeout: 5,
         build: '<%= grunt.template.today("isoDateTime") %>',
         browsers: browsers,
-        testname: 'all browsers - release',
+        testname: 'release candiate: <%= releaseVer %>',
         maxRetries: 2,
         // tags: ["master"]
       }
@@ -265,6 +265,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-bump');
 
   gruntConfig.bower = grunt.file.readJSON('bower.json');
+  gruntConfig.releaseVer = gruntConfig.bower.version + '-RC';
 
   grunt.initConfig(gruntConfig);
 
