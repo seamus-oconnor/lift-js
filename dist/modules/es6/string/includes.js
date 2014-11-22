@@ -10,19 +10,17 @@
 
 define(function() {
   "use strict";
-  function shimContains(str, start) {
-    return -1 !== this.indexOf(str, start);
+  function shimIncludes() {
+    return -1 !== String.prototype.indexOf.apply(this, arguments);
   }
-  if (String.prototype.contains) return !1;
+  if (String.prototype.includes) return !1;
   if (Object.defineProperty) try {
-    Object.defineProperty(String.prototype, "contains", {
+    return Object.defineProperty(String.prototype, "includes", {
       enumerable: !1,
       configurable: !1,
       writable: !1,
-      value: shimContains
-    });
-  } catch (e) {
-    String.prototype.contains = shimContains;
-  } else String.prototype.contains = shimContains;
-  return !0;
+      value: shimIncludes
+    }), !0;
+  } catch (e) {}
+  return String.prototype.includes = shimIncludes, !0;
 });

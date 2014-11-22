@@ -190,8 +190,11 @@ define(function() {
         };
         break;
       case 'CustomEvent':
-        evt.initUIEvent = function shimInitUIEvent(type, bubbles, cancelable, view, detail) {
-          initUIEvent(type, bubbles, cancelable, view, detail);
+        evt.initCustomEvent = function shimInitCustomEvent(type, bubbles, cancelable, detail) {
+          if(arguments.length < 3) { throw new TypeError("Not enough arguments to initCustomEvent."); }
+          evt.initEvent(type, bubbles, cancelable);
+          evt.detail = detail;
+          evt.$fakeEvent$ = true;
         };
         break;
       default:
@@ -213,7 +216,7 @@ define(function() {
       throw new Error('Element must be in DOM before dispatching event');
     }
 
-    this.fireEvent('on' + (evt.fakeEvent ? OVERLOADED_EVENT_NAME : evt.type), evt);
+    this.fireEvent('on' + (evt.$fakeEvent$ ? OVERLOADED_EVENT_NAME : evt.type), evt);
 
     return evt.returnValue === false;
   }

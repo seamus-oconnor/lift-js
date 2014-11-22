@@ -9,7 +9,7 @@ define(function() {
 
   function CustomEvent(event, params) {
     if(!event) { throw new TypeError("Failed to construct 'CustomEvent': An event name must be provided."); }
-    if(!(this instanceof CustomEvent)) { throw new TypeError("Failed to construct 'CustomEvent': Please use the 'new' operator, this DOM object constructor cannot be called as a function."); }
+    // if(!(this instanceof CustomEvent)) { throw new TypeError("Failed to construct 'CustomEvent': Please use the 'new' operator, this DOM object constructor cannot be called as a function."); }
     params = params || {};
     var evt = document.createEvent('CustomEvent');
     evt.initCustomEvent(event, params.bubbles || false, params.cancelable || false, params.detail || undefined);
@@ -19,7 +19,7 @@ define(function() {
 
   function MouseEvent(event, params) {
     if(!event) { throw new TypeError("Failed to construct 'MouseEvent': An event name must be provided."); }
-    if(!(this instanceof MouseEvent)) { throw new TypeError("Failed to construct 'MouseEvent': Please use the 'new' operator, this DOM object constructor cannot be called as a function."); }
+    // if(!(this instanceof MouseEvent)) { throw new TypeError("Failed to construct 'MouseEvent': Please use the 'new' operator, this DOM object constructor cannot be called as a function."); }
     params = params || {};
     var evt = document.createEvent('MouseEvent');
     evt.initMouseEvent('click',

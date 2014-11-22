@@ -25,3 +25,6 @@
 16          dom:node:transitionend
 
 23          window:raf
+
+# Version 18 -> 36* supported String.prototype.contains later renamed "includes"
+*           es6:string:includes

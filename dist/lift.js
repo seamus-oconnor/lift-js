@@ -106,7 +106,7 @@
         repeat: !!String.prototype.repeat,
         startswith: !!String.prototype.startsWith,
         endswith: !!String.prototype.endsWith,
-        contains: !!String.prototype.contains
+        includes: !!String.prototype.includes
       }
     },
     window: {

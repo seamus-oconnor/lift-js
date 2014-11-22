@@ -46,8 +46,9 @@ define(function() {
       break;
 
      case "CustomEvent":
-      evt.initUIEvent = function(type, bubbles, cancelable, view, detail) {
-        initUIEvent(type, bubbles, cancelable, view, detail);
+      evt.initCustomEvent = function(type, bubbles, cancelable, detail) {
+        if (arguments.length < 3) throw new TypeError("Not enough arguments to initCustomEvent.");
+        evt.initEvent(type, bubbles, cancelable), evt.detail = detail, evt.$fakeEvent$ = !0;
       };
       break;
 
@@ -58,7 +59,7 @@ define(function() {
   }
   function dispatchEvent(evt) {
     if (!this.parentNode) throw new Error("Element must be in DOM before dispatching event");
-    return this.fireEvent("on" + (evt.fakeEvent ? OVERLOADED_EVENT_NAME : evt.type), evt), 
+    return this.fireEvent("on" + (evt.$fakeEvent$ ? OVERLOADED_EVENT_NAME : evt.type), evt), 
     evt.returnValue === !1;
   }
   var shimmed = {}, attached_events_list = [], window_events = {}, OVERLOADED_EVENT_NAME = "click", HTML_EVENT_NAMES = {

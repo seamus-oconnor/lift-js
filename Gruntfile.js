@@ -40,8 +40,8 @@ const DEV_HOST = 'http://127.0.0.1';
 const TEST_PATH = '/tests';
 
 var srcTestUrls = [
-  '/index.html',
-  '/noamd.html',
+  '/amd-load.html',
+  '/tag-load.html',
 ].map(function(url) {
   return DEV_HOST + TEST_PATH + url;
 });
@@ -50,7 +50,7 @@ var optimizedTestUrls = srcTestUrls.map(function(url) {
   return url + '?liftjs=optimized';
 });
 
-var NO_AMD_DIST_TEST_URL = DEV_HOST + TEST_PATH + '/noamd.html?liftjs=optimized';
+var NO_AMD_DIST_TEST_URL = DEV_HOST + TEST_PATH + '/tag-load.html?liftjs=optimized';
 
 
 var JS_COPYRIGHT_HEADER = "" +
@@ -199,7 +199,7 @@ var gruntConfig = {
   'saucelabs-mocha': {
     oneoff: {
       options: {
-        urls: [ DEV_HOST + TEST_PATH + '/noamd.html?liftjs=optimized' ],
+        urls: [ DEV_HOST + TEST_PATH + '/tag-load.html?liftjs=optimized' ],
         tunnelTimeout: 5,
         browsers: [ { platform: "Windows XP", browserName: "internet explorer", version: "8" } ],
         testname: 'one off test',

@@ -8,6 +8,10 @@ window.runMochaTests = function runMochaTests() {
   runner.on('end', function() {
     window.mochaResults = runner.stats;
     window.mochaResults.reports = failedTests;
+
+    if(top && window.testsDone) {
+      window.testsDone(runner.stats, failedTests);
+    }
   });
 
   runner.on('fail', function(test, err) {

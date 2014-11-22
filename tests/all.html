@@ -1,0 +1,94 @@
+<!doctype html>
+
+<html lang="en-CA">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
+
+<title>All Lift JS Tests</title>
+
+<style type="text/css">
+body {
+  overflow-y: scroll;
+}
+
+#test-frames iframe {
+  border: 1px solid #EEE;
+  margin: 0 5%;
+  width: 90%;
+  height: 500px;
+}
+</style>
+
+
+</head>
+<body>
+
+<h1>Lift JS All Tests</h1>
+
+<div id="mocha"></div>
+
+<div id="test-frames"></div>
+
+<script src="../bower_components/mocha/mocha.js"></script>
+<script src="../bower_components/expect/index.js"></script>
+<script>mocha.setup('bdd');</script>
+<script src="helpers.js"></script>
+
+<script>
+var testFramesEl = document.getElementById('test-frames');
+function runTests(url, done) {
+  var iframe = document.createElement('iframe');
+  iframe.src = url;
+  iframe.frameBorder = '0'; // NOTE: For IE <= 8
+
+  function iframeLoad() {
+    iframe.contentWindow.testsDone = function(stats, failedTests) {
+      expect(failedTests.length).to.be(0);
+      done();
+      if(failedTests.length === 0) {
+        testFramesEl.removeChild(iframe);
+      }
+    };
+  }
+
+  if(iframe.addEventListener) {
+    iframe.addEventListener('load', iframeLoad, false);
+  } else {
+    iframe.attachEvent('onload', iframeLoad);
+  }
+
+  testFramesEl.appendChild(iframe);
+}
+
+mocha.timeout(10 * 1000);
+mocha.slow(3 * 1000);
+describe("Lift JS", function() {
+  describe("Not Built", function() {
+    it("All tests via AMD", function(done) {
+      runTests('./amd-load.html', done);
+    });
+
+    it("Loads via <script> tag", function(done) {
+      runTests('./tag-load.html', done);
+    });
+  });
+
+  describe("Optimized", function() {
+    it("All tests via AMD", function(done) {
+      runTests('./amd-load.html?liftjs=optimized', done);
+    });
+
+    it("Loads via <script> tag", function(done) {
+      runTests('./tag-load.html?liftjs=optimized', done);
+    });
+  });
+});
+
+window.onload = runMochaTests;
+</script>
+
+</body>
+</html>
