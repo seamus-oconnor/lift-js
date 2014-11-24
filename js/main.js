@@ -5,7 +5,7 @@ curl.config({
   packages: [
     {
       name: 'liftjs',
-      location: '/bower_components/liftjs/dist/',
+      location: '/js/liftjs/',
       main: 'lift.js'
     }
   ]
