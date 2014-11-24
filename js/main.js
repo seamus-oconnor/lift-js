@@ -1,11 +1,11 @@
 curl.config({
   apiName: 'require',
-  baseUrl: '/',
+  baseUrl: './',
   preloads: ['liftjs'],
   packages: [
     {
       name: 'liftjs',
-      location: '/js/liftjs/',
+      location: 'js/liftjs/',
       main: 'lift.js'
     }
   ]
