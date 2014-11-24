@@ -7,43 +7,37 @@
 
 <link rel="stylesheet" type="text/css" href="css/site.css">
 
-<script data-curl-run="js/main" src="/js/curl.js" async defer></script>
+<script data-curl-run="js/main.js" src="/bower_components/curl/dist/curl-with-js-and-domReady/curl.js" async defer></script>
 
 </head>
 <body>
 
-<div id="main" role="main">
+<main id="main" role="main">
+  <h1>Lift JS</h1>
 
-<h1>Lift JS</h1>
+  <p>[ about Lift JS ]</p>
 
-<p> [ about Lift JS ]</p>
+  <section>
+    <h2>Shims</h2>
 
-<section>
-  <h2>Shims</h2>
+    <p>This is a table of the current shims that Lift JS knows about. Your
+       browser's native support for these features is also shown.</p>
 
-  <p>This is a table of the current shims that Lift JS knows about. Your
-     browser's native support for these features is also shown.</p>
-
-  <table id="support">
-    <thead>
-      <tr>
-        <th>Feature</th>
-        <th>Shim Needed</th>
-      </tr>
-    </thead>
-    <tbody id="features"></tbody>
-  </table>
-</section>
-
-<section>
-  <h2>Test Your Browser</h2>
-
-  <p>Run the <a href="http://visionmedia.github.io/mocha/">Mocha</a> test suite in your browser.</p>
-
-  <p> Expect JS https://github.com/LearnBoost/expect.js/
-</section>
-
+    <table id="support" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Needs Shim</th>
+        </tr>
+      </thead>
+      <tbody id="features"></tbody>
+    </table>
+  </section>
 </div>
+
+<footer>
+  <p>Created by <a href="http://www.pneumaticweb.com/">Séamus O'Connor</a></p>
+</footer>
 
 </body>
 </html>

@@ -1,0 +1,27 @@
+{
+  "name": "lift-js-homepage",
+  "version": "0.0.1",
+  "homepage": "https://github.com/seamus-oconnor/lift-js",
+  "authors": [
+    "Séamus O'Connor <seamus.oconnor@pneumaticweb.com>"
+  ],
+  "description": "Lift JS Homepage",
+  "main": "index.html",
+  "keywords": [
+    "shim",
+    "liftjs"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "liftjs": "~0.2.4",
+    "curl": "~0.8.10"
+  }
+}

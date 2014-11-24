@@ -1,12 +1,12 @@
 curl.config({
   apiName: 'require',
-  baseUrl: '/js',
+  baseUrl: '/',
   preloads: ['liftjs'],
   packages: [
     {
       name: 'liftjs',
-      path: 'liftjs/',
-      main: 'lift'
+      location: '/bower_components/liftjs/dist/',
+      main: 'lift.js'
     }
   ]
 });
@@ -15,7 +15,7 @@ function $(id) {
   return document.getElementById(id);
 }
 
-curl(['liftjs', 'domReady!'], function(liftJS) {
+require(['liftjs', 'domReady!'], function(liftJS) {
   function createEl(name, attrs, child) {
     var el = document.createElement(name);
 
@@ -58,3 +58,28 @@ curl(['liftjs', 'domReady!'], function(liftJS) {
 
   walk(liftJS.support, '');
 });
+
+
+    // function walk(obj, path) {
+    //   for(var name in obj) {
+    //     var value = obj[name];
+    //     if(typeof value === 'object') {
+    //       walk(value, path + name + ':');
+    //     } else {
+    //       var tr = document.createElement('tr');
+    //       tr.className = value ? 'success' : 'danger';
+
+    //       var td = document.createElement('td');
+    //       td.textContent = path + name;
+    //       tr.appendChild(td);
+
+    //       td = document.createElement('td');
+    //       td.textContent = value ? 'yes' : 'no';
+    //       tr.appendChild(td);
+
+    //       tbody.appendChild(tr);
+    //     }
+    //   }
+    // }
+
+    // walk(liftjs.support, '');
