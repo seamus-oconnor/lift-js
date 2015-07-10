@@ -2,7 +2,7 @@
 * LiftJS Javascript Library v0.2.4
 * http://liftjs.github.io/
 *
-* Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
+* Copyright 2013 - 2015 Pneumatic Web Technologies Corp. and other contributors
 * Released under the MIT license
 * http://liftjs.github.io/license
 */
@@ -10,17 +10,30 @@
 
 define(function() {
   "use strict";
-  function shimIncludes() {
-    return -1 !== String.prototype.indexOf.apply(this, arguments);
+
+  if(String.prototype.includes) { return false; }
+
+  // Originally from:
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+
+  function shimIncludes(/*str, start*/) {
+    /*jshint validthis:true */
+    return String.prototype.indexOf.apply(this, arguments) !== -1;
   }
-  if (String.prototype.includes) return !1;
-  if (Object.defineProperty) try {
-    return Object.defineProperty(String.prototype, "includes", {
-      enumerable: !1,
-      configurable: !1,
-      writable: !1,
-      value: shimIncludes
-    }), !0;
-  } catch (e) {}
-  return String.prototype.includes = shimIncludes, !0;
+
+  if(Object.defineProperty) {
+    try {
+      Object.defineProperty(String.prototype, 'includes', {
+        enumerable: false,
+        configurable: false,
+        writable: false,
+        value: shimIncludes
+      });
+      return true;
+    } catch(e) { } // IE 8 supports Object.defineProperty but only for DOM nodes
+  }
+
+  String.prototype.includes = shimIncludes;
+
+  return true;
 });

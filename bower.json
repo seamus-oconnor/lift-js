@@ -14,17 +14,20 @@
   "ignore": [
     "**/.*",
     "node_modules",
+    "bower_components",
     "Dockerfile",
     "Gruntfile.js",
-    "bower_components",
+    "build.js",
     "scripts",
     "src",
-    "tests"
+    "tests",
+    "dist"
   ],
   "dependencies": {},
   "devDependencies": {
     "expect": "~0.3.1",
     "mocha": "~1.21.4",
-    "requirejs": "~2.1.15"
+    "requirejs": "~2.1.15",
+    "micro-amd": "~0.0.8"
   }
 }

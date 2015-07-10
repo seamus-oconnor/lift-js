@@ -7,16 +7,14 @@
 
 <link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
 
-<title>Lift JS Tests - No AMD</title>
+<title>Lift JS Tests - &lt;script&gt; load</title>
 
-<script src="{{ liftJSPath }}"></script>
+<script src="../dist/lift-optimized.js"></script>
 
 </head>
 <body>
 
-<h1>Lift JS: No AMD Loader <small>{{ titleLabel }}</small></h1>
-
-<div id="LiftJSLog"></div>
+<h1>Lift JS: &lt;script&gt; load</h1>
 
 <div id="mocha"></div>
 <script src="../bower_components/mocha/mocha.js"></script>
@@ -24,7 +22,7 @@
 <script>mocha.setup('bdd');</script>
 <script src="helpers.js"></script>
 
-<script src="spec/no-amd.js"></script>
+<script src="spec/tag-load.js"></script>
 
 <script>
 window.onload = runMochaTests;

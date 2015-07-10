@@ -1,1 +1,3 @@
-../node/classlist.js
+define(['../node/classlist'], function(classlist) {
+  return classlist;
+});

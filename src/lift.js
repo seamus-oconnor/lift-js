@@ -1,49 +1,49 @@
-/* global define */
-
-  // TODO:
-  // - Check Jquery to see what other shims are required to match it's API.
-  // - matches():
-  //   http://caniuse.com/#feat=matchesselector
-  // - ChannelMessaging:
-  //   http://caniuse.com/#feat=channel-messaging
-  //   Pollyfill using postmessage + prefix?
-  // - DataChannel:
-  //   https://github.com/ShareIt-project/DataChannel-polyfill
-  // - Any need to normalize touch events?
-  //   http://caniuse.com/#feat=touch
-  // - JSON:
-  //   needed?
-  //   use JSON3 if required: http://bestiejs.github.io/json3/lib/json3.js
-  // - ClipBoard:
-  //   http://caniuse.com/#feat=clipboard
-  // - Pointer Events:
-  //   http://caniuse.com/#feat=pointer
-  // - Form validation:
-  //   http://caniuse.com/#feat=form-validation
-  // - File & Blob stuff:
-  //   Can they build off each other? (Say IE 8 supports new Blob but not FileReader...)
-  //   http://caniuse.com/#feat=filereader
-  //   http://caniuse.com/#feat=fileapi
-  //   http://caniuse.com/#feat=blobbuilder
-  //   http://caniuse.com/#feat=bloburls
-  // - Web Audio?
-  //   http://caniuse.com/#feat=audio-api
-  // - Event Source:
-  //   http://caniuse.com/#feat=eventsource
-  // - Drag & Drop:
-  //   Shim IE by using their version of D&D
-  //   http://caniuse.com/#feat=dragndrop
-  // - Download Attribute:
-  //   http://caniuse.com/#feat=download
-  // - IndexDB:
-  //   Shim using WebSQL?
-  //   https://hacks.mozilla.org/2012/07/using-indexeddb-api-today-the-indexeddb-polyfills/
-  //   http://html5doctor.com/introducing-web-sql-databases/
-  //   http://caniuse.com/#feat=indexeddb
-  // - History State Mangement:
-  //   http://caniuse.com/#feat=history
-  // - Text selection:
-  //   http://stackoverflow.com/questions/11128130/select-text-in-javascript
+/*
+ TODO:
+ - Check Jquery to see what other shims are required to match it's API.
+ - matches():
+   http://caniuse.com/#feat=matchesselector
+ - ChannelMessaging:
+   http://caniuse.com/#feat=channel-messaging
+   Pollyfill using postmessage + prefix?
+ - DataChannel:
+   https://github.com/ShareIt-project/DataChannel-polyfill
+ - Any need to normalize touch events?
+   http://caniuse.com/#feat=touch
+ - JSON:
+   needed?
+   use JSON3 if required: http://bestiejs.github.io/json3/lib/json3.js
+ - ClipBoard:
+   http://caniuse.com/#feat=clipboard
+ - Pointer Events:
+   http://caniuse.com/#feat=pointer
+ - Form validation:
+   http://caniuse.com/#feat=form-validation
+ - File & Blob stuff:
+   Can they build off each other? (Say IE 8 supports new Blob but not FileReader...)
+   http://caniuse.com/#feat=filereader
+   http://caniuse.com/#feat=fileapi
+   http://caniuse.com/#feat=blobbuilder
+   http://caniuse.com/#feat=bloburls
+ - Web Audio?
+   http://caniuse.com/#feat=audio-api
+ - Event Source:
+   http://caniuse.com/#feat=eventsource
+ - Drag & Drop:
+   Shim IE by using their version of D&D
+   http://caniuse.com/#feat=dragndrop
+ - Download Attribute:
+   http://caniuse.com/#feat=download
+ - IndexDB:
+   Shim using WebSQL?
+   https://hacks.mozilla.org/2012/07/using-indexeddb-api-today-the-indexeddb-polyfills/
+   http://html5doctor.com/introducing-web-sql-databases/
+   http://caniuse.com/#feat=indexeddb
+ - History State Mangement:
+   http://caniuse.com/#feat=history
+ - Text selection:
+   http://stackoverflow.com/questions/11128130/select-text-in-javascript
+*/
 
 (function() {
   "use strict";
@@ -248,85 +248,6 @@
   console.log('LiftJS: AMD deps: ' + (deps.length ? '[\n  ' + deps.join(',\n  ') + '\n]' : 'none'));
 
   var now = new Date().getTime();
-  var head = document.head || document.getElementsByTagName('head')[0];
-  var LIFTJS_URL_RE = /^(.*\/)lift[^\/]*\.js$/;
-
-  var thisScript = (function() {
-    if(document.currentScript) {
-      return document.currentScript;
-    } else {
-      var scripts = document.getElementsByTagName('script');
-      for(var i = scripts.length - 1; i >= 0; i--) {
-        var script = scripts[i];
-        if(LIFTJS_URL_RE.test(script.src)) { return script; }
-      }
-    }
-  })();
-  var baseUrl = thisScript.src.match(LIFTJS_URL_RE)[1] || '/';
-
-
-  // Very crude AMD based define that will only work within the limited scope
-  // needed for LiftJS modules. Does not work with nested dependencies.
-  function liftJSDefine() {
-    var args = Array.prototype.slice.call(arguments);
-    var fn = args.pop(), deps = [], moduleId = null;
-
-    if(arguments.length >= 2) {
-      deps = args.pop();
-    }
-    if(arguments.length >= 3) {
-      moduleId = args.pop();
-    }
-    var count = deps.length;
-    // liftJS.log.push('define() w/ ' + count + ' deps.' + (count > 0 ? ' deps: ' + deps.join(', ')));
-
-    function buildLoad() {
-      // liftJS.log.push('buildLoad');
-      var done = false;
-
-      return function load() {
-        /*jshint validthis:true*/
-
-        var rs = this.readyState;
-        // liftJS.log.push('script.load called. Ready state: ' + rs);
-        if(!done && (!rs || rs === 'loaded' || rs === 'complete')) {
-          done = true;
-
-          // liftJS.log.push('script.load actually loaded');
-
-          // Handle memory leak in IE
-          this.onload = this.onreadystatechange = null;
-          if(head && this.parentNode) {
-            // liftJS.log.push('script.load removing script tag');
-            head.removeChild(this);
-          }
-
-          count--;
-          // liftJS.log.push('count:' + count);
-          if(count === 0) {
-            // liftJS.log.push('script.load: calling callback fn() ' + typeof(fn) + fn);
-            fn();
-          }
-        }
-      };
-    }
-
-    function error() {
-      console.warn('Unable to load ' + s.src);
-    }
-
-    if(count === 0) {
-      fn();
-    } else {
-      for(var i = deps.length - 1; i >= 0; i--) {
-        var s = document.createElement('script');
-        s.src = baseUrl + deps[i] + '.js';
-        s.onload = s.onreadystatechange = buildLoad();
-        s.onerror = error;
-        head.appendChild(s);
-      }
-    }
-  }
 
   var liftJS = {
     browser: browser,
@@ -335,16 +256,13 @@
     // log: []
   };
 
-  if(!(typeof window.define === 'function' && define.amd)) { // no AMD define()
-    window.define = liftJSDefine;
-    liftJS.ready = false;
+  if(window.LiftJS) {
     window.LiftJS = liftJS;
-    window.require = function() {};
   }
 
   // Define the liftjs module depending on a bundle of AMD modules or runtime
   // discovered dependencies.
-  define(deps, function() {
+  define(/* LIFT_AMD_MODULE_NAME */deps, function() {
     // var el = document.getElementById('LiftJSLog');
     // if(el) {
     //   el.innerHTML = liftJS.log.join('<br>');
@@ -352,20 +270,6 @@
 
     var howLong = (new Date().getTime() - now);
     console.log('LiftJS: loaded deps in ' + howLong + 'ms');
-
-    // Remove shimmed non-AMD complient define() function;
-    if(define === liftJSDefine) {
-      try {
-        delete window.define;
-      } catch(e) { window.define = undefined; } // IE can't delete
-
-      // setTimeout(function() {
-        liftJS.ready = true;
-        if(typeof liftJS.onload === 'function') {
-          liftJS.onload();
-        }
-      // }, 1000);
-    }
 
     return liftJS;
   });

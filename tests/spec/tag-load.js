@@ -1,4 +1,4 @@
-describe("no AMD", function() {
+describe("<script> tag load", function() {
   it("should have created window.LiftJS", function() {
     expect(window.LiftJS).to.be.ok();
   });

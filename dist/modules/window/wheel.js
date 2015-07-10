@@ -2,7 +2,7 @@
 * LiftJS Javascript Library v0.2.4
 * http://liftjs.github.io/
 *
-* Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
+* Copyright 2013 - 2015 Pneumatic Web Technologies Corp. and other contributors
 * Released under the MIT license
 * http://liftjs.github.io/license
 */
@@ -10,26 +10,80 @@
 
 define(function() {
   "use strict";
+
+  // Originally from:
+  // https://developer.mozilla.org/en-US/docs/Web/Reference/Events/wheel
+
+  // detect available wheel event
+  var support = "onwheel" in document.createElement("div") ? "wheel" : // Modern browsers support "wheel"
+            document.onmousewheel !== undefined ? "mousewheel" : // Webkit and IE support at least "mousewheel"
+            "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
+
+  if(support === 'wheel') { return false; }
+
   function wheelMoved(e) {
     e = e || window.event;
+
+    // create a normalized event object
     var event = {
+      // keep a ref to the original event object
       e: e,
       target: e.target || e.srcElement,
       type: "wheel",
-      deltaMode: "MozMousePixelScroll" === e.type ? 0 : 1,
+      deltaMode: e.type === 'MozMousePixelScroll' ? 0 : 1,
       deltaX: 0,
       delatZ: 0,
       preventDefault: function() {
-        e.preventDefault ? e.preventDefault() : e.returnValue = !1;
+        if(e.preventDefault) {
+          e.preventDefault();
+        } else {
+          e.returnValue = false;
+        }
       }
     };
-    "mousewheel" === support ? (event.deltaY = -1 / 40 * e.wheelDelta, e.wheelDeltaX && (event.deltaX = -1 / 40 * e.wheelDeltaX)) : event.deltaY = e.detail;
+
+    // calculate deltaY (and deltaX) according to the event
+    if(support === 'mousewheel') {
+      event.deltaY = - 1/40 * e.wheelDelta;
+      // Webkit also support wheelDeltaX
+      if(e.wheelDeltaX) {
+        event.deltaX = - 1/40 * e.wheelDeltaX;
+      }
+    } else {
+      event.deltaY = e.detail;
+    }
+
+    // it's time to fire the callback
     var new_e = document.createEvent("MouseEvents");
-    new_e.initMouseEvent("wheel", e.bubbles, e.cancelable, e.view, e.wheelData ? e.wheelData / -40 : e.detail, e.screenX, e.screenY, e.clientX, e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, e.relatedTarget), 
+
+    new_e.initMouseEvent(
+      "wheel",
+      e.bubbles,
+      e.cancelable,
+      e.view,
+      e.wheelData ? e.wheelData / -40 : e.detail,
+      e.screenX,
+      e.screenY,
+      e.clientX,
+      e.clientY,
+      e.ctrlKey,
+      e.altKey,
+      e.shiftKey,
+      e.metaKey,
+      e.button,
+      e.relatedTarget
+    );
+
     (e.target || e.srcElement).dispatchEvent(new_e);
   }
-  var support = "onwheel" in document.createElement("div") ? "wheel" : void 0 !== document.onmousewheel ? "mousewheel" : "DOMMouseScroll";
-  return "wheel" === support ? !1 : (window.addEventListener ? (window.addEventListener(support, wheelMoved, !1), 
-  window.addEventListener("MozMousePixelScroll", wheelMoved, !1)) : window.attachEvent("on" + support, wheelMoved), 
-  !0);
+
+  if(window.addEventListener) {
+    window.addEventListener(support, wheelMoved, false);
+    // handle MozMousePixelScroll in older Firefox
+    window.addEventListener('MozMousePixelScroll', wheelMoved, false);
+  } else {
+    window.attachEvent('on' + support, wheelMoved);
+  }
+
+  return true;
 });

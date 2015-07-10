@@ -2,64 +2,289 @@
 * LiftJS Javascript Library v0.2.4
 * http://liftjs.github.io/
 *
-* Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
+* Copyright 2013 - 2015 Pneumatic Web Technologies Corp. and other contributors
 * Released under the MIT license
 * http://liftjs.github.io/license
 */
 
 
-!function() {
+window.LiftJS = {};
+(function(global) {
+  'use strict';
+
+  
+  function empty() {}
+
+  function isArray(arr) {
+    return Object.prototype.toString.call(arr) === '[object Array]';
+  }
+
+  function err(msg) {
+    throw new Error(msg);
+  }
+
+  function normalizePath(path) {
+    var prefix = 'http://example.com/';
+    return normalizeUrl(prefix + path).substr(prefix.length);
+  }
+
+  function normalizeUrl(url) {
+    var a = document.createElement('a');
+    a.href = url;
+    return a.cloneNode(false).href;
+  }
+
+  function getModule(name) {
+    var mod = registry[name];
+    if(!mod) {
+      mod = new Module(name);
+      registry[mod.name] = mod;
+    }
+    return mod;
+  }
+
+  function executingScript() {
+    if(document.currentScript) { return document.currentScript; }
+
+    var scripts = document.getElementsByTagName('script');
+
+    for(var i = scripts.length - 1; i >= 0; i--) {
+      var script = scripts[i];
+      if(script.readyState === 'interactive') {
+        return script;
+      }
+    }
+  }
+
+  function resolveName(name, parentMod) {
+    var scope = ''; // normal and abs url cases;
+
+    if(name.charAt(0) === '.') { // relative url
+      if(parentMod) {
+        scope = parentMod.name + '/../';
+      }
+    } else if(name.indexOf('/') > 0) {
+      var parts = name.split('/');
+      var prefix = config.paths[parts[0]];
+      if(prefix) {
+        scope = prefix + '/';
+        name = parts.slice(1).join('/');
+      }
+    }
+
+    return normalizePath(scope + name);
+  }
+
+  function buildUrl(mod) {
+    var fqUrl = /https?:\/\//.test(config.baseUrl);
+    var baseUrl = fqUrl ? config.baseUrl : location.protocol + '//' + location.host + location.pathname + '-/../' + config.baseUrl;
+
+    return normalizeUrl(baseUrl + mod.name + '.js');
+  }
+
+
+  
+  var registry = {};
+  var anonDefine;
+  var head = document.getElementsByTagName('head')[0];
+  var logPile = [];
+  var currentlyAddingScript;
+  var config = {
+    baseUrl: './',
+    paths: {}
+  };
+
+
+  
+  function loadDependencies(deps, parentMod, fn) {
+    var count = deps.length;
+    var modules = [];
+
+    function loaded() {
+      count--;
+
+      if(count <= 0) {
+        var args = [];
+        for(var i = 0; i < modules.length; i++) {
+          args.push(modules[i].obj);
+        }
+        fn.apply(null, args);
+      }
+    }
+
+    if(count === 0) {
+      loaded();
+    } else {
+      for(var i = 0; i < deps.length; i++) {
+        var dep = deps[i];
+        var name = resolveName(dep, parentMod);
+        var mod = getModule(name);
+        modules.push(mod);
+        mod.load(loaded);
+      }
+    }
+  }
+
+
+  
+  function Module(name) {
+    this.name = name;
+    this.defined = false;
+    this.loaded = false;
+    this.loading = false;
+  }
+
+  Module.prototype.load = function(callback) {
+    var self = this;
+    var scriptLoaded = false;
+
+    function ready() {
+      loadDependencies(self.deps, self, function() {
+        if(!self.obj) {
+          var obj = self.initFn.apply(null, arguments);
+          self.obj = obj;
+        }
+        callback(self.obj);
+      });
+    }
+
+    function scriptLoad(e) {
+      /*jshint validthis:true*/
+
+      e = e || window.event;
+
+      var rs = this.readyState;
+      if(!scriptLoaded && (!rs || rs === 'loaded' || rs === 'complete')) {
+        scriptLoaded = true;
+        self.loading = false;
+        var url = this.src;
+
+        if(anonDefine === 'error') {
+          err('Multiple anon define()s in ' + url);
+        }
+
+        var deps = [];
+        var fn = empty;
+
+        if(anonDefine) {
+          url = anonDefine.pop() || url;
+          deps = anonDefine.pop();
+          fn = anonDefine.pop();
+
+          anonDefine = null; // remove held reference to anon define
+        } // else - must be resolved already.
+
+        self.setup(deps, fn);
+        this.onload = this.onreadystatechange = null;
+
+        if(head && this.parentNode) {
+          head.removeChild(this);
+        }
+
+        ready();
+      }
+    }
+
+    if(this.loaded) {
+      ready();
+    } else if(this.loading) {
+      err('not handled');
+    } else {
+      this.loading = true;
+      var s = document.createElement('script');
+      s.src = buildUrl(this);
+      s.onload = scriptLoad;
+      s.onreadystatechange = scriptLoad;
+      s.onerror = function() {
+        err('Unable to load ' + s.src);
+      };
+
+      currentlyAddingScript = s;
+      head.appendChild(s);
+      currentlyAddingScript = null;
+    }
+  };
+
+  Module.prototype.setup = function(deps, initFn) {
+    if(this.loaded) {
+      err('Module ' + this.name + ' already defined');
+    }
+
+    this.loaded = true;
+    this.deps = deps;
+    this.initFn = initFn;
+  };
+  function microAmdDefine(name, deps, fn) {
+    if(typeof name !== 'string') {
+      fn = deps;
+      deps = name;
+      name = null;
+    }
+
+    if(!isArray(deps)) {
+      fn = deps;
+      deps = [];
+    }
+
+    if(name) {
+      getModule(name).setup(deps, fn);
+    } else {
+      var script = currentlyAddingScript || executingScript();
+
+      if(anonDefine) {
+        anonDefine = 'error';
+        return;
+      }
+
+      anonDefine = [fn, deps, script ? script.src : null];
+    }
+  }
+
+  microAmdDefine.amd = true;
+
+  
+  function microAmdRequire(deps, fn) {
+    deps = deps || [];
+
+    loadDependencies(deps, null, fn || empty);
+  }
+
+  microAmdRequire.config = function microAmdConfig(cfg) {
+    for(var name in cfg) {
+      if(cfg.hasOwnProperty(name)) {
+        config[name] = cfg[name];
+      }
+    }
+  };
+
+  microAmdRequire.destroy = function microAmdDestroy() {
+    delete global.define;
+    delete global.require;
+  };
+
+  microAmdRequire.logPile = logPile;
+
+  global.define = microAmdDefine;
+  global.require = microAmdRequire;
+})(this);
+
+(function() {
   "use strict";
+
+  var ua = navigator.userAgent;
+  var testel = document.createElement('div');
+  testel.innerHTML = '<svg></svg>';
+  var svgel = testel.firstChild || {};
+
   function test(fn) {
     try {
       return fn();
-    } catch (e) {
-      return !1;
+    } catch(e) {
+      return false;
     }
   }
-  function walk(obj1, obj2, prefix) {
-    var list = [];
-    prefix = prefix || "";
-    for (var name in obj1) if (obj1.hasOwnProperty(name)) {
-      var val1 = obj1[name], val2 = obj2[name];
-      "*" === val1 && (val1 = val2), "object" == typeof val1 ? list = list.concat(walk(val1, val2, prefix + name + "/")) : obj2[name] || list.push(prefix + name);
-    }
-    return list;
-  }
-  function buildBundle() {
-    if (void 0 !== reqs && browser) {
-      for (var versions = bundleVersions[browser.name] || [], last_ver = "", i = 0; i < versions.length; i++) {
-        var ver = versions[i], still_unsupported = "*" === ver;
-        if (still_unsupported) return [ "./bundles/" + browser.name + last_ver + "+" ];
-        var verParts = ver.split("."), minor = null, major = +verParts[0];
-        if (minor = +verParts[1], major > browser.major || major === browser.major && minor > browser.minor) return [ "./bundles/" + browser.name + last_ver + "-" + ver ];
-        last_ver = ver;
-      }
-      return [];
-    }
-  }
-  function liftJSDefine() {
-    function buildLoad() {
-      var done = !1;
-      return function() {
-        var rs = this.readyState;
-        done || rs && "loaded" !== rs && "complete" !== rs || (done = !0, this.onload = this.onreadystatechange = null, 
-        head && this.parentNode && head.removeChild(this), count--, 0 === count && fn());
-      };
-    }
-    function error() {}
-    var args = Array.prototype.slice.call(arguments), fn = args.pop(), deps = [], moduleId = null;
-    arguments.length >= 2 && (deps = args.pop()), arguments.length >= 3 && (moduleId = args.pop());
-    var count = deps.length;
-    if (0 === count) fn(); else for (var i = deps.length - 1; i >= 0; i--) {
-      var s = document.createElement("script");
-      s.src = baseUrl + deps[i] + ".js", s.onload = s.onreadystatechange = buildLoad(), 
-      s.onerror = error, head.appendChild(s);
-    }
-  }
-  var ua = navigator.userAgent, testel = document.createElement("div");
-  testel.innerHTML = "<svg></svg>";
-  var svgel = testel.firstChild || {}, support = {
+
+  var support = {
     es5: {
       array: {
         indexof: !!Array.prototype.indexOf,
@@ -75,7 +300,7 @@
       },
       object: {
         create: !!Object.create,
-        defineproperty: !!Object.defineProperty,
+        defineproperty: !!Object.defineProperty, // TODO: add IE 8 test for conformance?
         defineproperties: !!Object.defineProperties,
         getprototypeof: !!Object.getPrototypeOf,
         keys: !!Object.keys,
@@ -87,7 +312,7 @@
         isextensible: !!Object.isExtensible,
         getownpropertynames: !!Object.getOwnPropertyDescriptor
       },
-      "function": {
+      'function': {
         bind: !!Function.prototype.bind
       },
       date: {
@@ -109,79 +334,171 @@
         includes: !!String.prototype.includes
       }
     },
-    window: {
+    'window': {
       innersize: !!window.innerWidth,
-      hashchange: "onhashchange" in window,
-      wheel: "onwheel" in testel,
-      base64: !(!window.atob || !window.btoa),
-      raf: !(!window.requestAnimationFrame || !window.cancelAnimationFrame),
-      eventconstructor: test(function() {
-        return !!new window.CustomEvent("foo") && !!new window.MouseEvent("bar");
-      }),
+      hashchange: 'onhashchange' in window,
+      wheel: 'onwheel' in testel,
+      base64: !!(window.atob && window.btoa),
+      raf: !!(window.requestAnimationFrame && window.cancelAnimationFrame),
+      eventconstructor: test(function() { return !!new window.CustomEvent('foo') && !!new window.MouseEvent('bar'); }),
       console: window.console && console.log
     },
     dom: {
-      document: {
+      'document': {
         defaultview: !!document.defaultView
       },
       node: {
-        children: "children" in testel,
-        classlist: "classList" in testel,
-        contains: "contains" in testel,
-        dataset: "dataset" in testel,
-        textcontent: "textContent" in testel,
+        children: 'children' in testel,
+        classlist: 'classList' in testel,
+        contains: 'contains' in testel,
+        dataset: 'dataset' in testel,
+        textcontent: 'textContent' in testel,
         getelementsbyclassname: !!document.getElementsByClassName,
         comparedocumentposition: !!testel.compareDocumentPosition,
-        transitionend: "transition" in testel.style
+        transitionend: 'transition' in testel.style
       },
       svg: {
-        children: "children" in svgel,
-        classlist: "classList" in svgel
+        children: 'children' in svgel,
+        classlist: 'classList' in svgel
       },
-      ie: {}
+      ie: {} // IE specific shims
     }
   };
-  !window.createEvent && document.createEventObject && !window.addEventListener && window.attachEvent && !window.dispatchEvent && document.fireEvent && (support.dom.ie.events = !1), 
-  !window.getComputedStyle && testel.currentStyle && (support.dom.ie.getcomputedstyle = !1);
-  var reqs, browser, browsers = {
+  if( !window.createEvent && document.createEventObject &&
+      !window.addEventListener && window.attachEvent &&
+      !window.dispatchEvent && document.fireEvent ) {
+    support.dom.ie.events = false;
+  }
+  if(!window.getComputedStyle && testel.currentStyle) {
+    support.dom.ie.getcomputedstyle = false;
+  }
+
+  function walk(obj1, obj2, prefix) {
+    var list = [];
+    prefix = prefix || '';
+    for(var name in obj1) {
+      if(obj1.hasOwnProperty(name)) {
+        var val1 = obj1[name];
+        var val2 = obj2[name];
+
+        if(val1 === '*') {
+          val1 = val2;
+        }
+
+        if(typeof val1 === 'object') {
+          list = list.concat(walk(val1, val2, prefix + name + '/'));
+        } else if(!obj2[name]) {
+          list.push(prefix + name);
+        }
+      }
+    }
+
+    return list;
+  }
+  var browsers = {
     ff: /Firefox\/((\d+)\.(\d+))?/,
     chrome: /Chrome\/((\d+)\.(\d+))?/,
     ie: /MSIE ((\d+)\.(\d+))?/
-  }, bundleVersions = {};
-  for (var name in browsers) if (browsers.hasOwnProperty(name)) {
-    var match = ua.match(browsers[name]);
-    if (match) {
-      browser = {
-        match: match[0],
-        name: name,
-        major: +match[2],
-        minor: +match[3]
-      };
-      break;
+  };
+
+  var reqs, bundleVersions = {};
+  /*! BUILD OPTIMIZATIONS */
+
+  var browser;
+  for(var name in browsers) {
+    if(browsers.hasOwnProperty(name)) {
+      var match = ua.match(browsers[name]);
+      if(match) {
+        browser = {
+          match: match[0],
+          name: name,
+          major: +match[2],
+          minor: +match[3]
+        };
+        break;
+      }
     }
   }
-  var deps = buildBundle() || walk(reqs || support, support, "./modules/"), now = new Date().getTime(), head = document.head || document.getElementsByTagName("head")[0], LIFTJS_URL_RE = /^(.*\/)lift[^\/]*\.js$/, thisScript = function() {
-    if (document.currentScript) return document.currentScript;
-    for (var scripts = document.getElementsByTagName("script"), i = scripts.length - 1; i >= 0; i--) {
-      var script = scripts[i];
-      if (LIFTJS_URL_RE.test(script.src)) return script;
+
+  function buildBundle() {
+    if(reqs === undefined || !browser) { return; }
+
+    var versions = bundleVersions[browser.name] || [];
+    var last_ver = '';
+
+    for(var i = 0; i < versions.length; i++) {
+      var ver = versions[i];
+      var still_unsupported = ver === '*';
+
+      if(still_unsupported) {
+        return ['./bundles/' + browser.name + last_ver + '+'];
+      } else {
+        var verParts = ver.split('.'), minor = null;
+        var major = +verParts[0];
+        minor = +verParts[1];
+        if(major > browser.major || (major === browser.major && minor > browser.minor)) {
+          return ['./bundles/' + browser.name + last_ver + '-' + ver];
+        }
+      }
+
+      last_ver = ver;
     }
-  }(), baseUrl = thisScript.src.match(LIFTJS_URL_RE)[1] || "/", liftJS = {
+
+    return [];
+  }
+  var deps = buildBundle() || walk(reqs || support, support, './modules/');
+
+  
+  
+
+  var now = new Date().getTime();
+
+  var liftJS = {
     browser: browser,
     support: support,
-    reqs: reqs
+    reqs: reqs,
   };
-  "function" == typeof window.define && define.amd || (window.define = liftJSDefine, 
-  liftJS.ready = !1, window.LiftJS = liftJS, window.require = function() {}), define(deps, function() {
-    new Date().getTime() - now;
-    if (define === liftJSDefine) {
-      try {
-        delete window.define;
-      } catch (e) {
-        window.define = void 0;
-      }
-      liftJS.ready = !0, "function" == typeof liftJS.onload && liftJS.onload();
-    }
+
+  if(window.LiftJS) {
+    window.LiftJS = liftJS;
+  }
+  define('liftjs', deps, function() {
+
+    var howLong = (new Date().getTime() - now);
+    
+
     return liftJS;
   });
-}();
+
+})();
+
+(function() {
+  var currentScript = document.currentScript;
+
+  if(!currentScript) {
+    var scripts = document.getElementsByTagName('script');
+    currentScript = scripts[scripts.length - 1]; // most likely the last script
+
+    for(var i = scripts.length - 1; i >= 0; i--) {
+      var script = scripts[i];
+      if(script.readyState === 'interactive') {
+        currentScript = script;
+      }
+    }
+  }
+  var baseUrl = currentScript ? currentScript.src + '-/../' : './';
+
+  require.config({
+    baseUrl: baseUrl
+  });
+
+  require(['liftjs'], function() {
+    if(typeof define.destroy === 'function') {
+      define.destroy();
+    }
+    window.LiftJS.ready = true;
+    if(typeof window.LiftJS.onload === 'function') {
+      window.LiftJS.onload();
+    }
+  });
+})();

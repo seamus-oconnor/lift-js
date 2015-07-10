@@ -11,9 +11,10 @@
 
 <script src="../bower_components/requirejs/require.js"></script>
 <script>
+/*global require*/
+
 var useSrc = location.search.indexOf('liftjs=source') !== -1;
 var useOptimized = location.search.indexOf('liftjs=optimized') !== -1;
-var titleLabel = useOptimized ? 'optimized' : useSrc ? 'source' : 'dist';
 
 require.config({
   deps: ['liftjs'],
@@ -22,7 +23,7 @@ require.config({
     {
       location: useSrc ? '../src' : '../dist/',
       name: 'liftjs',
-      main: 'lift' + (useOptimized ? '-optimized' : '' )
+      main: 'lift' + (useOptimized ? '-optimized' : '' ) + '.amd'
     }
   ]
 });
@@ -37,14 +38,10 @@ require.config({
 }
 </style>
 
-
 </head>
 <body>
 
-<h1>Lift JS <small></small></h1>
-<script>
-document.getElementsByTagName('h1')[0].lastChild.appendChild(document.createTextNode(titleLabel));
-</script>
+<h1>Lift JS</h1>
 
 <div id="mocha"></div>
 
@@ -55,43 +52,7 @@ document.getElementsByTagName('h1')[0].lastChild.appendChild(document.createText
 <script>mocha.setup('bdd');</script>
 <script src="helpers.js"></script>
 
-<script src="spec/lift.js"></script>
-
-<script src="spec/es5/array/every.js"></script>
-<script src="spec/es5/array/filter.js"></script>
-<script src="spec/es5/array/foreach.js"></script>
-<script src="spec/es5/array/indexof.js"></script>
-<script src="spec/es5/array/lastindexof.js"></script>
-<script src="spec/es5/array/map.js"></script>
-<script src="spec/es5/array/reduce.js"></script>
-<script src="spec/es5/array/reduceright.js"></script>
-<script src="spec/es5/array/some.js"></script>
-
-<script src="spec/es5/date/now.js"></script>
-<script src="spec/es5/date/toisostring.js"></script>
-
-<script src="spec/es5/function/bind.js"></script>
-
-<script src="spec/es5/string/trim.js"></script>
-
-<script src="spec/es6/string/includes.js"></script>
-<script src="spec/es6/string/endswith.js"></script>
-<script src="spec/es6/string/repeat.js"></script>
-<script src="spec/es6/string/startswith.js"></script>
-
-<script src="spec/dom/children.js"></script>
-<script src="spec/dom/classlist.js"></script>
-<script src="spec/dom/comparedocumentposition.js"></script>
-<script src="spec/dom/contains.js"></script>
-<script src="spec/dom/dataset.js"></script>
-<script src="spec/dom/getelementsbyclassname.js"></script>
-<script src="spec/dom/textcontent.js"></script>
-<script src="spec/dom/transitionend.js"></script>
-
-<script src="spec/window/events.js"></script>
-<script src="spec/window/base64.js"></script>
-<script src="spec/window/hashchange.js"></script>
-<script src="spec/window/raf.js"></script>
+<script src="spec/amd-load.js"></script>
 
 <script>
 /*global require*/

@@ -85,6 +85,12 @@ describe("Lift JS", function() {
       runTests('./tag-load.html?liftjs=optimized', done);
     });
   });
+
+  describe("Shims", function() {
+    it("All tests via AMD", function(done) {
+      runTests('./shims.html', done);
+    });
+  });
 });
 
 window.onload = runMochaTests;

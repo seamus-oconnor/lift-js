@@ -352,9 +352,7 @@ function customizeLiftJS(reqs, browserVersions, source) {
     }
   }
 
-  if(foundBuildOptimizationsLine) {
-    console.log(chalk.blue('Created optimized lift JS'));
-  } else {
+  if(!foundBuildOptimizationsLine) {
     throw new Error('Unable to find spot put build optimizations in lift.js');
   }
 

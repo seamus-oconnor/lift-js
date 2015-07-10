@@ -90,20 +90,30 @@ function buildOptimizedLiftJs() {
     }));
   });
 
-  return Promise.all(promises).then(function() {
-    // Copy all AMD modules into the dist/modules dir
-    var liftJsSource = fs.readFileSync(path.join(BUILD_DIR, 'lift.js')).toString();
+  function optimizeLiftJs(fileName) {
+    var liftJsSource = fs.readFileSync(path.join(BUILD_DIR, fileName)).toString();
 
     // Parse lift.js and output reqs and browser_ranges as JSON.
     var customLiftJS = liftBuilder.customizeLiftJS(reqs, browserVersions, liftJsSource);
 
-    var outFp = fs.openSync(path.join(BUILD_DIR, 'lift-optimized.js'), 'w');
+    console.log(chalk.blue('Created optimized ' + fileName));
+
+    var fileParts = fileName.split('.');
+    var name = fileParts[0];
+    var ext = '.' + fileParts.slice(1).join('.');
+
+    var outFp = fs.openSync(path.join(BUILD_DIR, name + '-optimized' + ext), 'w');
 
     try {
       fs.writeSync(outFp, customLiftJS);
     } finally {
       fs.closeSync(outFp);
     }
+  }
+
+  return Promise.all(promises).then(function() {
+    optimizeLiftJs('lift.js');
+    optimizeLiftJs('lift.amd.js');
   });
 }
 

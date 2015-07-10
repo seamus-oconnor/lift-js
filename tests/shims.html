@@ -1,0 +1,80 @@
+<!doctype html>
+
+<html lang="en-CA">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<link rel="stylesheet" type="text/css" href="../bower_components/mocha/mocha.css">
+
+<title>Lift JS Shim Tests</title>
+
+<script src="../dist/lift-optimized.js"></script>
+
+<style type="text/css">
+#wasteland {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Lift JS: Shim Tests</h1>
+
+<div id="mocha"></div>
+
+<div id="wasteland"></div>
+
+<script src="../bower_components/mocha/mocha.js"></script>
+<script src="../bower_components/expect/index.js"></script>
+<script>mocha.setup('bdd');</script>
+<script src="helpers.js"></script>
+
+<script src="spec/es5/array/every.js"></script>
+<script src="spec/es5/array/filter.js"></script>
+<script src="spec/es5/array/foreach.js"></script>
+<script src="spec/es5/array/indexof.js"></script>
+<script src="spec/es5/array/lastindexof.js"></script>
+<script src="spec/es5/array/map.js"></script>
+<script src="spec/es5/array/reduce.js"></script>
+<script src="spec/es5/array/reduceright.js"></script>
+<script src="spec/es5/array/some.js"></script>
+
+<script src="spec/es5/date/now.js"></script>
+<script src="spec/es5/date/toisostring.js"></script>
+
+<script src="spec/es5/function/bind.js"></script>
+
+<script src="spec/es5/string/trim.js"></script>
+
+<script src="spec/es6/string/includes.js"></script>
+<script src="spec/es6/string/endswith.js"></script>
+<script src="spec/es6/string/repeat.js"></script>
+<script src="spec/es6/string/startswith.js"></script>
+
+<script src="spec/dom/children.js"></script>
+<script src="spec/dom/classlist.js"></script>
+<script src="spec/dom/comparedocumentposition.js"></script>
+<script src="spec/dom/contains.js"></script>
+<script src="spec/dom/dataset.js"></script>
+<script src="spec/dom/getelementsbyclassname.js"></script>
+<script src="spec/dom/textcontent.js"></script>
+<script src="spec/dom/transitionend.js"></script>
+
+<script src="spec/window/events.js"></script>
+<script src="spec/window/base64.js"></script>
+<script src="spec/window/hashchange.js"></script>
+<script src="spec/window/raf.js"></script>
+
+<script>
+window.onload = function() {
+  runMochaTests();
+};
+</script>
+
+</body>
+</html>

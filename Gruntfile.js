@@ -1,9 +1,5 @@
 /* jshint node:true */
 
-var tamper = require('tamper');
-var url = require('url');
-var path = require('path');
-
 var browsers = [
   { platform: "Windows 8.1", browserName: "firefox", },
   { platform: "Windows 8.1", browserName: "chrome", },
@@ -39,18 +35,13 @@ var popularBrowsers = [
 const DEV_HOST = 'http://127.0.0.1';
 const TEST_PATH = '/tests';
 
-var srcTestUrls = [
+var testUrls = [
   '/amd-load.html',
   '/tag-load.html',
-].map(function(url) {
-  return DEV_HOST + TEST_PATH + url;
-});
-
-var optimizedTestUrls = srcTestUrls.map(function(url) {
-  return url + '?liftjs=optimized';
-});
-
-var NO_AMD_DIST_TEST_URL = DEV_HOST + TEST_PATH + '/tag-load.html?liftjs=optimized';
+  '/amd-load.html?liftjs=optimized',
+  '/tag-load.html?liftjs=optimized',
+  '/shims.html',
+].map(function(url) { return DEV_HOST + TEST_PATH + url; });
 
 
 var JS_COPYRIGHT_HEADER = "" +
@@ -63,18 +54,6 @@ var JS_COPYRIGHT_HEADER = "" +
   "* http://liftjs.github.io/license\n" +
   "*/\n\n\n";
 
-
-var UGLIFY_OPTIONS = {
-  ASCIIOnly: true,
-  mangle: false,
-  width: 80,
-  beautify: {
-    beautify: true,
-    indent_level: 2,
-  },
-  preserveComments: false,
-  banner: JS_COPYRIGHT_HEADER
-};
 
 var gruntConfig = {
   jshint: {
@@ -97,36 +76,80 @@ var gruntConfig = {
   },
   copy: {
     liftjs: {
-      src: 'src/lift.js',
-      dest: 'dist/lift.js',
-    },
-  },
-  uglify: {
-    modules: {
-      options: UGLIFY_OPTIONS,
       files: [
-        { expand: true, src: ['**/*.js'], dest: 'dist/modules/', cwd: 'src/modules' },
+        { src: 'src/lift.js', dest: 'dist/lift.amd.js' },
+        { expand: true, src: ['modules/**/*.js'], dest: 'dist/', cwd: 'src/'}
       ]
     },
-    liftjs: {
-      options: UGLIFY_OPTIONS,
+  },
+  concat: {
+    amd: {
+      options: {
+        stripBanners: { block: true },
+        nonull: true,
+        banner: 'window.LiftJS = {};\n'
+      },
+      src: ['bower_components/micro-amd/dist/micro-amd.js', 'dist/lift.amd.js', 'src/global.js'],
+      dest: 'dist/lift.js',
+    },
+    all: {
+      options: {
+        banner: JS_COPYRIGHT_HEADER,
+        nonull: true,
+      },
       files: [
-        { src: ['dist/lift.js'], dest: 'dist/lift.js' },
-        { src: ['dist/lift-optimized.js'], dest: 'dist/lift-optimized.js' },
+        { expand: true, src: ['**/*.js'], dest: 'dist/', cwd: 'dist/' },
+      ]
+    },
+  },
+  replace: {
+    liftjs: {
+      src: [ 'dist/lift.js' ],
+      dest: 'dist/lift.js',
+      replacements: [{
+        from: /\/\*\ LIFT_AMD_MODULE_NAME \*\//,
+        to: "'liftjs', "
+      }],
+    }
+  },
+  uglify: {
+    all: {
+      options: {
+        ASCIIOnly: true,
+        mangle: true,
+        preserveComments: false,
+        banner: JS_COPYRIGHT_HEADER,
+        sourceMap: true,
+        compress: {
+          drop_console: true
+        }
+      },
+      files: [
+        { expand: true, src: ['dist/**/*.js'], ext: '.min.js' },
+        { src: 'dist/lift.amd.js', dest: 'dist/lift.amd.min.js' },
       ]
     },
   },
   removelogging: {
     liftjs: {
-      src: 'dist/lift.js',
+      src: 'dist/lift.*',
     }
+  },
+  comments: {
+    js: {
+      options: {
+        singleline: true,
+        multiline: true,
+      },
+      src: [ 'dist/*.js' ]
+    },
   },
   exec: {
     all: {
       cmd: 'node ./build.js "*"'
     },
     getownpropertynames: {
-      cmd: 'node ./build.js "es5/object/getownpropertynames"'
+      cmd: 'node ./build.js "es5:object:getownpropertynames"'
     },
   },
   mocha: {
@@ -137,7 +160,7 @@ var gruntConfig = {
     },
     test: {
       options: {
-        urls: srcTestUrls.concat(optimizedTestUrls)
+        urls: testUrls
       }
     }
   },
@@ -154,36 +177,6 @@ var gruntConfig = {
       options: {
         base: '',
         port: 80,
-        middleware: function(connect, options, middlewares) {
-          // inject a custom middleware into the array of default middlewares
-          middlewares.unshift(tamper(function replaceTokens(req/*, res */) {
-            return function(body) {
-              var parsedUrl = url.parse(req.url, true);
-              var urlPath = parsedUrl.pathname;
-              var query = parsedUrl.query;
-
-              if(path.extname(urlPath || '') === '.html') {
-                var useSrc = query.liftjs === 'source';
-                var useOptimized = query.liftjs === 'optimized';
-
-                var data = {
-                  liftJSPath: '../' + (useSrc ? 'src' : 'dist') + '/lift' + (useOptimized ? '-optimized' : '') + '.js',
-                  titleLabel: useOptimized ? 'optimized' : useSrc ? 'source' : 'dist',
-                };
-
-                return body.replace(/\{\{\s*(\S+)\s*\}\}/g, function(match, name) {
-                  if(name in data) {
-                    return data[name];
-                  }
-                });
-              }
-
-              return body;
-            };
-          }));
-
-          return middlewares;
-        },
       }
     }
   },
@@ -192,6 +185,7 @@ var gruntConfig = {
       files: ['src/**/*.js', 'tests/spec/**/*.js', 'tests/*.html'],
       tasks: [
         'build',
+        'exec:all',
         '_mochaTests',
       ],
     },
@@ -199,36 +193,26 @@ var gruntConfig = {
   'saucelabs-mocha': {
     oneoff: {
       options: {
-        urls: [ DEV_HOST + TEST_PATH + '/tag-load.html?liftjs=optimized' ],
+        urls: [ DEV_HOST + TEST_PATH + '/index.html' ],
         tunnelTimeout: 5,
         browsers: [ { platform: "Windows XP", browserName: "internet explorer", version: "8" } ],
         testname: 'one off test',
       }
     },
-    quick: {
+    browsers: {
       options: {
-        urls: [ NO_AMD_DIST_TEST_URL ],
+        urls: [ DEV_HOST + TEST_PATH + '/index.html' ],
         tunnelTimeout: 5,
+        build: '<%= grunt.template.today("isoDateTime") %>',
         browsers: popularBrowsers,
         testname: 'popular browsers',
         maxRetries: 2,
         tags: ["master"]
       }
     },
-    browsers: {
+    release: {
       options: {
-        urls: [ NO_AMD_DIST_TEST_URL ],
-        tunnelTimeout: 5,
-        build: '<%= grunt.template.today("isoDateTime") %>',
-        browsers: browsers,
-        testname: 'all browsers - 1 url',
-        maxRetries: 2,
-        tags: ["master"]
-      }
-    },
-    all: {
-      options: {
-        urls: srcTestUrls.concat(optimizedTestUrls),
+        urls: [ DEV_HOST + TEST_PATH + '/index.html' ],
         tunnelTimeout: 5,
         build: '<%= grunt.template.today("isoDateTime") %>',
         browsers: browsers,
@@ -250,19 +234,22 @@ var gruntConfig = {
 };
 
 module.exports = function(grunt) {
+  grunt.loadNpmTasks('grunt-bump');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-exec');
+  grunt.loadNpmTasks('grunt-mkdir');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-remove-logging');
-  grunt.loadNpmTasks('grunt-mkdir');
   grunt.loadNpmTasks('grunt-saucelabs');
-  grunt.loadNpmTasks('grunt-exec');
-  grunt.loadNpmTasks('grunt-bump');
+  grunt.loadNpmTasks('grunt-stripcomments');
+  grunt.loadNpmTasks('grunt-text-replace');
 
   gruntConfig.bower = grunt.file.readJSON('bower.json');
   gruntConfig.releaseVer = gruntConfig.bower.version + '-RC';
@@ -280,13 +267,15 @@ module.exports = function(grunt) {
     'mkdir',
     'copy',
     'removelogging',
-    'uglify:modules',
-    'exec:all',
-    'uglify:liftjs',
+    'concat',
+    'replace',
+    'comments',
+    'uglify',
   ]);
 
   grunt.registerTask('test', [
     'build',
+    'exec:all',
     'connect',
     '_mochaTests',
   ]);
@@ -296,23 +285,18 @@ module.exports = function(grunt) {
     'saucelabs-mocha:oneoff',
   ]);
 
-  grunt.registerTask('test:quick', [
-    'test',
-    'saucelabs-mocha:quick',
-  ]);
-
   grunt.registerTask('test:browsers', [
     'test',
     'saucelabs-mocha:browsers',
   ]);
 
-  grunt.registerTask('test:all', [
+  grunt.registerTask('test:release', [
     'test',
-    'saucelabs-mocha:all',
+    'saucelabs-mocha:release',
   ]);
 
   grunt.registerTask('dev', [
-    'build',
+    'jshint',
     'connect',
     'watch'
   ]);

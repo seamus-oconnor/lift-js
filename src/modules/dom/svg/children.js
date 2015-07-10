@@ -1,1 +1,3 @@
-../node/children.js
+define(['../node/children'], function(children) {
+  return children;
+});

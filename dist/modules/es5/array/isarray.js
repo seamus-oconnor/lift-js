@@ -2,7 +2,7 @@
 * LiftJS Javascript Library v0.2.4
 * http://liftjs.github.io/
 *
-* Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
+* Copyright 2013 - 2015 Pneumatic Web Technologies Corp. and other contributors
 * Released under the MIT license
 * http://liftjs.github.io/license
 */
@@ -10,7 +10,15 @@
 
 define(function() {
   "use strict";
-  return Array.isArray ? !1 : (Array.isArray = function(arr) {
-    return arr instanceof Array || "[object Array]" === Object.prototype.toString.call(arr);
-  }, !0);
+
+  if(Array.isArray) { return false; }
+
+  // Oringally from:
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
+
+  Array.isArray = function shimIsArray(arr) {
+    return arr instanceof Array || Object.prototype.toString.call(arr) === '[object Array]';
+  };
+
+  return true;
 });

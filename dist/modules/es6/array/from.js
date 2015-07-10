@@ -2,21 +2,45 @@
 * LiftJS Javascript Library v0.2.4
 * http://liftjs.github.io/
 *
-* Copyright 2013 - 2014 Pneumatic Web Technologies Corp. and other contributors
+* Copyright 2013 - 2015 Pneumatic Web Technologies Corp. and other contributors
 * Released under the MIT license
 * http://liftjs.github.io/license
 */
 
 
+
 define(function() {
   "use strict";
-  return Array.from ? !1 : (Array.from = function(iterable) {
-    var mapFn = arguments[1], context = arguments[2];
-    if (void 0 !== mapFn && "[object Function]" !== Object.prototype.toString.call(mapFn)) throw new TypeError("when provided, the second argument must be a function");
-    for (var Arr = this, list = Object(iterable), length = list.length >>> 0, result = "function" == typeof this ? Object(new Arr(length)) : new Array(length), i = 0; length > i; i++) {
-      var value = list[i];
-      result[i] = void 0 !== mapFn ? context ? mapFn.call(context, value) : mapFn(value) : value;
+
+  if(Array.from) { return false; }
+
+  // Copied from: https://github.com/paulmillr/es6-shim/blob/master/es6-shim.js
+  Array.from = function shimArrayFrom(iterable) {
+    var mapFn = arguments[1];
+    var context = arguments[2];
+
+    if (mapFn !== undefined && Object.prototype.toString.call(mapFn) !== '[object Function]') {
+      throw new TypeError('when provided, the second argument must be a function');
     }
-    return result.length = length, result;
-  }, !0);
+
+    var Arr = this;
+    var list = Object(iterable);
+    /*jshint bitwise:false*/
+    var length = list.length >>> 0;
+    var result = typeof this === 'function' ? Object(new Arr(length)) : new Array(length);
+
+    for (var i = 0; i < length; i++) {
+      var value = list[i];
+      if (mapFn !== undefined) {
+        result[i] = context ? mapFn.call(context, value) : mapFn(value);
+      } else {
+        result[i] = value;
+      }
+    }
+
+    result.length = length;
+    return result;
+  };
+
+  return true;
 });

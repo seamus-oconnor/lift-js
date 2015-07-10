@@ -23,9 +23,9 @@ define(function() {
       throw new TypeError(obj + ' is not an object');
     }
 
-    var result = [], prop;
+    var result = [];
 
-    for (prop in obj) {
+    for (var prop in obj) {
       if (obj.hasOwnProperty(prop)) {
         result.push(prop);
       }
@@ -38,6 +38,7 @@ define(function() {
         }
       }
     }
+
     return result;
   };
 
