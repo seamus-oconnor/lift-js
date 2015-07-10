@@ -113,7 +113,7 @@ var gruntConfig = {
     }
   },
   uglify: {
-    all: {
+    liftjsamd: {
       options: {
         ASCIIOnly: true,
         mangle: true,
