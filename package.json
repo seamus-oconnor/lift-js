@@ -3,7 +3,7 @@
   "author": "Séamus O'Connor",
   "license": "MIT",
   "homepage": "https://github.com/seamus-oconnor/lift-js",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "JS Shims",
   "main": "build.js",
   "dependencies": {
