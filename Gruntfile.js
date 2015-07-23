@@ -182,7 +182,7 @@ var gruntConfig = {
   },
   watch: {
     scripts: {
-      files: ['src/**/*.js', 'tests/spec/**/*.js', 'tests/*.html'],
+      files: ['src/**/*.js', 'src/browsers/*.txt', 'tests/spec/**/*.js', 'tests/*.html'],
       tasks: [
         'build',
         'exec:all',
@@ -195,7 +195,7 @@ var gruntConfig = {
       options: {
         urls: [ DEV_HOST + TEST_PATH + '/index.html' ],
         tunnelTimeout: 5,
-        browsers: [ { platform: 'Windows 7', browserName: 'internet explorer', version: '11' } ],
+        browsers: [ { platform: 'Windows 7', browserName: 'internet explorer', version: '8' } ],
         testname: 'one off test',
       }
     },

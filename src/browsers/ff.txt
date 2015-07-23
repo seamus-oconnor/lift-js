@@ -26,5 +26,5 @@
 
 23          window:raf
 
-# Version 18 -> 36* supported String.prototype.contains later renamed "includes"
-*           es6:string:includes
+# Version 18 -> 39 supported String.prototype.contains later renamed "includes"
+40          es6:string:includes

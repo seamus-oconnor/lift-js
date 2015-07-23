@@ -15,7 +15,7 @@
 
 26          dom:node:transitionend
 
-*           es6:string:includes
-*           es6:string:endswith
-*           es6:string:repeat
-*           es6:string:startswith
+41          es6:string:includes
+41          es6:string:endswith
+41          es6:string:repeat
+41          es6:string:startswith
