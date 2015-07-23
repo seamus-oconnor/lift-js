@@ -45,13 +45,21 @@ function runTests(url, done) {
   iframe.frameBorder = '0'; // NOTE: For IE <= 8
 
   function iframeLoad() {
-    iframe.contentWindow.testsDone = function(stats, failedTests) {
+    function testsDone(stats) {
+      var failedTests = stats.reports;
       expect(failedTests.length).to.be(0);
       done();
       if(failedTests.length === 0) {
         testFramesEl.removeChild(iframe);
       }
-    };
+    }
+
+    // Tests already run
+    if(iframe.contentWindow.mochaResults) {
+      testsDone(iframe.contentWindow.mochaResults);
+    } else { // Listen for tests to be done
+      iframe.contentWindow.testsDone = testsDone;
+    }
   }
 
   if(iframe.addEventListener) {

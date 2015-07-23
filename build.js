@@ -12,10 +12,10 @@ if(!global.Promise) {
 }
 
 
-const BUILD_DIR = path.join(__dirname, 'dist');
-const SRC_DIR = path.join(__dirname, 'src');
-const BROWSERS_DIR = path.join(SRC_DIR, 'browsers');
-const FEATURES = argv._;
+var BUILD_DIR = path.join(__dirname, 'dist');
+var SRC_DIR = path.join(__dirname, 'src');
+var BROWSERS_DIR = path.join(SRC_DIR, 'browsers');
+var FEATURES = argv._;
 
 
 // function fail() {

@@ -1,6 +1,5 @@
 /dist/bundles
 /dist/lift-optimized*.js
-*.pyc
 /bower_components
 /node_modules
 /tmp

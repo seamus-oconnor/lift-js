@@ -1,35 +1,35 @@
 /* jshint node:true */
 
 var browsers = [
-  { platform: "Windows 8.1", browserName: "firefox", },
-  { platform: "Windows 8.1", browserName: "chrome", },
-  { platform: "Windows 8.1", browserName: "internet explorer", version: "11" },
-  { platform: "Windows 8",   browserName: "internet explorer", version: "10" },
-  { platform: "Windows 7",   browserName: "firefox" },
-  { platform: "Windows 7",   browserName: "chrome" },
-  { platform: "Windows 7",   browserName: "internet explorer", version: "11" },
-  { platform: "Windows 7",   browserName: "internet explorer", version: "10" },
-  { platform: "Windows 7",   browserName: "internet explorer", version: "9" },
-  { platform: "Windows 7",   browserName: "internet explorer", version: "8" },
-  { platform: "Windows XP",  browserName: "firefox",  },
-  { platform: "Windows XP",  browserName: "chrome",  },
-  { platform: "Windows XP",  browserName: "internet explorer", version: "8" },
-  { platform: "OS X 10.9",   browserName: "safari", version: "7" },
-  { platform: "OS X 10.9",   browserName: "firefox", },
-  { platform: "OS X 10.9",   browserName: "chrome",  },
-  { platform: "Linux",   browserName: "firefox", },
-  { platform: "Linux",   browserName: "chrome",  },
-  // { browserName: "safari", platform: "OS X 10.8", version: "6" },
+  { platform: 'Windows 8.1', browserName: 'firefox', },
+  { platform: 'Windows 8.1', browserName: 'chrome', },
+  { platform: 'Windows 8.1', browserName: 'internet explorer', version: '11' },
+  { platform: 'Windows 8',   browserName: 'internet explorer', version: '10' },
+  { platform: 'Windows 7',   browserName: 'firefox' },
+  { platform: 'Windows 7',   browserName: 'chrome' },
+  { platform: 'Windows 7',   browserName: 'internet explorer', version: '11' },
+  { platform: 'Windows 7',   browserName: 'internet explorer', version: '10' },
+  { platform: 'Windows 7',   browserName: 'internet explorer', version: '9' },
+  { platform: 'Windows 7',   browserName: 'internet explorer', version: '8' },
+  { platform: 'Windows XP',  browserName: 'firefox',  },
+  { platform: 'Windows XP',  browserName: 'chrome',  },
+  { platform: 'Windows XP',  browserName: 'internet explorer', version: '8' },
+  { platform: 'OS X 10.9',   browserName: 'safari', version: '7' },
+  { platform: 'OS X 10.9',   browserName: 'firefox', },
+  { platform: 'OS X 10.9',   browserName: 'chrome',  },
+  { platform: 'Linux',   browserName: 'firefox', },
+  { platform: 'Linux',   browserName: 'chrome',  },
+  // { browserName: 'safari', platform: 'OS X 10.8', version: '6' },
 ];
 
 
 var popularBrowsers = [
-  // { browserName: "firefox", version: "32", platform: "Windows XP" },
-  { browserName: "internet explorer", platform: "Windows 7", version: "11" },
-  { browserName: "internet explorer", platform: "Windows 7", version: "10" },
-  { browserName: "chrome", platform: "Windows 7" },
-  { browserName: "firefox", platform: "Windows 7" },
-  { browserName: "safari", platform: "OS X 10.9", version: "7" },
+  // { browserName: 'firefox', version: '32', platform: 'Windows XP' },
+  { browserName: 'internet explorer', platform: 'Windows 7', version: '11' },
+  { browserName: 'internet explorer', platform: 'Windows 7', version: '10' },
+  { browserName: 'chrome', platform: 'Windows 7' },
+  { browserName: 'firefox', platform: 'Windows 7' },
+  { browserName: 'safari', platform: 'OS X 10.9', version: '7' },
 ];
 
 const DEV_HOST = 'http://127.0.0.1';
@@ -195,7 +195,7 @@ var gruntConfig = {
       options: {
         urls: [ DEV_HOST + TEST_PATH + '/index.html' ],
         tunnelTimeout: 5,
-        browsers: [ { platform: "Windows XP", browserName: "internet explorer", version: "8" } ],
+        browsers: [ { platform: 'Windows 7', browserName: 'internet explorer', version: '11' } ],
         testname: 'one off test',
       }
     },
@@ -207,7 +207,7 @@ var gruntConfig = {
         browsers: popularBrowsers,
         testname: 'popular browsers',
         maxRetries: 2,
-        tags: ["master"]
+        tags: ['master']
       }
     },
     release: {
@@ -218,7 +218,7 @@ var gruntConfig = {
         browsers: browsers,
         testname: 'release candiate: <%= releaseVer %>',
         maxRetries: 2,
-        // tags: ["master"]
+        // tags: ['master']
       }
     },
   },

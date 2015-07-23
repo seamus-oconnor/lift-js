@@ -10,7 +10,7 @@ window.runMochaTests = function runMochaTests() {
     window.mochaResults.reports = failedTests;
 
     if(top && window.testsDone) {
-      window.testsDone(runner.stats, failedTests);
+      window.testsDone(runner.stats);
     }
   });
 
